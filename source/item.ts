@@ -10,7 +10,7 @@ export abstract class Item<T extends ItemType> implements ItemDefinition<T> {
         return ++Item.nextId;
     }
 
-    public readonly id = Item.getID();
+    public readonly id = this.type === ItemType.Package ? 1 : Item.getID();
 
     public constructor (
         public readonly type: T,
@@ -19,6 +19,12 @@ export abstract class Item<T extends ItemType> implements ItemDefinition<T> {
         public name: string = '',
         public enabled: boolean = true
     ) {
+        this.items = this.items || [];
+        this.actions = this.actions || [];
 
+        if (this.type === ItemType.Package) {
+            // Force Package to be a group
+            this.type = <T>ItemType.Group;
+        }
     }
 }

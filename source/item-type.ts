@@ -1,4 +1,5 @@
 export enum ItemType {
+    Package = 'package',
     Group = 'group',
     Alias = 'alias',
     Keybind = 'keybind',

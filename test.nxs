@@ -3,14 +3,26 @@
     "items": [
         {
             "type": "function",
-            "name": "test",
+            "items": [],
+            "actions": [],
+            "name": "onLoad",
             "enabled": true,
             "id": 2,
-            "code": "// Testttt"
+            "code": "(function () {\r\n        // onLoad\r\n    })()"
+        },
+        {
+            "type": "function",
+            "items": [],
+            "actions": [],
+            "name": "onGMCP",
+            "enabled": true,
+            "id": 3,
+            "code": "(function () {\r\n        // onGMCP\r\n    })()"
         }
     ],
+    "actions": [],
     "name": "test",
     "enabled": true,
-    "id": 3,
+    "id": 1,
     "description": "test test"
 }

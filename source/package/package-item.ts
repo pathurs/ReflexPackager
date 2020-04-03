@@ -3,8 +3,8 @@ import { ItemType } from '../item-type';
 import { PackageDefinition } from './package-definition';
 import { Items } from '../items';
 
-export class PackageItem extends Item<ItemType.Group> implements PackageDefinition {
+export class PackageItem extends Item<ItemType.Package> implements PackageDefinition {
     public constructor (name: string, public description: string, items: Items) {
-        super(ItemType.Group, items, undefined, name);
+        super(ItemType.Package, items, undefined, name);
     }
 }
