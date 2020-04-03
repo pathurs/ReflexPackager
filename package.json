@@ -1,0 +1,33 @@
+{
+    "name": "reflexpackager",
+    "version": "0.0.0",
+    "description": "A JavaScript Reflex Packager for the Iron Realms Nexus Client",
+    "main": "index.js",
+    "scripts": {
+        "build": "tsc --outDir build"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/pathurs/ReflexPackager.git"
+    },
+    "keywords": [
+        "Nexus",
+        "Iron",
+        "Realms",
+        "MUD",
+        "Packager"
+    ],
+    "author": "Patrick Stanford",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/pathurs/ReflexPackager/issues"
+    },
+    "homepage": "https://github.com/pathurs/ReflexPackager#readme",
+    "devDependencies": {
+        "@types/node": "^13.11.0",
+        "typescript": "^3.8.3"
+    },
+    "dependencies": {
+        "tslib": "^1.11.1"
+    }
+}

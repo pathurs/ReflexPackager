@@ -1,0 +1,16 @@
+{
+    "type": "group",
+    "items": [
+        {
+            "type": "function",
+            "name": "test",
+            "enabled": true,
+            "id": 2,
+            "code": "// Testttt"
+        }
+    ],
+    "name": "test",
+    "enabled": true,
+    "id": 3,
+    "description": "test test"
+}
