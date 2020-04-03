@@ -4,7 +4,8 @@
     "description": "A JavaScript Reflex Packager for the Iron Realms Nexus Client",
     "main": "index.js",
     "scripts": {
-        "build": "tsc --outDir build"
+        "build": "tsc --outDir build",
+        "test": "ts-node test"
     },
     "repository": {
         "type": "git",
