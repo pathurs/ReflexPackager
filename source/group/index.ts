@@ -1,2 +1,2 @@
 export * from './group-definition';
-export * from './group';
+export * from './group-item';

@@ -7,8 +7,8 @@
             "actions": [],
             "name": "onLoad",
             "enabled": true,
-            "id": 2,
-            "code": "(function () {\r\n        // onLoad\r\n    })()"
+            "id": 3,
+            "code": "(function () {\n    // onLoad\n})()"
         },
         {
             "type": "function",
@@ -16,8 +16,30 @@
             "actions": [],
             "name": "onGMCP",
             "enabled": true,
-            "id": 3,
-            "code": "(function () {\r\n        // onGMCP\r\n    })()"
+            "id": 2,
+            "code": "(function () {\n    // onGMCP\n})()"
+        },
+        {
+            "type": "group",
+            "items": [
+                {
+                    "type": "alias",
+                    "items": [],
+                    "actions": [],
+                    "name": "",
+                    "enabled": true,
+                    "id": 4,
+                    "text": "test",
+                    "matching": "exact",
+                    "whole_words": true,
+                    "case_sensitive": true,
+                    "prefix_suffix": true
+                }
+            ],
+            "actions": [],
+            "name": "Aliases",
+            "enabled": true,
+            "id": 5
         }
     ],
     "actions": [],

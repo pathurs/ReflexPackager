@@ -8,6 +8,6 @@ export class FunctionItem extends Item<ItemType.Function> implements FunctionDef
     public constructor (name: string, code: Function, enabled?: boolean) {
         super(ItemType.Function, undefined, undefined, name, enabled);
 
-        this.code = `(${code.toString()})()`;
+        this.code = `(${code.toString()})()`.replace(/\r/g, '');
     }
 }

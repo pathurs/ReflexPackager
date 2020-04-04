@@ -1,20 +1,13 @@
-import { createFromFile } from '../source/create'
-import { FunctionItem } from '../source/function';
+import { createFromFile } from '../source';
+import { onGMCP } from './onGMCP.function';
+import { onLoad } from './onLoad.function';
+import { Aliases } from './Aliases';
 
 createFromFile(
     [
-        new FunctionItem(
-            'onLoad',
-            function () {
-                // onLoad
-            }
-        ),
-        new FunctionItem(
-            'onGMCP',
-            function () {
-                // onGMCP
-            }
-        )
+        onLoad,
+        onGMCP,
+        Aliases
     ],
     'test/rpconfig.json'
 );
