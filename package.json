@@ -5,7 +5,12 @@
     "main": "index.js",
     "scripts": {
         "build": "tsc --outDir build",
-        "test": "ts-node test"
+        "test": "ts-node test",
+        "display-service": "ts-node display-service",
+        "gmcp-service": "ts-node gmcp-service",
+        "defence-manager": "ts-node defence-manager",
+        "hunting-manager": "ts-node hunting-manager",
+        "inventory-manager": "ts-node inventory-manager"
     },
     "repository": {
         "type": "git",
@@ -25,6 +30,7 @@
     },
     "homepage": "https://github.com/pathurs/ReflexPackager#readme",
     "devDependencies": {
+        "@types/jquery": "^3.3.34",
         "@types/node": "^13.11.0",
         "typescript": "^3.8.3"
     },

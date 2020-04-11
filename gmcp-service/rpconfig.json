@@ -1,0 +1,5 @@
+{
+    "name": "GMCP Service",
+    "description": "A GMCP Service",
+    "outFile": "./gmcp-service.nxs"
+}

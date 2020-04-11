@@ -1,0 +1,46 @@
+{
+    "type": "group",
+    "items": [
+        {
+            "type": "function",
+            "items": [],
+            "actions": [],
+            "name": "onGMCP",
+            "enabled": true,
+            "id": 5,
+            "code": "(function (args) {\n    client.gmcpservice.latest[args.gmcp_method] = args.gmcp_args;\n    client.gmcpservice.subscriptions.forEach(subscription => {\n        subscription.methods.forEach(method => {\n            if (args.gmcp_method.includes(method)) {\n                subscription.subscriber(args);\n            }\n        });\n    });\n})(args);"
+        },
+        {
+            "type": "function",
+            "items": [],
+            "actions": [],
+            "name": "onLoad",
+            "enabled": true,
+            "id": 2,
+            "code": "(function () {\n    run_function('gmcp-service:setup', undefined, 'GMCP Service');\n    send_GMCP('Char.Items.Room');\n    display_notice('GMCP Service Loaded.');\n})(args);"
+        },
+        {
+            "type": "group",
+            "items": [
+                {
+                    "type": "function",
+                    "items": [],
+                    "actions": [],
+                    "name": "gmcp-service:setup",
+                    "enabled": true,
+                    "id": 3,
+                    "code": "(function () {\n    client.gmcpservice = {\n        latest: {},\n        subscriptions: [],\n        subscribe(methods, subscriber) {\n            const subscription = {\n                methods,\n                subscriber\n            };\n            client.gmcpservice.subscriptions.push(subscription);\n            return subscription;\n        },\n        unsubscribe(subscription) {\n            const index = client.gmcpservice.subscriptions.findIndex(value => value === subscription);\n            client.gmcpservice.subscriptions.splice(index, 1);\n        },\n        once(methods, subscriber) {\n            const subscription = client.gmcpservice.subscribe(methods, function (args) {\n                subscriber(args);\n                client.gmcpservice.unsubscribe(subscription);\n            });\n            return subscription;\n        }\n    };\n})(args);"
+                }
+            ],
+            "actions": [],
+            "name": "Functions",
+            "enabled": true,
+            "id": 4
+        }
+    ],
+    "actions": [],
+    "name": "GMCP Service",
+    "enabled": true,
+    "id": 1,
+    "description": "A GMCP Service"
+}

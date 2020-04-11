@@ -1,39 +1,39 @@
-import { CallFunctionAction } from './call-function-action';
-import { DesktopNotificationAction } from './desktop-notification-action';
-import { DisableReflexAction } from './disable-reflex-action';
-import { DisableThisReflexAction } from './disable-this-reflex-action';
-import { EnableReflexAction } from './enable-reflex-action';
-import { ExecuteScriptAction } from './execute-script-action';
-import { IfAction } from './if-action';
-import { JumpToLabelAction } from './jump-to-label-action';
-import { LabelAction } from './label-action';
-import { ModifyAButtonAction } from './modify-a-button-action';
-import { ModifyVariableAction } from './modify-variable-action';
-import { PlayASoundAction } from './play-a-sound';
-import { RepeatAction } from './repeat-action';
-import { SendACommandAction } from './send-a-command-action';
-import { SendANoticeAction } from './send-a-notice-action';
-import { StopAction } from './stop-action';
-import { WaitAction } from './wait-action';
-import { WaitForAction } from './wait-for-action';
+import { CallFunctionDefinition } from './call-function-definition';
+import { DesktopNotificationDefinition } from './desktop-notification-definition';
+import { DisableReflexDefinition } from './disable-reflex-definition';
+import { DisableThisReflexDefinition } from './disable-this-reflex-definition';
+import { EnableReflexDefinition } from './enable-reflex-definition';
+import { ExecuteScriptDefinition } from './execute-script-definition';
+import { IfDefinition } from './if-definition';
+import { JumpToLabelDefinition } from './jump-to-label-definition';
+import { LabelDefinition } from './label-definition';
+import { ModifyAButtonDefinition } from './modify-a-button-definition';
+import { ModifyVariableDefinition } from './modify-variable-definition';
+import { PlayASoundDefinition } from './play-a-sound-definition';
+import { RepeatDefinition } from './repeat-definition';
+import { SendACommandDefinition } from './send-a-command-definition';
+import { SendANoticeDefinition } from './send-a-notice-definition';
+import { StopDefinition } from './stop-definition';
+import { WaitDefinition } from './wait-definition';
+import { WaitForDefinition } from './wait-for-definition';
 
 export type Actions = (
-    | CallFunctionAction
-    | DesktopNotificationAction
-    | DisableReflexAction
-    | DisableThisReflexAction
-    | EnableReflexAction
-    | ExecuteScriptAction
-    | IfAction
-    | JumpToLabelAction
-    | LabelAction
-    | ModifyAButtonAction
-    | ModifyVariableAction
-    | PlayASoundAction
-    | RepeatAction
-    | SendACommandAction
-    | SendANoticeAction
-    | StopAction
-    | WaitAction
-    | WaitForAction
+    | CallFunctionDefinition
+    | DesktopNotificationDefinition
+    | DisableReflexDefinition
+    | DisableThisReflexDefinition
+    | EnableReflexDefinition
+    | ExecuteScriptDefinition
+    | IfDefinition
+    | JumpToLabelDefinition
+    | LabelDefinition
+    | ModifyAButtonDefinition
+    | ModifyVariableDefinition
+    | PlayASoundDefinition
+    | RepeatDefinition
+    | SendACommandDefinition
+    | SendANoticeDefinition
+    | StopDefinition
+    | WaitDefinition
+    | WaitForDefinition
 )[];

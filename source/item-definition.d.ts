@@ -1,12 +1,11 @@
 import { ItemType } from './item-type';
-import { Action } from './action/action';
-import { ActionType } from './action/action-type';
+import { ActionDefinition, ActionType } from './action';
 
 export interface ItemDefinition<T extends ItemType> {
     type: T,
     name: string;
     enabled: boolean;
     id: number;
-    actions?: Action<ActionType>[];
+    actions?: ActionDefinition<ActionType>[];
     items?: ItemDefinition<ItemType>[];
 }

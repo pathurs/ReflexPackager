@@ -1,0 +1,19 @@
+{
+    "type": "group",
+    "items": [
+        {
+            "type": "function",
+            "items": [],
+            "actions": [],
+            "name": "onLoad",
+            "enabled": true,
+            "id": 2,
+            "code": "(function () {\n    run_function('defence-manager:setup', undefined, 'Defence Manager');\n    // send_GMCP('Char.Items.Inv');\n    client.gmcpservice.subscribe(['Char.Defences.List', 'Char.Defences.Add', 'Char.Defences.Remove'], args => {\n        run_function('defence-manager:onDefenceChange', args, 'Defence Manager');\n    });\n    display_notice('Defence Manager Loaded.');\n})(args);"
+        }
+    ],
+    "actions": [],
+    "name": "Defence Manager",
+    "enabled": true,
+    "id": 1,
+    "description": "A Defence Manager"
+}

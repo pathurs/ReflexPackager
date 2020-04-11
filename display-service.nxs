@@ -1,0 +1,19 @@
+{
+    "type": "group",
+    "items": [
+        {
+            "type": "function",
+            "items": [],
+            "actions": [],
+            "name": "onLoad",
+            "enabled": true,
+            "id": 2,
+            "code": "(function () {\n    client.displayservice = {\n        table(title, groups) {\n            const lines = [];\n            displayTableTitle(title);\n            groups.forEach(group => {\n                displayTableGroup(group);\n            });\n            displayTableFooter();\n            print(lines.map(line => `<div>${line}</div>`).join(''));\n            function getLength(text) {\n                return (new DOMParser().parseFromString(text, 'text/html').body.textContent || '').length;\n            }\n            function displayTableTitle(title) {\n                const left = 39 - Math.floor(getLength(title) / 2);\n                const right = 39 - Math.ceil(getLength(title) / 2);\n                lines.push(`+${'-'.repeat(left)}${title}${'-'.repeat(right)}+`);\n            }\n            function displayTableFooter() {\n                lines.push(`+${'-'.repeat(78)}+`);\n            }\n            function displayTableGroup(group) {\n                if (group.title) {\n                    displayTableGroupTitle(group.title);\n                }\n                for (let i = 0; i < group.items.length; i += group.columns) {\n                    displayTableGroupItems(group.items.slice(i, i + group.columns), group.columns);\n                }\n            }\n            function displayTableGroupTitle(title) {\n                const right = 76 - getLength(title);\n                lines.push(`+-${title}${'-'.repeat(right)}-+`);\n            }\n            function displayTableGroupItems(items, columns) {\n                let columnWidth;\n                const labelValueSpacerWidth = 1;\n                const columnSpacerWidth = 3;\n                switch (columns) {\n                    case 1:\n                        columnWidth = 74;\n                        break;\n                    case 2:\n                        columnWidth = 35;\n                        break;\n                    case 3:\n                        columnWidth = 22;\n                        break;\n                    case 4:\n                        columnWidth = 16;\n                        break;\n                    default:\n                        throw new Error(`Display Service: Unsupported columnss '${columns}'`);\n                }\n                let line = '';\n                for (let i = 0; i < items.length; i++) {\n                    const item = items[i];\n                    const label = item.label.substring(0, columnWidth - getLength(item.value) - labelValueSpacerWidth);\n                    const parsed = `${item.label}${' '.repeat(columnWidth - getLength(label) - getLength(item.value))}${item.value}`;\n                    if (i !== 0) {\n                        line += ' '.repeat(columnSpacerWidth);\n                    }\n                    line += parsed;\n                }\n                line += ' '.repeat(74 - getLength(line));\n                lines.push(`|   ${line} |`);\n            }\n        },\n        clickify(text, command, hint, fgcolor, bgcolor) {\n            return `<a\n                    class=\"url_link\"\n                    onclick=\"handle_aliases('${command}')\"\n                    title=\"${hint}\"\n                    style=\"cursor: pointer; ${fgcolor ? `color: ${fgcolor};` : ''} ${bgcolor ? `background-color: ${bgcolor};` : ''}\">${text}</a>`;\n        }\n    };\n    display_notice('Display Service Loaded.');\n})(args);"
+        }
+    ],
+    "actions": [],
+    "name": "Display Service",
+    "enabled": true,
+    "id": 1,
+    "description": "A Display Service"
+}
