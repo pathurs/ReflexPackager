@@ -1,15 +1,21 @@
 import { GroupItem } from '../../source';
-import { arentWielding } from './arent-wielding';
-import { alreadyWielding } from './already-wielding';
 import { swappedHands } from './swapped-hands';
-import { wieldWhat } from './wield-what';
+import { wieldFailed } from './wield-failed';
+import { containerClosed } from './container-closed';
+import { containerOpened } from './container-opened';
+import { notCloseable } from './not-closeable';
+import { alreadyClosed } from './already-closed';
+import { alreadyOpen } from './already-open';
 
 export const Triggers = new GroupItem(
     'Triggers',
     [
-        alreadyWielding,
-        arentWielding,
+        alreadyClosed,
+        alreadyOpen,
+        containerClosed,
+        containerOpened,
+        notCloseable,
         swappedHands,
-        wieldWhat
+        wieldFailed
     ]
 );

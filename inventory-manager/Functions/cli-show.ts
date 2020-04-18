@@ -5,23 +5,8 @@ import { DisplayServiceClient } from '../../display-service/display-service';
 
 declare const client: InventoryManagerClient & DisplayServiceClient;
 
-/**
-print('+------------------------------Inventory Manager------------------------------+');
-print('|   Active:          Yes                                                      |');
-print('|   Mode:        Default                                                      |');
-print('+-Wielding--------------------------------------------------------------------+');
-print('|   Active:          Yes                                                      |');
-print('|   Gripping:        Yes                                                      |');
-print('+-Giving / Putting / Getting--------------------------------------------------+');
-print('|   Active:          Yes                                                      |');
-print('|   Selfishness:     Yes                                                      |');
-print('+-Containers------------------------------------------------------------------+');
-print('|   Active:          Yes                                                      |');
-print('+-----------------------------------------------------------------------------+');
- */
-
-export const show = new FunctionItem(
-    'inventory-manager:show',
+export const cliShow = new FunctionItem(
+    'inventory-manager:cli-show',
     function () {
         client.displayservice.table(
             'Inventory Manager',

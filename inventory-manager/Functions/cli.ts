@@ -1,12 +1,13 @@
 import { FunctionItem } from '../../source';
 
-export const config = new FunctionItem(
-    'inventory-manager:config',
+export const cli = new FunctionItem(
+    'inventory-manager:cli',
     function (args: string[]) {
         switch (args[0]) {
             case undefined:
             case 'show':
-                run_function('inventory-manager:show', args.slice(1), 'Inventory Manager');
+            case 'config':
+                run_function('inventory-manager:cli-show', args.slice(1), 'Inventory Manager');
                 break;
 
             case 'help':
@@ -17,7 +18,7 @@ export const config = new FunctionItem(
             case 'packs':
             case 'container':
             case 'containers':
-                run_function('inventory-manager:containers', args.slice(1) || '', 'Inventory Manager');
+                run_function('inventory-manager:cli-containers', args.slice(1) || '', 'Inventory Manager');
                 break;
         }
     }

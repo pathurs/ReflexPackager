@@ -18,7 +18,7 @@ export const onInventoryChange = new FunctionItem(
                     const newItem = (<GMCPCharItemsList>args.gmcp_args).items.find(value => value.id === itemId);
 
                     if (oldItem && newItem) {
-                        updateItem(newItem);
+                        updateItem(oldItem, newItem);
                     }
                     else if (oldItem) {
                         removeItem(oldItem);
@@ -27,30 +27,52 @@ export const onInventoryChange = new FunctionItem(
                         addItem(newItem);
                     }
                     else {
-                        throw new Error(`Inventory Manager: Unknown item: '${itemId}'`);
+                        throw new Error(`Inventory Manager(inventory-manager:onInventoryChange): Unknown item: '${itemId}'`);
                     }
                 });
                 break;
 
             case 'Char.Items.Add':
-                addItem((<GMCPCharItemsAdd>args.gmcp_args).item);
+                {
+                    const item = (<GMCPCharItemsAdd>args.gmcp_args).item;
+                    const oldItem = client.inventorymanager.items.find(value => value.id === item.id);
+
+                    if (oldItem) {
+                        updateItem(oldItem, item);
+                    }
+                    else {
+                        addItem(item);
+                    }
+                }
                 break;
 
             case 'Char.Items.Remove':
-                removeItem((<GMCPCharItemsRemove>args.gmcp_args).item);
+                {
+                    const item = (<GMCPCharItemsAdd>args.gmcp_args).item;
+                    const oldItem = client.inventorymanager.items.find(value => value.id === item.id);
+
+                    if (oldItem) {
+                        removeItem(item);
+                    }
+                }
                 break;
 
             case 'Char.Items.Update':
-                updateItem((<GMCPCharItemsUpdate>args.gmcp_args).item);
+                {
+                    const item = (<GMCPCharItemsAdd>args.gmcp_args).item;
+                    const oldItem = client.inventorymanager.items.find(value => value.id === item.id);
+
+                    if (oldItem) {
+                        updateItem(oldItem, item);
+                    }
+                    else {
+                        addItem(item);
+                    }
+                }
                 break;
         }
 
-        set_variable('inventory-manager:items', client.inventorymanager.items);
-        set_variable('inventory-manager:wielding', client.inventorymanager.wielding);
-        set_variable('inventory-manager:wearables', client.inventorymanager.wearables);
-        set_variable('inventory-manager:groupables', client.inventorymanager.groupables);
-        set_variable('inventory-manager:containers', client.inventorymanager.containers);
-        set_variable('inventory-manager:corpses', client.inventorymanager.corpses);
+        run_function('inventory-manager:save', undefined, 'Inventory Manager');
 
         function hasAttribute(item: GMCPCharItemsItem, attribute: GMCPCharItemsItemAttribute): boolean {
             return item.attrib !== undefined && item.attrib?.includes(attribute);
@@ -68,156 +90,23 @@ export const onInventoryChange = new FunctionItem(
             }
         }
 
-        // function addItemTo<T extends keyof InventoryManager, D extends keyof InventoryManager[T]>(a: T, b: D, itemId: string) {
-        //     const object = client.inventorymanager[a][b];
-
-        //     if (!Array.isArray(object)) {
-        //         return;
-        //     }
-
-        //     if (!object.includes(itemId)) {
-        //         object.push(itemId);
-        //     }
-        // }
-
-        // function removeItemFrom<T extends keyof InventoryManager, D extends keyof InventoryManager[T]>(a: T, b: D, itemId: string) {
-        //     const object = client.inventorymanager[a][b];
-
-        //     if (!Array.isArray(object)) {
-        //         return;
-        //     }
-
-        //     if (!object.includes(itemId)) {
-        //         const index = object.findIndex(id => id === itemId);
-        //         object.splice(index, 1);
-        //     }
-        // }
-
         function addItem(item: GMCPCharItemsItem) {
             client.inventorymanager.items.push(item);
-
-            if (item.attrib) {
-                // // Worn
-                // if (item.attrib.includes('w')) {
-                //     addItemTo('wearables', 'allIds', item.id);
-                //     addItemTo('wearables', 'wornIds', item.id);
-                // }
-
-                // // Wearable, not worn
-                // if (item.attrib.includes('W')) {
-                //     addItemTo('wearables', 'allIds', item.id);
-                // }
-
-                // // Wielded, Left
-                // if (item.attrib.includes('l')) {
-                //     client.inventorymanager.wielding.currentLeftId = item.id;
-                // }
-
-                // // Wielded, Right
-                // if (item.attrib.includes('L')) {
-                //     client.inventorymanager.wielding.currentRightId = item.id;
-                // }
-
-                // // Groupable
-                // if (item.attrib.includes('g')) {
-                //     addItemTo('groupables', 'allIds', item.id);
-                // }
-
-                // // Container
-                // if (item.attrib.includes('c')) {
-                //     addItemTo('containers', 'allIds', item.id);
-                // }
-
-                // // Corpse, Dead monster
-                // if (item.attrib.includes('d')) {
-                //     addItemTo('corpses', 'allIds', item.id);
-                // }
-            }
         }
 
         function removeItem(item: GMCPCharItemsItem) {
-            const oldItem = client.inventorymanager.items.find(value => value.id === item.id);
-
-            if (!oldItem) {
-                return;
-            }
-
             const index = client.inventorymanager.items.findIndex(value => value.id === item.id);
 
             client.inventorymanager.items.splice(index, 1);
-
-            if (oldItem.attrib) {
-                // // Worn
-                // if (oldItem.attrib.includes('w')) {
-                //     removeItemFrom('wearables', 'allIds', item.id);
-                //     removeItemFrom('wearables', 'wornIds', item.id);
-                // }
-
-                // // Wearable, not worn
-                // if (oldItem.attrib.includes('W')) {
-                //     removeItemFrom('wearables', 'allIds', item.id);
-                // }
-
-                // // Wielded, Left
-                // if (oldItem.attrib.includes('l')) {
-                //     client.inventorymanager.wielding.currentLeftId = item.id;
-                // }
-
-                // // Wielded, Right
-                // if (oldItem.attrib.includes('L')) {
-                //     client.inventorymanager.wielding.currentRightId = item.id;
-                // }
-
-                // // Groupable
-                // if (oldItem.attrib.includes('g')) {
-                //     removeItemFrom('groupables', 'allIds', item.id);
-                // }
-
-                // // Container
-                // if (oldItem.attrib.includes('c')) {
-                //     removeItemFrom('containers', 'allIds', item.id);
-                // }
-
-                // // Corpse, Dead monster
-                // if (oldItem.attrib.includes('d')) {
-                //     removeItemFrom('corpses', 'allIds', item.id);
-                // }
-            }
         }
 
-        function updateItem(item: GMCPCharItemsItem) {
-            const oldItem = client.inventorymanager.items.find(value => value.id === item.id);
-
-            if (!oldItem) {
-                addItem(item);
-                return;
-            }
-
+        function updateItem(oldItem: GMCPCharItemsItem, item: GMCPCharItemsItem) {
             const index = client.inventorymanager.items.findIndex(value => value.id === item.id);
 
             client.inventorymanager.items[index] = item;
 
-            // // Worn
-            // if (attributeChange(oldItem, item, 'w') === 'add') {
-            //     addItemTo('wearables', 'allIds', item.id);
-            //     addItemTo('wearables', 'wornIds', item.id);
-            // }
-            // else if (attributeChange(oldItem, item, 'w') === 'remove') {
-            //     removeItemFrom('wearables', 'allIds', item.id);
-            // }
-
-            // // Wearable, not worn
-            // if (attributeChange(oldItem, item, 'W') === 'add') {
-            //     addItemTo('wearables', 'allIds', item.id);
-            // }
-            // else if (attributeChange(oldItem, item, 'W') === 'remove') {
-            //     //
-            // }
-
             // Wielded, Left
             if (attributeChange(oldItem, item, 'l') === 'add') {
-                client.inventorymanager.wielding.currentLeftId = item.id;
-
                 if (client.inventorymanager.wielding.expectdWield === 'left') {
                     client.inventorymanager.wielding.expectedLeftId = item.id;
 
@@ -225,10 +114,6 @@ export const onInventoryChange = new FunctionItem(
                 }
             }
             else if (attributeChange(oldItem, item, 'l') === 'remove') {
-                if (!client.inventorymanager.wielding.expectdSwapHands) {
-                    client.inventorymanager.wielding.currentLeftId = undefined;
-                }
-
                 if (client.inventorymanager.wielding.expectedLeftId === item.id) {
                     if (['any', 'left', 'both'].includes(<string>client.inventorymanager.wielding.expectdUnwield)) {
                         client.inventorymanager.wielding.expectedLeftId = undefined;
@@ -245,8 +130,6 @@ export const onInventoryChange = new FunctionItem(
 
             // Wielded, Right
             if (attributeChange(oldItem, item, 'L') === 'add') {
-                client.inventorymanager.wielding.currentRightId = item.id;
-
                 if (client.inventorymanager.wielding.expectdWield === 'right') {
                     client.inventorymanager.wielding.expectdRightId = item.id;
 
@@ -254,10 +137,6 @@ export const onInventoryChange = new FunctionItem(
                 }
             }
             else if (attributeChange(oldItem, item, 'L') === 'remove') {
-                if (!client.inventorymanager.wielding.expectdSwapHands) {
-                    client.inventorymanager.wielding.currentRightId = undefined;
-                }
-
                 if (client.inventorymanager.wielding.expectdRightId === item.id) {
                     if (['any', 'right', 'both'].includes(<string>client.inventorymanager.wielding.expectdUnwield)) {
                         client.inventorymanager.wielding.expectdRightId = undefined;
@@ -271,30 +150,6 @@ export const onInventoryChange = new FunctionItem(
                     client.inventorymanager.wielding.expectdUnwield = undefined;
                 }
             }
-
-            // // Groupable
-            // if (attributeChange(oldItem, item, 'g') === 'add') {
-            //     addItemTo('groupables', 'allIds', item.id);
-            // }
-            // else if (attributeChange(oldItem, item, 'g') === 'remove') {
-            //     removeItemFrom('groupables', 'allIds', item.id);
-            // }
-
-            // // Container
-            // if (attributeChange(oldItem, item, 'c') === 'add') {
-            //     addItemTo('containers', 'allIds', item.id);
-            // }
-            // else if (attributeChange(oldItem, item, 'c') === 'remove') {
-            //     removeItemFrom('containers', 'allIds', item.id);
-            // }
-
-            // // Corpse, Dead monster
-            // if (attributeChange(oldItem, item, 'd') === 'add') {
-            //     addItemTo('corpses', 'allIds', item.id);
-            // }
-            // else if (attributeChange(oldItem, item, 'd') === 'remove') {
-            //     removeItemFrom('corpses', 'allIds', item.id);
-            // }
         }
     }
 );

@@ -4,8 +4,8 @@ import { DisplayServiceClient, TableGroupItemDefinition } from '../../display-se
 
 declare const client: InventoryManagerClient & DisplayServiceClient;
 
-export const containers = new FunctionItem(
-    'inventory-manager:containers',
+export const cliContainers = new FunctionItem(
+    'inventory-manager:cli-containers',
     function (args: string[]) {
         switch (args[0]) {
             case undefined:
@@ -32,7 +32,7 @@ export const containers = new FunctionItem(
                                 .map<TableGroupItemDefinition>(
                                     container => {
                                         const label = `${container.id} ${container.name}`;
-                                        const value = client.inventorymanager.containers.trackedIds.includes(container.id)
+                                        const value = client.inventorymanager.containers.tracked.find(value => value.id == container.id)
                                             ? client.displayservice.clickify('Yes', `inventory-manager containers untrack ${container.id}`, `Untrack ${container.name}`, '#00ff00')
                                             : client.displayservice.clickify('No', `inventory-manager containers track ${container.id}`, `Track ${container.name}`, '#ff0000');
 
@@ -53,11 +53,17 @@ export const containers = new FunctionItem(
                     const container = client.inventorymanager.items.find(item => item.id === containerId);
 
                     if (!container) {
-                        throw new Error(`Inventory Manager: Unknown container '${containerId}'`);
+                        throw new Error(`Inventory Manager(inventory-manager:containers): Unknown container '${containerId}'`);
                     }
 
-                    if (!client.inventorymanager.containers.trackedIds.includes(container.id)) {
-                        client.inventorymanager.containers.trackedIds.push(container.id);
+                    if (!client.inventorymanager.containers.tracked.find(value => value.id == container.id)) {
+                        client.inventorymanager.containers.tracked.push({
+                            id: container.id,
+                            items: []
+                        });
+
+                        send_command(`close ${containerId}`, 1);
+                        send_GMCP('Char.Items.Contents', Number(containerId));
 
                         display_notice(`Inventory Manager: Now tracking container '${container.name} (${container.id})'.`);
                     }
@@ -73,13 +79,13 @@ export const containers = new FunctionItem(
                     const container = client.inventorymanager.items.find(item => item.id === containerId);
 
                     if (!container) {
-                        throw new Error(`Inventory Manager: Unknown container '${containerId}'`);
+                        throw new Error(`Inventory Manager(inventory-manager:containers): Unknown container '${containerId}'`);
                     }
 
-                    const index = client.inventorymanager.containers.trackedIds.indexOf(containerId);
+                    const index = client.inventorymanager.containers.tracked.findIndex(value => value.id === containerId);
 
                     if (index !== -1) {
-                        client.inventorymanager.containers.trackedIds.splice(index, 1);
+                        client.inventorymanager.containers.tracked.splice(index, 1);
 
                         display_notice(`Inventory Manager: No longer tracking container '${container.name} (${container.id})'.`);
                     }
@@ -93,5 +99,7 @@ export const containers = new FunctionItem(
             default:
                 break;
         }
+
+        run_function('inventory-manager:save', undefined, 'Inventory Manager');
     }
 );

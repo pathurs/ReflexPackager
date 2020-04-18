@@ -4,7 +4,8 @@ import { InventoryManagerClient } from '../inventory-manager';
 declare const client: InventoryManagerClient;
 
 export const swapHands = new AliasItem(
-    '^swap hands$',
+    'Swap Hands',
+    /^swap hands$/,
     AliasType.RegularExpression,
     [
         new ExecuteScriptAction(
@@ -18,6 +19,8 @@ export const swapHands = new AliasItem(
                 client.inventorymanager.wielding.expectdRightId = expectdLeft;
 
                 client.inventorymanager.wielding.expectdSwapHands = true;
+
+                run_function('inventory-manager:save', undefined, 'Inventory Manager');
             }
         )
     ]

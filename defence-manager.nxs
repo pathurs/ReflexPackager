@@ -8,7 +8,7 @@
             "name": "onLoad",
             "enabled": true,
             "id": 2,
-            "code": "(function () {\n    run_function('defence-manager:setup', undefined, 'Defence Manager');\n    // send_GMCP('Char.Items.Inv');\n    client.gmcpservice.subscribe(['Char.Defences.List', 'Char.Defences.Add', 'Char.Defences.Remove'], args => {\n        run_function('defence-manager:onDefenceChange', args, 'Defence Manager');\n    });\n    display_notice('Defence Manager Loaded.');\n})(args);"
+            "code": "(function () {\n    run_function('defence-manager:setup', undefined, 'Defence Manager');\n    // send_GMCP('Char.Items.Inv');\n    client.gmcpservice.subscribe(['Char.Defences.List', 'Char.Defences.Add', 'Char.Defences.Remove'], args => {\n        run_function('defence-manager:onDefenceChange', args, 'Defence Manager');\n    });\n    display_notice('Defence Manager: Loaded.');\n})(args);"
         }
     ],
     "actions": [],

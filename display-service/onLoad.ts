@@ -105,6 +105,6 @@ export const onLoad = new FunctionItem(
             }
         };
 
-        display_notice('Display Service Loaded.');
+        display_notice('Display Service: Loaded.');
     }
 );

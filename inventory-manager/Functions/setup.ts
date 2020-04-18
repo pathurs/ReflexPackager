@@ -23,7 +23,7 @@ export const setup = new FunctionItem(
             },
             containers: get_variable('inventory-manager:containers') || {
                 enabled: true,
-                trackedIds: []
+                tracked: []
             },
             corpses: get_variable('inventory-manager:corpses') || {
                 enabled: true

@@ -1,8 +1,9 @@
 import { AliasItem, AliasType, ExecuteScriptAction } from '../../source';
 
-export const ii = new AliasItem(
-    'ii',
-    AliasType.ExactMatch,
+export const infoInventory = new AliasItem(
+    'Info Inventory (ii)',
+    /^ii$/,
+    AliasType.RegularExpression,
     [
         new ExecuteScriptAction(
             function () {

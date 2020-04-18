@@ -5,8 +5,6 @@ interface Wearables {
 
 interface Wielding {
     enabled: boolean;
-    currentLeftId?: string;
-    currentRightId?: string;
     expectedLeftId?: string;
     expectdRightId?: string;
     expectdWield?: 'left' | 'right' | 'both';
@@ -18,9 +16,18 @@ interface Groupables {
     enabled: boolean;
 }
 
+interface TrackedContainer {
+    id: string;
+    closeable?: boolean;
+    possiblyOpen?: boolean;
+    items: GMCPCharItemsItem[];
+}
+
 interface Containers {
     enabled: boolean;
-    trackedIds: string[];
+    tracked: TrackedContainer[];
+    expectedOpen?: string;
+    expectedClose?: string;
 }
 
 interface Corpses {

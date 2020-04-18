@@ -3,14 +3,19 @@ import { InventoryManagerClient } from '../inventory-manager';
 
 declare const client: InventoryManagerClient;
 
-export const wieldWhat = new TriggerItem(
-    'What do you wish to wield?',
-    TriggerType.ExactMatch,
+export const unwieldFailed = new TriggerItem(
+    'Unwield Failed',
+    [
+        /^You aren't wielding that\.$/,
+        /^You aren't wielding anything\.$/
+    ],
+    TriggerType.RegularExpression,
     [
         new ExecuteScriptAction(
             function () {
-                client.inventorymanager.wielding.expectdWield = undefined;
                 client.inventorymanager.wielding.expectdUnwield = undefined;
+
+                run_function('inventory-manager:save', undefined, 'Inventory Manager');
             }
         )
     ]

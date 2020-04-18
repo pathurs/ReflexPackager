@@ -17,7 +17,7 @@
             "name": "onLoad",
             "enabled": true,
             "id": 2,
-            "code": "(function () {\n    run_function('gmcp-service:setup', undefined, 'GMCP Service');\n    send_GMCP('Char.Items.Room');\n    display_notice('GMCP Service Loaded.');\n})(args);"
+            "code": "(function () {\n    run_function('gmcp-service:setup', undefined, 'GMCP Service');\n    send_GMCP('Char.Items.Room');\n    display_notice('GMCP Service: Loaded.');\n})(args);"
         },
         {
             "type": "group",

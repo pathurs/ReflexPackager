@@ -9,6 +9,6 @@ export const onLoad = new FunctionItem(
         run_function('gmcp-service:setup', undefined, 'GMCP Service');
         send_GMCP('Char.Items.Room');
 
-        display_notice('GMCP Service Loaded.');
+        display_notice('GMCP Service: Loaded.');
     }
 );

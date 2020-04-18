@@ -471,7 +471,7 @@ export const setup = new FunctionItem(
                     ]
                 },
                 parry: {
-                    name: 'parrying \\((\\w+)\\)',
+                    name: 'parrying \((\w+)\)',
                     type: 'permanent',
                     skills: [
                         {

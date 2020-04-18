@@ -14,6 +14,6 @@ export const onLoad = new FunctionItem(
             run_function('defence-manager:onDefenceChange', args, 'Defence Manager');
         });
 
-        display_notice('Defence Manager Loaded.');
+        display_notice('Defence Manager: Loaded.');
     }
 );

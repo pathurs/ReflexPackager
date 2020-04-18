@@ -1,7 +1,4 @@
-// Type definitions for ironrealms-nexus-client x.x
-// Project: https://www.ironrealms.com/the-nexus-client/
-// Definitions by: Patrick Stanford <https://github.com/pathurs>
-// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped// Client
+// From https://github.com/keneanung/GMCPAdditions
 
 declare var client: typeof window;
 
@@ -135,12 +132,61 @@ type GMCPClientMethod =
     | GMCPClientMethodIRE
     ;
 
+// Char.Skills
+
+interface GMCPCharSkillsGet {
+    group: string;
+    name: string;
+}
+
+interface GMCPCharSkillsGroupsGroup {
+    name: string;
+    rank: string;
+}
+
+type GMCPCharSkillsGroups = GMCPCharSkillsGroupsGroup[];
+
+interface GMCPCharSkillsList {
+    group: string;
+    desc: string[];
+    list: string[];
+}
+
+interface GMCPCharSkillsInfo {
+    group: string;
+    skill: string;
+    info: string;
+}
+
+// Char.Afflictions
+
+interface GMCPCharAfflictionsAffliction {
+    name: string;
+    cure: string;
+    desc: string;
+}
+
+type GMCPCharAfflictionsList = GMCPCharAfflictionsAffliction[];
+
+type GMCPCharAfflictionsAdd = GMCPCharAfflictionsAffliction[];
+
+type GMCPCharAfflictionsRemove = string[];
+
 // Char.Defences
 
-interface GMCPCharDefencesDefenceAdd {
+interface GMCPCharDefencesDefence {
     name: string;
     desc: string;
 }
+
+type GMCPCharDefencesList = GMCPCharDefencesDefence[];
+
+interface GMCPCharDefencesAdd {
+    name: string;
+    desc: string;
+}
+
+type GMCPCharDefencesRemove = string[];
 
 // Char.Items
 
@@ -157,6 +203,9 @@ type GMCPCharItemsItemAttribute =
     | 'L' // Wielded, Right
     | 'g' // Groupable
     | 'c' // Container
+    | 'r' // Riftable
+    | 'f' // Fluid
+    | 'e' // Edible
     | 't' // Takeable
     | 'm' // Monster
     | 'd' // Dead monster
@@ -237,7 +286,7 @@ interface RoomExits {
     d?: number;
 }
 
-interface RoomInfo {
+interface GMCPRoomInfo {
     num: number;
     name: string;
     desc: string;
@@ -259,19 +308,19 @@ interface GMCPServerMethodToArgsMap {
     'Char.Vitals': unknown;
     'Char.StatusVars': unknown;
     'Char.Status': unknown;
-    'Char.Afflictions.List': unknown;
-    'Char.Afflictions.Add': unknown;
-    'Char.Afflictions.Remove': unknown;
-    'Char.Defences.List': unknown;
-    'Char.Defences.Add': GMCPCharDefencesDefenceAdd;
-    'Char.Defences.Remove': unknown;
+    'Char.Afflictions.List': GMCPCharAfflictionsList;
+    'Char.Afflictions.Add': GMCPCharAfflictionsAdd;
+    'Char.Afflictions.Remove': GMCPCharAfflictionsRemove;
+    'Char.Defences.List': GMCPCharDefencesList;
+    'Char.Defences.Add': GMCPCharDefencesAdd;
+    'Char.Defences.Remove': GMCPCharDefencesRemove;
     'Char.Items.List': GMCPCharItemsList;
     'Char.Items.Add': GMCPCharItemsAdd;
     'Char.Items.Remove': GMCPCharItemsRemove;
     'Char.Items.Update': GMCPCharItemsUpdate;
-    'Char.Skills.Groups': unknown;
-    'Char.Skills.List': unknown;
-    'Char.Skills.Info': unknown;
+    'Char.Skills.Groups': GMCPCharSkillsGroups;
+    'Char.Skills.List': GMCPCharSkillsList;
+    'Char.Skills.Info': GMCPCharSkillsInfo;
 
     'Comm.Channel.Players': unknown;
     'Comm.Channel.List': unknown;
@@ -279,7 +328,7 @@ interface GMCPServerMethodToArgsMap {
     'Comm.Channel.End': unknown;
     'Comm.Channel.Text': unknown;
 
-    'Room.Info': RoomInfo;
+    'Room.Info': GMCPRoomInfo;
     'Room.WrongDir': unknown;
     'Room.Players': unknown;
     'Room.AddPlayer': unknown;
@@ -315,7 +364,7 @@ interface GMCPServerMethodToArgsMap {
 // Args
 
 type GMCPServerArgs =
-    | GMCPCharDefencesDefenceAdd
+    | GMCPCharDefencesAdd
 
     | GMCPCharItemsList
     | GMCPCharItemsAdd
@@ -323,13 +372,9 @@ type GMCPServerArgs =
     | GMCPCharItemsUpdate
     ;
 
-interface TriggerFunctionArgs {
-    text: string;
-    match: unknown;
-    prefix: unknown;
-    suffix: unknown;
-    backrefs: unknown[];
-}
+type TriggerFunctionArgs = RegExpMatchArray;
+
+type AliasFunctionArgs = RegExpMatchArray;
 
 interface GMCPFunctionArgs<
     TMethod extends GMCPServerMethod = GMCPServerMethod,
@@ -347,6 +392,10 @@ interface GMCPAliasRegexArgs {
 interface ScriptsArgs {
     [index: number]: unknown;
 }
+
+// Variables
+
+declare const stack_delimiter: string;
 
 // Calling functions
 
@@ -537,6 +586,10 @@ declare function to_number(val: string): number;
  * @param message
  * @param arguments
  */
-declare function send_GMCP(message: GMCPClientMethod, arguments?: unknown): void;
+declare function send_GMCP(message: 'Char.Skills.Get', args: GMCPCharSkillsGet): void;
+declare function send_GMCP(message: 'Char.Items.Inv'): void;
+declare function send_GMCP(message: 'Char.Items.Contents', args: number): void;
+declare function send_GMCP(message: 'Char.Items.Room'): void;
+// declare function send_GMCP(message: GMCPClientMethod, args?: unknown): void;
 
 

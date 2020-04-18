@@ -16,6 +16,6 @@ export const onLoad = new FunctionItem(
             }
         });
 
-        display_notice('Hunting Manager Loaded.');
+        display_notice('Hunting Manager: Loaded.');
     }
 );
