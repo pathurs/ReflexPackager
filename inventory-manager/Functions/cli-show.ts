@@ -2,7 +2,6 @@ import { FunctionItem } from '../../source';
 import { InventoryManagerClient } from '../inventory-manager';
 import { DisplayServiceClient } from '../../display-service/display-service';
 
-
 declare const client: InventoryManagerClient & DisplayServiceClient;
 
 export const cliShow = new FunctionItem(
@@ -17,18 +16,18 @@ export const cliShow = new FunctionItem(
                     items: [
                         {
                             label: 'Enabled',
-                            value: 'Yes',
-                            // hint: 'Whether to enable the Inventory Manager.'
+                            value: makeBooleanValue(
+                                client.inventorymanager.enabled,
+                                'inventory-manager config enabled false',
+                                'Disable Inventory Manager.',
+                                'inventory-manager config enabled true',
+                                'Enable Inventory Manager.'
+                            )
                         },
                         {
                             label: 'Mode',
                             value: 'Default',
                             // hint: 'The current mode.'
-                        },
-                        {
-                            label: 'Selfishness',
-                            value: 'Yes',
-                            // hint: 'Whether to use the selfishness defence.'
                         }
                     ]
                 },
@@ -40,11 +39,6 @@ export const cliShow = new FunctionItem(
                             label: 'Enabled',
                             value: 'Yes',
                             // hint: 'Whether to manage wielding and unwielding.'
-                        },
-                        {
-                            label: 'Gripping',
-                            value: 'Yes',
-                            // hint: 'Whether to use the gripping defence.'
                         }
                     ]
                 },
@@ -94,5 +88,11 @@ export const cliShow = new FunctionItem(
                 }
             ]
         );
+
+        function makeBooleanValue(value: boolean, trueCommand: string, trueHint: string, falseCommand: string, falseHint: string) {
+            return value
+                ? client.displayservice.clickify('Yes', trueCommand, trueHint, '#00ff00')
+                : client.displayservice.clickify('No', falseCommand, falseHint, '#ff0000');
+        }
     }
 );

@@ -18,6 +18,7 @@ export const onLoad = new FunctionItem(
 
                 displayTableFooter();
 
+                // Use print() because it allows HTML
                 print(lines.map(line => `<div>${line}</div>`).join(''));
 
                 function getLength(text: string) {

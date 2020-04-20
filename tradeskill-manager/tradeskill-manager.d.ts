@@ -74,14 +74,14 @@ interface Harvesting {
     names: HarvestingNamesDictionary;
 }
 
-interface ExtractingEnvironmentDictionary {
+interface TransmutationEnvironmentDictionary {
     'Constructed underground': ['bisemutum', 'calamine', 'dolomite', 'potash'];
     'Natural underground': ['argentum', 'calamine', 'dolomite', 'malachite', 'potash', 'quartz', 'stannum'];
     'Magma Caves': ['dolomite'];
     Mountains: ['antimony', 'calcite', 'malachite', 'potash', 'quartz'];
 }
 
-interface ExtractingNamesDictionary {
+interface TransmutationNamesDictionary {
     'antimony flake': 'antimony';
     'antimony flakes': 'antimony';
     'argentum flake': 'argentum';
@@ -126,12 +126,12 @@ interface ExtractingNamesDictionary {
     'stannum flakes': 'stannum';
 }
 
-interface Extracting {
+interface Transmutation {
     enabled: boolean;
     queue: string[];
     running: boolean;
-    environments: ExtractingEnvironmentDictionary;
-    names: ExtractingNamesDictionary;
+    environments: TransmutationEnvironmentDictionary;
+    names: TransmutationNamesDictionary;
 }
 
 interface GatheringEnvironmentDictionary {
@@ -328,7 +328,7 @@ interface Inkmilling {
 interface TradeskillManager {
     running: boolean;
     harvesting: Harvesting;
-    extracting: Extracting;
+    transmutation: Transmutation;
     gathering: Gathering;
     butchering: Butchering;
     inkmilling: Inkmilling;

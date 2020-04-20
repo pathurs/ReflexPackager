@@ -81,7 +81,7 @@ export const onLoad = new FunctionItem(
                     'prickly pears': 'pear'
                 }
             },
-            extracting: {
+            transmutation: {
                 enabled: true,
                 queue: [],
                 running: false,

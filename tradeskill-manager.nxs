@@ -8,104 +8,180 @@
             "name": "onLoad",
             "enabled": true,
             "id": 2,
-            "code": "(function () {\n    client.tradeskillmanager = {\n        running: false,\n        harvesting: {\n            enabled: true,\n            queue: [],\n            running: false,\n            environments: {\n                Forest: ['elm', 'ginger', 'ginseng', 'lobelia', 'myrrh', 'echinacea', 'burdock'],\n                Garden: ['echinacea', 'elm', 'ginger', 'ginseng', 'lobelia', 'myrrh'],\n                Desert: ['pear', 'weed'],\n                Grasslands: ['goldenseal', 'slipper'],\n                Mountains: ['valerian', 'blueberry'],\n                Jungle: ['kuzu', 'kola', 'skullcap'],\n                'Natural underground': ['moss', 'bloodroot'],\n                Hills: ['bayberry', 'hawthorn'],\n                Swamp: ['ash', 'cohosh', 'bellwort'],\n                Valley: ['sileris'],\n                Freshwater: ['kelp'],\n                River: ['kelp'],\n                Water: ['kelp'],\n                Ocean: ['kelp']\n            },\n            names: {\n                'bayberry bark': 'bayberry',\n                'pieces of bayberry bark': 'bayberry',\n                'bellwort flower': 'bellwort',\n                'bellwort flowers': 'bellwort',\n                'dark burdock root': 'burdock',\n                'burdock roots': 'burdock',\n                'black cohosh root': 'cohosh',\n                'cohosh roots': 'cohosh',\n                'bloodroot leaf': 'bloodroot',\n                'bloodroot leaves': 'bloodroot',\n                'echinacea root': 'echinacea',\n                'echinacea roots': 'echinacea',\n                'ginger root': 'ginger',\n                'ginger roots': 'ginger',\n                'ginseng root': 'ginseng',\n                'ginseng roots': 'ginseng',\n                'goldenseal root': 'goldenseal',\n                'goldenseal roots': 'goldenseal',\n                'hawthorn berry': 'hawthorn',\n                'hawthorn berries': 'hawthorn',\n                'irid moss': 'moss',\n                'pieces of irid moss': 'moss',\n                'piece of kelp': 'kelp',\n                'pieces of kelp': 'kelp',\n                'kola nut': 'kola',\n                'kola nuts': 'kola',\n                'kuzu root': 'kuzu',\n                'kuzu roots': 'kuzu',\n                'lady\\'s slipper root': 'slipper',\n                'lady\\'s slipper roots': 'slipper',\n                'ball of myrrh gum': 'myrrh',\n                'myrrh balls': 'myrrh',\n                'lobelia seed': 'lobelia',\n                'lobelia seeds': 'lobelia',\n                'prickly ash bark': 'ash',\n                'pieces of prickly ash bark': 'ash',\n                'sileris berry': 'sileris',\n                'sileris berries': 'sileris',\n                'skullcap flower': 'skullcap',\n                'skullcap flowers': 'skullcap',\n                'slippery elm': 'elm',\n                'slippery elms': 'elm',\n                'valerian leaf': 'valerian',\n                'valerian leaves': 'valerian',\n                'sprig of cactus weed': 'weed',\n                'sprigs of cactus weed': 'weed',\n                'prickly pear': 'pear',\n                'prickly pears': 'pear'\n            }\n        },\n        extracting: {\n            enabled: true,\n            queue: [],\n            running: false,\n            environments: {\n                'Constructed underground': ['bisemutum', 'calamine', 'dolomite', 'potash'],\n                'Natural underground': ['argentum', 'calamine', 'dolomite', 'malachite', 'potash', 'quartz', 'stannum'],\n                'Magma Caves': ['dolomite'],\n                Mountains: ['antimony', 'calcite', 'malachite', 'potash', 'quartz']\n            },\n            names: {\n                'antimony flake': 'antimony',\n                'antimony flakes': 'antimony',\n                'argentum flake': 'argentum',\n                'argentum flakes': 'argentum',\n                'arsenic pellet': 'arsenic',\n                'arsenic pellets': 'arsenic',\n                'aurum flake': 'aurum',\n                'aurum flakes': 'aurum',\n                'azurite mote': 'azurite',\n                'azurite motes': 'azurite',\n                'bisemutum chip': 'bisemutum',\n                'bisemutum chips': 'bisemutum',\n                'calamine crystal': 'calamine',\n                'calamine crystals': 'calamine',\n                'calcite mote': 'calcite',\n                'calcite motes': 'calcite',\n                'pinch of ground cinnabar': 'cinnabar',\n                'pinches of ground cinnabar': 'cinnabar',\n                'cuprum flake': 'cuprum',\n                'cuprum flakes': 'cuprum',\n                'dolomite grain': 'dolomite',\n                'dolomite grains': 'dolomite',\n                'ferrum flake': 'ferrum',\n                'ferrum flakes': 'ferrum',\n                'gypsum crystal': 'gypsum',\n                'gypsum crystals': 'gypsum',\n                'magnesium chip': 'magnesium',\n                'magnesium chips': 'magnesium',\n                'pinch of ground malachite': 'malachite',\n                'pinches of ground malachite': 'malachite',\n                'plumbum flake': 'plumbum',\n                'plumbum flakes': 'plumbum',\n                'potash crystal': 'potash',\n                'potash crystals': 'potash',\n                'quartz grain': 'quartz',\n                'quartz grains': 'quartz',\n                'quicksilver droplet': 'quicksilver',\n                'quicksilver droplets': 'quicksilver',\n                'pinch of realgar crystals': 'realgar',\n                'pinches of ground realgar': 'realgar',\n                'stannum flake': 'stannum',\n                'stannum flakes': 'stannum'\n            }\n        },\n        gathering: {\n            enabled: true,\n            queue: [],\n            running: false,\n            environments: {\n                Forest: ['nut'],\n                Garden: ['fruit', 'vegetable'],\n                Grasslands: ['sugarcane', 'grain', 'from farm'],\n                Jungle: ['fruit', 'cacao'],\n                'Natural underground': ['lumic', 'dust'],\n                Valley: ['olive'],\n                River: ['clay'],\n                Ocean: ['saltwater']\n            },\n            names: {\n                'assortment of vegetables': 'vegetable',\n                vegetables: 'vegetable',\n                'lump of red clay': 'clay',\n                'lumps of red clay': 'clay',\n                'handful of fruits': 'fruit',\n                'pieces of fruit': 'fruit',\n                'handful of grain': 'grain',\n                'handfuls of grain': 'grain',\n                'small brown egg': 'egg',\n                eggs: 'egg',\n                'handful of nuts': 'nut',\n                'handfuls of nuts': 'nut',\n                'cluster of olives': 'olive',\n                'large, green olives': 'olive',\n                'raw sugarcane stick': 'sugarcane',\n                'sticks of sugarcane': 'sugarcane',\n                'small patch of lumic moss': 'lumic',\n                'patches of lumic moss': 'lumic',\n                'cacao pod': 'cacao',\n                'cacao pods': 'cacao',\n                'pinch of diamond dust': 'dust',\n                'pinches of diamond dust': 'dust',\n                'bar of gold': 'goldbar',\n                'gold bars': 'goldbar',\n                'handfuls of seeds': 'seed',\n                'handful of seeds': 'seed',\n                'piles of gold flakes': 'goldflakes',\n                'pile of gold flakes': 'goldflakes',\n                'venom sac': 'sac',\n                'venom sacs': 'sac',\n                'sidewinder skin': 'skin',\n                'sidewinder skins': 'skin'\n            }\n        },\n        butchering: {\n            enabled: true,\n            queue: [],\n            running: false,\n            names: {\n                'piece of buffalo horn': 'buffalohorn',\n                'pieces of buffalo horn': 'buffalohorn',\n                'pile of fish scales': 'scales',\n                'piles of fish scales': 'scales',\n                'pile of gold flakes': 'flakes',\n                'piles of gold flakes': 'flakes',\n                'an ink bladder': 'bladder',\n                'ink bladders': 'bladder',\n                'sliver of red scorpion chitin': 'redchitin',\n                'slivers of red chitin': 'redchitin',\n                'sliver of yellow scorpion chitin': 'yellowchitin',\n                'slivers of yellow chitin': 'yellowchitin',\n                'lump of red clay': 'clay',\n                'lumps of red clay': 'clay',\n                'shark tooth': 'tooth',\n                'shark teeth': 'tooth',\n                'wyrm tongue': 'tongue',\n                'wyrm tongues': 'tongue',\n                'chunk of animal fat': 'fat',\n                'chunks of animal fat': 'fat',\n                'fillet of fish': 'fish',\n                'pieces of fish': 'fish',\n                'tender cut of meat': 'meat',\n                'pieces of meat': 'meat',\n                'poultry breast': 'poultry',\n                'pieces of poultry': 'poultry'\n            }\n        },\n        inkmilling: {\n            enabled: true,\n            queue: [],\n            running: false,\n            reagents: {\n                red: ['clay', 'redchitin'],\n                blue: ['bladder', 'lumic'],\n                yellow: ['yellowchitin'],\n                gold: ['goldflakes'],\n                common: ['scales'],\n                uncommon: ['buffalohorn'],\n                scarce: ['tooth'],\n                rare: ['tongue']\n            },\n            inks: {\n                red: {\n                    red: 1,\n                    common: 1\n                },\n                blue: {\n                    blue: 1,\n                    uncommon: 1\n                },\n                yellow: {\n                    yellow: 1,\n                    scarce: 1\n                },\n                green: {\n                    blue: 2,\n                    yellow: 1,\n                    uncommon: 2,\n                    scarce: 1\n                },\n                purple: {\n                    red: 2,\n                    blue: 2,\n                    common: 2,\n                    uncommon: 2,\n                    rare: 1\n                },\n                gold: {\n                    gold: 1,\n                    common: 2,\n                    uncommon: 2,\n                    scarce: 2,\n                    rare: 1\n                },\n                black: {\n                    red: 1,\n                    blue: 1,\n                    yellow: 1,\n                    gold: 1,\n                    common: 2,\n                    uncommon: 2,\n                    scarce: 2,\n                    rare: 3\n                }\n            },\n            names: {\n                'red ink': 'redink',\n                'red inks': 'redink',\n                'blue ink': 'blueink',\n                'blue inks': 'blueink',\n                'yellow ink': 'yellowink',\n                'yellow inks': 'yellowink',\n                'green ink': 'greenink',\n                'green inks': 'greenink',\n                'purple ink': 'purpleink',\n                'purple inks': 'purpleink',\n                'gold ink': 'goldink',\n                'gold inks': 'goldink',\n                'black ink': 'blackink',\n                'black inks': 'blackink'\n            }\n        }\n    };\n    display_notice('Tradeskill Manager: Loaded.');\n})(args);"
+            "code": "(function () {\n    var _a;\n    client.tradeskillmanager = {\n        running: false,\n        harvesting: {\n            enabled: true,\n            queue: [],\n            running: false,\n            environments: {\n                Forest: ['elm', 'ginger', 'ginseng', 'lobelia', 'myrrh', 'echinacea', 'burdock'],\n                Garden: ['echinacea', 'elm', 'ginger', 'ginseng', 'lobelia', 'myrrh'],\n                Desert: ['pear', 'weed'],\n                Grasslands: ['goldenseal', 'slipper'],\n                Mountains: ['valerian', 'blueberry'],\n                Jungle: ['kuzu', 'kola', 'skullcap'],\n                'Natural underground': ['moss', 'bloodroot'],\n                Hills: ['bayberry', 'hawthorn'],\n                Swamp: ['ash', 'cohosh', 'bellwort'],\n                Valley: ['sileris'],\n                Freshwater: ['kelp'],\n                River: ['kelp'],\n                Water: ['kelp'],\n                Ocean: ['kelp']\n            },\n            names: {\n                'bayberry bark': 'bayberry',\n                'pieces of bayberry bark': 'bayberry',\n                'bellwort flower': 'bellwort',\n                'bellwort flowers': 'bellwort',\n                'dark burdock root': 'burdock',\n                'burdock roots': 'burdock',\n                'black cohosh root': 'cohosh',\n                'cohosh roots': 'cohosh',\n                'bloodroot leaf': 'bloodroot',\n                'bloodroot leaves': 'bloodroot',\n                'echinacea root': 'echinacea',\n                'echinacea roots': 'echinacea',\n                'ginger root': 'ginger',\n                'ginger roots': 'ginger',\n                'ginseng root': 'ginseng',\n                'ginseng roots': 'ginseng',\n                'goldenseal root': 'goldenseal',\n                'goldenseal roots': 'goldenseal',\n                'hawthorn berry': 'hawthorn',\n                'hawthorn berries': 'hawthorn',\n                'irid moss': 'moss',\n                'pieces of irid moss': 'moss',\n                'piece of kelp': 'kelp',\n                'pieces of kelp': 'kelp',\n                'kola nut': 'kola',\n                'kola nuts': 'kola',\n                'kuzu root': 'kuzu',\n                'kuzu roots': 'kuzu',\n                'lady\\'s slipper root': 'slipper',\n                'lady\\'s slipper roots': 'slipper',\n                'ball of myrrh gum': 'myrrh',\n                'myrrh balls': 'myrrh',\n                'lobelia seed': 'lobelia',\n                'lobelia seeds': 'lobelia',\n                'prickly ash bark': 'ash',\n                'pieces of prickly ash bark': 'ash',\n                'sileris berry': 'sileris',\n                'sileris berries': 'sileris',\n                'skullcap flower': 'skullcap',\n                'skullcap flowers': 'skullcap',\n                'slippery elm': 'elm',\n                'slippery elms': 'elm',\n                'valerian leaf': 'valerian',\n                'valerian leaves': 'valerian',\n                'sprig of cactus weed': 'weed',\n                'sprigs of cactus weed': 'weed',\n                'prickly pear': 'pear',\n                'prickly pears': 'pear'\n            }\n        },\n        transmutation: {\n            enabled: true,\n            queue: [],\n            running: false,\n            environments: {\n                'Constructed underground': ['bisemutum', 'calamine', 'dolomite', 'potash'],\n                'Natural underground': ['argentum', 'calamine', 'dolomite', 'malachite', 'potash', 'quartz', 'stannum'],\n                'Magma Caves': ['dolomite'],\n                Mountains: ['antimony', 'calcite', 'malachite', 'potash', 'quartz']\n            },\n            names: {\n                'antimony flake': 'antimony',\n                'antimony flakes': 'antimony',\n                'argentum flake': 'argentum',\n                'argentum flakes': 'argentum',\n                'arsenic pellet': 'arsenic',\n                'arsenic pellets': 'arsenic',\n                'aurum flake': 'aurum',\n                'aurum flakes': 'aurum',\n                'azurite mote': 'azurite',\n                'azurite motes': 'azurite',\n                'bisemutum chip': 'bisemutum',\n                'bisemutum chips': 'bisemutum',\n                'calamine crystal': 'calamine',\n                'calamine crystals': 'calamine',\n                'calcite mote': 'calcite',\n                'calcite motes': 'calcite',\n                'pinch of ground cinnabar': 'cinnabar',\n                'pinches of ground cinnabar': 'cinnabar',\n                'cuprum flake': 'cuprum',\n                'cuprum flakes': 'cuprum',\n                'dolomite grain': 'dolomite',\n                'dolomite grains': 'dolomite',\n                'ferrum flake': 'ferrum',\n                'ferrum flakes': 'ferrum',\n                'gypsum crystal': 'gypsum',\n                'gypsum crystals': 'gypsum',\n                'magnesium chip': 'magnesium',\n                'magnesium chips': 'magnesium',\n                'pinch of ground malachite': 'malachite',\n                'pinches of ground malachite': 'malachite',\n                'plumbum flake': 'plumbum',\n                'plumbum flakes': 'plumbum',\n                'potash crystal': 'potash',\n                'potash crystals': 'potash',\n                'quartz grain': 'quartz',\n                'quartz grains': 'quartz',\n                'quicksilver droplet': 'quicksilver',\n                'quicksilver droplets': 'quicksilver',\n                'pinch of realgar crystals': 'realgar',\n                'pinches of ground realgar': 'realgar',\n                'stannum flake': 'stannum',\n                'stannum flakes': 'stannum'\n            }\n        },\n        gathering: {\n            enabled: true,\n            queue: [],\n            running: false,\n            environments: {\n                Forest: ['nut'],\n                Garden: ['fruit', 'vegetable'],\n                Grasslands: ['sugarcane', 'grain', 'from farm'],\n                Jungle: ['fruit', 'cacao'],\n                'Natural underground': ['lumic', 'dust'],\n                Valley: ['olive'],\n                River: ['clay'],\n                Ocean: ['saltwater']\n            },\n            names: {\n                'assortment of vegetables': 'vegetable',\n                vegetables: 'vegetable',\n                'lump of red clay': 'clay',\n                'lumps of red clay': 'clay',\n                'handful of fruits': 'fruit',\n                'pieces of fruit': 'fruit',\n                'handful of grain': 'grain',\n                'handfuls of grain': 'grain',\n                'small brown egg': 'egg',\n                eggs: 'egg',\n                'handful of nuts': 'nut',\n                'handfuls of nuts': 'nut',\n                'cluster of olives': 'olive',\n                'large, green olives': 'olive',\n                'raw sugarcane stick': 'sugarcane',\n                'sticks of sugarcane': 'sugarcane',\n                'small patch of lumic moss': 'lumic',\n                'patches of lumic moss': 'lumic',\n                'cacao pod': 'cacao',\n                'cacao pods': 'cacao',\n                'pinch of diamond dust': 'dust',\n                'pinches of diamond dust': 'dust',\n                'bar of gold': 'goldbar',\n                'gold bars': 'goldbar',\n                'handfuls of seeds': 'seed',\n                'handful of seeds': 'seed',\n                'piles of gold flakes': 'goldflakes',\n                'pile of gold flakes': 'goldflakes',\n                'venom sac': 'sac',\n                'venom sacs': 'sac',\n                'sidewinder skin': 'skin',\n                'sidewinder skins': 'skin'\n            }\n        },\n        butchering: {\n            enabled: true,\n            queue: [],\n            running: false,\n            names: {\n                'piece of buffalo horn': 'buffalohorn',\n                'pieces of buffalo horn': 'buffalohorn',\n                'pile of fish scales': 'scales',\n                'piles of fish scales': 'scales',\n                'pile of gold flakes': 'flakes',\n                'piles of gold flakes': 'flakes',\n                'an ink bladder': 'bladder',\n                'ink bladders': 'bladder',\n                'sliver of red scorpion chitin': 'redchitin',\n                'slivers of red chitin': 'redchitin',\n                'sliver of yellow scorpion chitin': 'yellowchitin',\n                'slivers of yellow chitin': 'yellowchitin',\n                'lump of red clay': 'clay',\n                'lumps of red clay': 'clay',\n                'shark tooth': 'tooth',\n                'shark teeth': 'tooth',\n                'wyrm tongue': 'tongue',\n                'wyrm tongues': 'tongue',\n                'chunk of animal fat': 'fat',\n                'chunks of animal fat': 'fat',\n                'fillet of fish': 'fish',\n                'pieces of fish': 'fish',\n                'tender cut of meat': 'meat',\n                'pieces of meat': 'meat',\n                'poultry breast': 'poultry',\n                'pieces of poultry': 'poultry'\n            }\n        },\n        inkmilling: {\n            enabled: true,\n            queue: [],\n            running: false,\n            mill: {\n                // TODO: Let user set id\n                id: (_a = client.inventorymanager.items.find(item => item.name.includes('mill'))) === null || _a === void 0 ? void 0 : _a.id\n            },\n            reagents: {\n                red: ['clay', 'redchitin'],\n                blue: ['bladder', 'lumic'],\n                yellow: ['yellowchitin'],\n                gold: ['goldflakes'],\n                common: ['scales'],\n                uncommon: ['buffalohorn'],\n                scarce: ['tooth'],\n                rare: ['tongue']\n            },\n            inks: {\n                red: {\n                    red: 1,\n                    common: 1\n                },\n                blue: {\n                    blue: 1,\n                    uncommon: 1\n                },\n                yellow: {\n                    yellow: 1,\n                    scarce: 1\n                },\n                green: {\n                    blue: 2,\n                    yellow: 1,\n                    uncommon: 2,\n                    scarce: 1\n                },\n                purple: {\n                    red: 2,\n                    blue: 2,\n                    common: 2,\n                    uncommon: 2,\n                    rare: 1\n                },\n                gold: {\n                    gold: 1,\n                    common: 2,\n                    uncommon: 2,\n                    scarce: 2,\n                    rare: 1\n                },\n                black: {\n                    red: 1,\n                    blue: 1,\n                    yellow: 1,\n                    gold: 1,\n                    common: 2,\n                    uncommon: 2,\n                    scarce: 2,\n                    rare: 3\n                }\n            },\n            names: {\n                'red ink': 'redink',\n                'red inks': 'redink',\n                'blue ink': 'blueink',\n                'blue inks': 'blueink',\n                'yellow ink': 'yellowink',\n                'yellow inks': 'yellowink',\n                'green ink': 'greenink',\n                'green inks': 'greenink',\n                'purple ink': 'purpleink',\n                'purple inks': 'purpleink',\n                'gold ink': 'goldink',\n                'gold inks': 'goldink',\n                'black ink': 'blackink',\n                'black inks': 'blackink'\n            }\n        }\n    };\n    display_notice('Tradeskill Manager: Loaded.');\n})(args);"
         },
         {
             "type": "group",
             "items": [
                 {
-                    "type": "alias",
-                    "items": [],
-                    "actions": [
+                    "type": "group",
+                    "items": [
                         {
-                            "action": "script",
-                            "script": "(function () {\n        const corpses = client.inventorymanager.items.filter(value => value.name.startsWith('the corpse of'));\n        if (corpses.length > 0) {\n            client.tradeskillmanager.butchering.queue.push('butcher corpse');\n            client.tradeskillmanager.butchering.running = true;\n            run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n        }\n        else {\n            display_notice(`Tradeskill Manager: You have no corpses.`, '#FF0000');\n        }\n    })(args);"
+                            "type": "function",
+                            "items": [],
+                            "actions": [],
+                            "name": "tradeskill-manager:inrift",
+                            "enabled": true,
+                            "id": 37,
+                            "code": "(function (args) {\n    var _a;\n    const amountMatch = args[1] || args[3] || args[5] || args[7] || args[9] || args[11] || '';\n    const itemNameMatch = args[2] || args[4] || args[6] || args[8] || args[10] || args[12] || '';\n    const amount = ((_a = amountMatch.match(/(\\d+)/)) === null || _a === void 0 ? void 0 : _a[1]) || '1';\n    let item;\n    if (itemNameMatch in client.tradeskillmanager.harvesting.names) {\n        item = client.tradeskillmanager.harvesting.names[itemNameMatch];\n    }\n    else if (itemNameMatch in client.tradeskillmanager.transmutation.names) {\n        item = client.tradeskillmanager.transmutation.names[itemNameMatch];\n    }\n    else if (itemNameMatch in client.tradeskillmanager.gathering.names) {\n        item = client.tradeskillmanager.gathering.names[itemNameMatch];\n    }\n    else if (itemNameMatch in client.tradeskillmanager.butchering.names) {\n        item = client.tradeskillmanager.butchering.names[itemNameMatch];\n    }\n    else if (itemNameMatch in client.tradeskillmanager.inkmilling.names) {\n        item = client.tradeskillmanager.inkmilling.names[itemNameMatch];\n    }\n    if (item) {\n        send_command(`inrift ${amount} ${item}`);\n    }\n})(args);"
+                        },
+                        {
+                            "type": "function",
+                            "items": [],
+                            "actions": [],
+                            "name": "tradeskill-manager:run-queue",
+                            "enabled": true,
+                            "id": 38,
+                            "code": "(function () {\n    if (client.tradeskillmanager.running) {\n        return;\n    }\n    else {\n        client.tradeskillmanager.running = true;\n        setTimeout(function () {\n            client.tradeskillmanager.running = false;\n        });\n    }\n    if (client.tradeskillmanager.harvesting.running) {\n        if (client.tradeskillmanager.harvesting.queue.length > 0) {\n            // display_notice(`Tradeskill Manager: Harvesting Queue: ${client.tradeskillmanager.harvesting.queue.join(', ')}`, '#00FF00');\n            const command = client.tradeskillmanager.harvesting.queue.pop();\n            if (command) {\n                send_command(`queue add eqbal ${command}`);\n                return;\n            }\n        }\n        else {\n            display_notice(`Tradeskill Manager: Harvesting Complete!`, '#00FF00');\n            client.tradeskillmanager.harvesting.running = false;\n        }\n    }\n    if (client.tradeskillmanager.transmutation.running) {\n        if (client.tradeskillmanager.transmutation.queue.length > 0) {\n            // display_notice(`Tradeskill Manager: Transmutation Queue: ${client.tradeskillmanager.transmutation.queue.join(', ')}`, '#00FF00');\n            const command = client.tradeskillmanager.transmutation.queue.pop();\n            if (command) {\n                send_command(`queue add eqbal ${command}`);\n                return;\n            }\n        }\n        else {\n            display_notice(`Tradeskill Manager: Transmutation Complete!`, '#00FF00');\n            client.tradeskillmanager.transmutation.running = false;\n        }\n    }\n    if (client.tradeskillmanager.gathering.running) {\n        if (client.tradeskillmanager.gathering.queue.length > 0) {\n            // display_notice(`Tradeskill Manager: Gathering Queue: ${client.tradeskillmanager.gathering.queue.join(', ')}`, '#00FF00');\n            const command = client.tradeskillmanager.gathering.queue.pop();\n            if (command) {\n                send_command(`queue add eqbal ${command}`);\n                return;\n            }\n        }\n        else {\n            display_notice(`Tradeskill Manager: Gathering Complete!`, '#00FF00');\n            client.tradeskillmanager.gathering.running = false;\n        }\n    }\n    if (client.tradeskillmanager.butchering.running) {\n        if (client.tradeskillmanager.butchering.queue.length > 0) {\n            // display_notice(`Tradeskill Manager: Butchering Queue: ${client.tradeskillmanager.butchering.queue.join(', ')}`, '#00FF00');\n            const command = client.tradeskillmanager.butchering.queue.pop();\n            if (command) {\n                send_command(`queue add eqbal ${command}`);\n                return;\n            }\n        }\n        else {\n            display_notice(`Tradeskill Manager: Butchering Complete!`, '#00FF00');\n            client.tradeskillmanager.butchering.running = false;\n        }\n    }\n    if (client.tradeskillmanager.inkmilling.running) {\n        if (client.tradeskillmanager.inkmilling.queue.length > 0) {\n            // display_notice(`Tradeskill Manager: Inkmilling Queue: ${client.tradeskillmanager.inkmilling.queue.join(', ')}`, '#00FF00');\n            const next = client.tradeskillmanager.inkmilling.queue.pop();\n            const match = (next === null || next === void 0 ? void 0 : next.match(/(\\d+) (\\w+)/)) || [];\n            const amount = Number(match[1]);\n            const colour = match[2];\n            if (!amount || !colour) {\n                return;\n            }\n            const inkReagents = client.tradeskillmanager.inkmilling.inks[colour];\n            const outriftCommands = [];\n            const putInMillCommands = [];\n            for (let inkReagent in inkReagents) {\n                const reagentAmount = amount * inkReagents[inkReagent];\n                const reagents = client.tradeskillmanager.inkmilling.reagents[inkReagent];\n                // Actually check rift\n                const reagent = reagents[0];\n                if (reagentAmount === 1) {\n                    outriftCommands.push(`outrift ${reagent}`);\n                    putInMillCommands.push(`put ${reagent} in mill`);\n                }\n                else {\n                    outriftCommands.push(`outrift ${reagentAmount} ${reagent}`);\n                    putInMillCommands.push(`put group ${reagent} in mill`);\n                }\n            }\n            send_command(outriftCommands.join('|'), 1);\n            send_command(putInMillCommands.join('|'), 1);\n            send_command(`mill for ${amount} ${colour}`, 1);\n        }\n        else {\n            display_notice(`Tradeskill Manager: Inkmilling Complete!`, '#00FF00');\n            client.tradeskillmanager.inkmilling.running = false;\n        }\n    }\n})(args);"
                         }
                     ],
-                    "name": "Butcher",
+                    "actions": [],
+                    "name": "Functions",
                     "enabled": true,
-                    "id": 3,
-                    "matching": "regexp",
-                    "whole_words": true,
-                    "case_sensitive": true,
-                    "prefix_suffix": true,
-                    "text": "^butcher$"
+                    "id": 39
                 },
                 {
-                    "type": "alias",
-                    "items": [],
-                    "actions": [
+                    "type": "group",
+                    "items": [
                         {
-                            "action": "script",
-                            "script": "(function () {\n        var _a, _b, _c;\n        // Delete when got all minerals in all environments\n        send_command('minerals');\n        client.tradeskillmanager.extracting.queue = [];\n        for (const environment in client.tradeskillmanager.extracting.environments) {\n            if (((_a = client.gmcpservice.latest['Room.Info']) === null || _a === void 0 ? void 0 : _a.environment) === environment) {\n                const toExtract = client.tradeskillmanager.extracting.environments[environment];\n                toExtract.forEach(extractable => {\n                    client.tradeskillmanager.extracting.queue.push(`extract ${extractable}`);\n                    client.tradeskillmanager.extracting.running = true;\n                });\n                break;\n            }\n        }\n        if (client.tradeskillmanager.extracting.running) {\n            run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n        }\n        else if ((_b = client.gmcpservice.latest['Room.Info']) === null || _b === void 0 ? void 0 : _b.environment) {\n            display_notice(`Tradeskill Manager: Found nothing to extract from '${(_c = client.gmcpservice.latest['Room.Info']) === null || _c === void 0 ? void 0 : _c.environment}'.`, '#FF0000');\n        }\n    })(args);"
+                            "type": "trigger",
+                            "items": [],
+                            "actions": [
+                                {
+                                    "action": "script",
+                                    "script": "(function (args) {\n        var _a;\n        const environment = (_a = client.gmcpservice.latest['Room.Info']) === null || _a === void 0 ? void 0 : _a.environment;\n        const item = `${args[2] || args[3]}`.trim().toLowerCase();\n        if (client.tradeskillmanager.harvesting.running || client.tradeskillmanager.transmutation.running || client.tradeskillmanager.gathering.running) {\n            gag_current_line();\n        }\n        if (item === 'undefined' || environment === undefined) {\n            return;\n        }\n        const inHarvesting = (client.tradeskillmanager.harvesting.environments[environment] || []).includes(item);\n        const inTransmutation = (client.tradeskillmanager.transmutation.environments[environment] || []).includes(item);\n        const inGathering = (client.tradeskillmanager.gathering.environments[environment] || []).includes(item);\n        if (!inHarvesting && !inTransmutation && !inGathering) {\n            display_notice(`Tradeskill Manager: Missing item '${item}' in '${environment}'.`, '#FF0000');\n        }\n    })(args);"
+                                }
+                            ],
+                            "name": "Check Missing Item",
+                            "enabled": true,
+                            "id": 40,
+                            "matching": "regexp",
+                            "whole_words": false,
+                            "case_sensitive": false,
+                            "text": "(?:^The following plants are growing in this room:$|^([\\w\\W]+) \\((\\w+)\\)\\s+(?:Plentiful|Abundant|Moderate|Sparse)$|^You spot the following minerals here:$|^([\\w\\W]+)\\s+(?:Plentiful|Abundant|Moderate|Sparse)$)"
+                        },
+                        {
+                            "type": "trigger",
+                            "items": [],
+                            "actions": [
+                                {
+                                    "action": "script",
+                                    "script": "(function () {\n        if (client.tradeskillmanager.harvesting.running\n            || client.tradeskillmanager.transmutation.running\n            || client.tradeskillmanager.gathering.running\n            || client.tradeskillmanager.butchering.running\n            || client.tradeskillmanager.inkmilling.running) {\n            gag_current_line();\n        }\n    })(args);"
+                                }
+                            ],
+                            "name": "System Queue Add",
+                            "enabled": true,
+                            "id": 41,
+                            "matching": "regexp",
+                            "whole_words": false,
+                            "case_sensitive": false,
+                            "text": "(?:^\\[System\\]: Added ([\\w\\W]+) to your eqbal queue\\.$|^([\\w\\W]+) was added to your balance queue\\.$')"
+                        },
+                        {
+                            "type": "trigger",
+                            "items": [],
+                            "actions": [
+                                {
+                                    "action": "script",
+                                    "script": "(function () {\n        if (client.tradeskillmanager.harvesting.running\n            || client.tradeskillmanager.transmutation.running\n            || client.tradeskillmanager.gathering.running\n            || client.tradeskillmanager.butchering.running\n            || client.tradeskillmanager.inkmilling.running) {\n            gag_current_line();\n        }\n    })(args);"
+                                }
+                            ],
+                            "name": "System Queue Remove",
+                            "enabled": true,
+                            "id": 42,
+                            "matching": "regexp",
+                            "whole_words": false,
+                            "case_sensitive": false,
+                            "text": "(?:^\\[System\\]: Running queued eqbal command: ([\\w\\W]+)$)"
                         }
                     ],
-                    "name": "Extract",
+                    "actions": [],
+                    "name": "Triggers",
                     "enabled": true,
-                    "id": 6,
-                    "matching": "regexp",
-                    "whole_words": true,
-                    "case_sensitive": true,
-                    "prefix_suffix": true,
-                    "text": "^extract$"
-                },
-                {
-                    "type": "alias",
-                    "items": [],
-                    "actions": [
-                        {
-                            "action": "script",
-                            "script": "(function () {\n        var _a, _b, _c;\n        // Delete when got all plants in all environments\n        send_command('plants');\n        client.tradeskillmanager.gathering.queue = [];\n        for (const environment in client.tradeskillmanager.gathering.environments) {\n            if (((_a = client.gmcpservice.latest['Room.Info']) === null || _a === void 0 ? void 0 : _a.environment) === environment) {\n                const toGather = client.tradeskillmanager.gathering.environments[environment];\n                toGather.forEach(gatherable => {\n                    client.tradeskillmanager.gathering.queue.push(`gather ${gatherable}`);\n                    client.tradeskillmanager.gathering.running = true;\n                });\n                break;\n            }\n        }\n        if (client.tradeskillmanager.gathering.running) {\n            run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n        }\n        else if ((_b = client.gmcpservice.latest['Room.Info']) === null || _b === void 0 ? void 0 : _b.environment) {\n            display_notice(`Tradeskill Manager: Found nothing to gather from '${(_c = client.gmcpservice.latest['Room.Info']) === null || _c === void 0 ? void 0 : _c.environment}'.`, '#FF0000');\n        }\n    })(args);"
-                        }
-                    ],
-                    "name": "Gather",
-                    "enabled": true,
-                    "id": 5,
-                    "matching": "regexp",
-                    "whole_words": true,
-                    "case_sensitive": true,
-                    "prefix_suffix": true,
-                    "text": "^gather$"
-                },
-                {
-                    "type": "alias",
-                    "items": [],
-                    "actions": [
-                        {
-                            "action": "script",
-                            "script": "(function () {\n        var _a, _b, _c;\n        // Delete when got all plants in all environments\n        send_command('plants');\n        client.tradeskillmanager.harvesting.queue = [];\n        for (const environment in client.tradeskillmanager.harvesting.environments) {\n            if (((_a = client.gmcpservice.latest['Room.Info']) === null || _a === void 0 ? void 0 : _a.environment) === environment) {\n                const toHarvest = client.tradeskillmanager.harvesting.environments[environment];\n                toHarvest.forEach(harvestable => {\n                    client.tradeskillmanager.harvesting.queue.push(`harvest ${harvestable}`);\n                    client.tradeskillmanager.harvesting.running = true;\n                });\n                break;\n            }\n        }\n        if (client.tradeskillmanager.harvesting.running) {\n            run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n        }\n        else if ((_b = client.gmcpservice.latest['Room.Info']) === null || _b === void 0 ? void 0 : _b.environment) {\n            display_notice(`Tradeskill Manager: Found nothing to harvest from '${(_c = client.gmcpservice.latest['Room.Info']) === null || _c === void 0 ? void 0 : _c.environment}'.`, '#FF0000');\n        }\n    })(args);"
-                        }
-                    ],
-                    "name": "Harvest",
-                    "enabled": true,
-                    "id": 4,
-                    "matching": "regexp",
-                    "whole_words": true,
-                    "case_sensitive": true,
-                    "prefix_suffix": true,
-                    "text": "^harvest$"
-                },
-                {
-                    "type": "alias",
-                    "items": [],
-                    "actions": [
-                        {
-                            "action": "script",
-                            "script": "(function (args) {\n        const total = Number(args[1]);\n        const colour = args[2];\n        const inkReagents = client.tradeskillmanager.inkmilling.inks[colour];\n        if (!inkReagents) {\n            display_notice(`Tradeskill Manager: Unknown ink colour '${colour}'.`, '#FF0000');\n            return;\n        }\n        if (!total || total < 0) {\n            display_notice(`Tradeskill Manager: Unexpected amount '${total}'.`, '#FF0000');\n            return;\n        }\n        for (let i = 0; i < total; i += 5) {\n            const amount = i + 5 > total ? total - i : 5;\n            client.tradeskillmanager.inkmilling.queue.push(`${amount} ${colour}`);\n        }\n        client.tradeskillmanager.inkmilling.running = true;\n        run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n    })(args);"
-                        }
-                    ],
-                    "name": "Mill",
-                    "enabled": true,
-                    "id": 7,
-                    "matching": "regexp",
-                    "whole_words": true,
-                    "case_sensitive": true,
-                    "prefix_suffix": true,
-                    "text": "^mill (\\d+) (\\w+)$"
+                    "id": 43
                 }
             ],
             "actions": [],
-            "name": "Aliases",
+            "name": "General",
+            "enabled": true,
+            "id": 44
+        },
+        {
+            "type": "group",
+            "items": [
+                {
+                    "type": "group",
+                    "items": [
+                        {
+                            "type": "alias",
+                            "items": [],
+                            "actions": [
+                                {
+                                    "action": "script",
+                                    "script": "(function () {\n        const corpses = client.inventorymanager.items.filter(value => value.name.startsWith('the corpse of'));\n        if (corpses.length > 0) {\n            client.tradeskillmanager.butchering.queue.push('butcher corpse for reagents');\n            client.tradeskillmanager.butchering.running = true;\n            run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n        }\n        else {\n            display_notice(`Tradeskill Manager: You have no corpses.`, '#FF0000');\n        }\n    })(args);"
+                                }
+                            ],
+                            "name": "Butcher",
+                            "enabled": true,
+                            "id": 6,
+                            "matching": "regexp",
+                            "whole_words": true,
+                            "case_sensitive": true,
+                            "prefix_suffix": true,
+                            "text": "^butcher$"
+                        }
+                    ],
+                    "actions": [],
+                    "name": "Aliases",
+                    "enabled": true,
+                    "id": 7
+                },
+                {
+                    "type": "group",
+                    "items": [
+                        {
+                            "type": "trigger",
+                            "items": [],
+                            "actions": [
+                                {
+                                    "action": "script",
+                                    "script": "(function (args) {\n        if (client.tradeskillmanager.butchering.running) {\n            run_function('tradeskill-manager:inrift', args, 'Tradeskill Manager');\n            client.tradeskillmanager.butchering.queue.push('butcher corpse for reagents');\n            run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n        }\n    })(args);"
+                                }
+                            ],
+                            "name": "Butchered",
+                            "enabled": true,
+                            "id": 3,
+                            "matching": "regexp",
+                            "whole_words": false,
+                            "case_sensitive": false,
+                            "text": "(?:^Skilfully, you butcher the corpse of [\\w\\W]+, separating flesh from bone with your cleaver and preparing (a group of \\d+ |an |a |some |\\d+ )?([\\w\\W]+)\\.$|^As you set about butchering the corpse, you realise you have made a mistake and mutilated it beyond redemption\\.$)"
+                        },
+                        {
+                            "type": "trigger",
+                            "items": [],
+                            "actions": [
+                                {
+                                    "action": "script",
+                                    "script": "(function () {\n        if (client.tradeskillmanager.butchering.running) {\n            gag_current_line();\n        }\n        run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n    })(args);"
+                                }
+                            ],
+                            "name": "Can't Butcher",
+                            "enabled": true,
+                            "id": 4,
+                            "matching": "regexp",
+                            "whole_words": false,
+                            "case_sensitive": false,
+                            "text": "(?:^Butcher with what? Your fingernails\\?$|^Butcher what\\?$|^You have no corpse suitable for butchering\\.$)"
+                        }
+                    ],
+                    "actions": [],
+                    "name": "Triggers",
+                    "enabled": true,
+                    "id": 5
+                }
+            ],
+            "actions": [],
+            "name": "Butchering",
             "enabled": true,
             "id": 8
         },
@@ -113,309 +189,385 @@
             "type": "group",
             "items": [
                 {
-                    "type": "function",
-                    "items": [],
+                    "type": "group",
+                    "items": [
+                        {
+                            "type": "alias",
+                            "items": [],
+                            "actions": [
+                                {
+                                    "action": "script",
+                                    "script": "(function () {\n        var _a, _b, _c;\n        // Delete when got all plants in all environments\n        send_command('plants');\n        client.tradeskillmanager.gathering.queue = [];\n        for (const environment in client.tradeskillmanager.gathering.environments) {\n            if (((_a = client.gmcpservice.latest['Room.Info']) === null || _a === void 0 ? void 0 : _a.environment) === environment) {\n                const toGather = client.tradeskillmanager.gathering.environments[environment];\n                toGather.forEach(gatherable => {\n                    client.tradeskillmanager.gathering.queue.push(`gather ${gatherable}`);\n                    client.tradeskillmanager.gathering.running = true;\n                });\n                break;\n            }\n        }\n        if (client.tradeskillmanager.gathering.running) {\n            run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n        }\n        else if ((_b = client.gmcpservice.latest['Room.Info']) === null || _b === void 0 ? void 0 : _b.environment) {\n            display_notice(`Tradeskill Manager: Found nothing to gather from '${(_c = client.gmcpservice.latest['Room.Info']) === null || _c === void 0 ? void 0 : _c.environment}'.`, '#FF0000');\n        }\n    })(args);"
+                                }
+                            ],
+                            "name": "Gather",
+                            "enabled": true,
+                            "id": 9,
+                            "matching": "regexp",
+                            "whole_words": true,
+                            "case_sensitive": true,
+                            "prefix_suffix": true,
+                            "text": "^gather$"
+                        }
+                    ],
                     "actions": [],
-                    "name": "tradeskill-manager:inrift",
+                    "name": "Aliases",
                     "enabled": true,
-                    "id": 26,
-                    "code": "(function (args) {\n    var _a;\n    const amountMatch = args[1] || args[3] || args[5] || args[7] || args[9] || args[11] || '';\n    const itemNameMatch = args[2] || args[4] || args[6] || args[8] || args[10] || args[12] || '';\n    const amount = ((_a = amountMatch.match(/(\\d+)/)) === null || _a === void 0 ? void 0 : _a[1]) || '1';\n    let item;\n    if (itemNameMatch in client.tradeskillmanager.harvesting.names) {\n        item = client.tradeskillmanager.harvesting.names[itemNameMatch];\n    }\n    else if (itemNameMatch in client.tradeskillmanager.extracting.names) {\n        item = client.tradeskillmanager.extracting.names[itemNameMatch];\n    }\n    else if (itemNameMatch in client.tradeskillmanager.gathering.names) {\n        item = client.tradeskillmanager.gathering.names[itemNameMatch];\n    }\n    else if (itemNameMatch in client.tradeskillmanager.butchering.names) {\n        item = client.tradeskillmanager.butchering.names[itemNameMatch];\n    }\n    else if (itemNameMatch in client.tradeskillmanager.inkmilling.names) {\n        item = client.tradeskillmanager.inkmilling.names[itemNameMatch];\n    }\n    if (item) {\n        send_command(`inrift ${amount} ${item}`);\n    }\n})(args);"
+                    "id": 10
                 },
                 {
-                    "type": "function",
-                    "items": [],
+                    "type": "group",
+                    "items": [
+                        {
+                            "type": "trigger",
+                            "items": [],
+                            "actions": [
+                                {
+                                    "action": "script",
+                                    "script": "(function () {\n        if (client.tradeskillmanager.gathering.running) {\n            gag_current_line();\n        }\n        run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n    })(args);"
+                                }
+                            ],
+                            "name": "Can't Gather",
+                            "enabled": true,
+                            "id": 12,
+                            "matching": "regexp",
+                            "whole_words": false,
+                            "case_sensitive": false,
+                            "text": "(?:^You carefully dig through the soft soil of the riverbed but are unable to find any suitable clay\\.$|^You carefully search the cracks and crevices of the surrounding rock, but find nothing\\.$|^Exactly where do you see farmland around here to gather from\\?|^You have already gathered from that plant recently\\.$|^That plant has been fully harvested\\.$|^What do you wish to harvest\\?|^What would you like to gather\\?|^This location will not yield \\w+\\.$)"
+                        },
+                        {
+                            "type": "trigger",
+                            "items": [],
+                            "actions": [
+                                {
+                                    "action": "script",
+                                    "script": "(function (args) {\n        if (client.tradeskillmanager.gathering.running) {\n            run_function('tradeskill-manager:inrift', args, 'Tradeskill Manager');\n            run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n        }\n    })(args);"
+                                }
+                            ],
+                            "name": "Gathered",
+                            "enabled": true,
+                            "id": 13,
+                            "matching": "regexp",
+                            "whole_words": false,
+                            "case_sensitive": false,
+                            "text": "(?:^You reach out and carefully harvest (a group of \\d+ |an |a |some |\\d+ )?([\\w\\W]+)\\.$|^Sifting through the soft riverbed with your fingers, you collect (a group of \\d+ |an |a |some |\\d+ )?([\\w\\W]+)\\.$|^Carefully scouring the nooks and crannies of the surrounding rock, you gather (a group of \\d+ |an |a |some |\\d+ )?([\\w\\W]+)\\.$|^You scour the farmland and find a rudimentary nest, from which you gather (a group of \\d+ |an |a |some |\\d+ )?([\\w\\W]+)\\.$)"
+                        },
+                        {
+                            "type": "trigger",
+                            "items": [],
+                            "actions": [
+                                {
+                                    "action": "script",
+                                    "script": "(function (args) {\n        run_function('tradeskill-manager:inrift', args, 'Tradeskill Manager');\n    })(args);"
+                                }
+                            ],
+                            "name": "Gathered Extra",
+                            "enabled": true,
+                            "id": 11,
+                            "matching": "regexp",
+                            "whole_words": false,
+                            "case_sensitive": false,
+                            "text": "(?:^As you cleanse the clay in the riverwater, you discover (a group of \\d+ |an |a |some |\\d+ )?([\\w\\W]+) hidden by the silt\\.$|^With your keen eyes, you spot some additional edibles and you gather (a group of \\d+ |an |a |some |\\d+ )?([\\w\\W]+) to supplement your collection\\.$)"
+                        },
+                        {
+                            "type": "trigger",
+                            "items": [],
+                            "actions": [
+                                {
+                                    "action": "script",
+                                    "script": "(function (args) {\n        run_function('tradeskill-manager:inrift', [args[0], '2', 'venom sacs'], 'Tradeskill Manager');\n        run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n    })(args);"
+                                }
+                            ],
+                            "name": "Harvested Sac",
+                            "enabled": true,
+                            "id": 14,
+                            "matching": "regexp",
+                            "whole_words": false,
+                            "case_sensitive": false,
+                            "text": "(?:^You reach down and expertly pry back the jaws of the dead snake\\. Reaching in with your fingers, careful to avoid the sharp fangs, you tear out the two venom sacs\\.$)"
+                        },
+                        {
+                            "type": "trigger",
+                            "items": [],
+                            "actions": [
+                                {
+                                    "action": "script",
+                                    "script": "(function (args) {\n        run_function('tradeskill-manager:inrift', [args[0], '2', 'sidewinder skins'], 'Tradeskill Manager');\n        run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n    })(args);"
+                                }
+                            ],
+                            "name": "Harvested Skin",
+                            "enabled": true,
+                            "id": 15,
+                            "matching": "regexp",
+                            "whole_words": false,
+                            "case_sensitive": false,
+                            "text": "(?:^You reach down and carefully peel off two long strips of skin from the dead sidewinder\\.$)"
+                        }
+                    ],
                     "actions": [],
-                    "name": "tradeskill-manager:run-queue",
+                    "name": "Triggers",
                     "enabled": true,
-                    "id": 27,
-                    "code": "(function () {\n    if (client.tradeskillmanager.running) {\n        return;\n    }\n    else {\n        client.tradeskillmanager.running = true;\n        setTimeout(function () {\n            client.tradeskillmanager.running = false;\n        });\n    }\n    if (client.tradeskillmanager.harvesting.running) {\n        if (client.tradeskillmanager.harvesting.queue.length > 0) {\n            // display_notice(`Tradeskill Manager: Harvesting Queue: ${client.tradeskillmanager.harvesting.queue.join(', ')}`, '#00FF00');\n            const command = client.tradeskillmanager.harvesting.queue.pop();\n            if (command) {\n                send_command(`queue add eqbal ${command}`);\n                return;\n            }\n        }\n        else {\n            display_notice(`Tradeskill Manager: Harvesting Complete!`, '#00FF00');\n            client.tradeskillmanager.harvesting.running = false;\n        }\n    }\n    if (client.tradeskillmanager.extracting.running) {\n        if (client.tradeskillmanager.extracting.queue.length > 0) {\n            // display_notice(`Tradeskill Manager: Extracting Queue: ${client.tradeskillmanager.extracting.queue.join(', ')}`, '#00FF00');\n            const command = client.tradeskillmanager.extracting.queue.pop();\n            if (command) {\n                send_command(`queue add eqbal ${command}`);\n                return;\n            }\n        }\n        else {\n            display_notice(`Tradeskill Manager: Extracting Complete!`, '#00FF00');\n            client.tradeskillmanager.extracting.running = false;\n        }\n    }\n    if (client.tradeskillmanager.gathering.running) {\n        if (client.tradeskillmanager.gathering.queue.length > 0) {\n            // display_notice(`Tradeskill Manager: Gathering Queue: ${client.tradeskillmanager.gathering.queue.join(', ')}`, '#00FF00');\n            const command = client.tradeskillmanager.gathering.queue.pop();\n            if (command) {\n                send_command(`queue add eqbal ${command}`);\n                return;\n            }\n        }\n        else {\n            display_notice(`Tradeskill Manager: Gathering Complete!`, '#00FF00');\n            client.tradeskillmanager.gathering.running = false;\n        }\n    }\n    if (client.tradeskillmanager.butchering.running) {\n        if (client.tradeskillmanager.butchering.queue.length > 0) {\n            // display_notice(`Tradeskill Manager: Butchering Queue: ${client.tradeskillmanager.butchering.queue.join(', ')}`, '#00FF00');\n            const command = client.tradeskillmanager.butchering.queue.pop();\n            if (command) {\n                send_command(`queue add eqbal ${command}`);\n                return;\n            }\n        }\n        else {\n            display_notice(`Tradeskill Manager: Butchering Complete!`, '#00FF00');\n            client.tradeskillmanager.butchering.running = false;\n        }\n    }\n    if (client.tradeskillmanager.inkmilling.running) {\n        if (client.tradeskillmanager.inkmilling.queue.length > 0) {\n            // display_notice(`Tradeskill Manager: Inkmilling Queue: ${client.tradeskillmanager.inkmilling.queue.join(', ')}`, '#00FF00');\n            const next = client.tradeskillmanager.inkmilling.queue.pop();\n            const match = (next === null || next === void 0 ? void 0 : next.match(/(\\d+) (\\w+)/)) || [];\n            const amount = Number(match[1]);\n            const colour = match[2];\n            if (!amount || !colour) {\n                return;\n            }\n            const inkReagents = client.tradeskillmanager.inkmilling.inks[colour];\n            const outriftCommands = [];\n            const putInMillCommands = [];\n            for (let inkReagent in inkReagents) {\n                const reagentAmount = amount * inkReagents[inkReagent];\n                const reagents = client.tradeskillmanager.inkmilling.reagents[inkReagent];\n                // Actually check rift\n                const reagent = reagents[0];\n                if (reagentAmount === 1) {\n                    outriftCommands.push(`outrift ${reagent}`);\n                    putInMillCommands.push(`put ${reagent} in mill`);\n                }\n                else {\n                    outriftCommands.push(`outrift ${reagentAmount} ${reagent}`);\n                    putInMillCommands.push(`put group ${reagent} in mill`);\n                }\n            }\n            send_command(outriftCommands.join('|'), 1);\n            send_command(putInMillCommands.join('|'), 1);\n            send_command(`mill for ${amount} ${colour}`, 1);\n        }\n        else {\n            display_notice(`Tradeskill Manager: Inkmilling Complete!`, '#00FF00');\n            client.tradeskillmanager.inkmilling.running = false;\n        }\n    }\n})(args);"
+                    "id": 16
                 }
             ],
             "actions": [],
-            "name": "Functions",
+            "name": "Gathering",
             "enabled": true,
-            "id": 28
+            "id": 17
         },
         {
             "type": "group",
             "items": [
                 {
-                    "type": "trigger",
-                    "items": [],
-                    "actions": [
+                    "type": "group",
+                    "items": [
                         {
-                            "action": "script",
-                            "script": "(function (args) {\n        if (client.tradeskillmanager.butchering.running) {\n            run_function('tradeskill-manager:inrift', args, 'Tradeskill Manager');\n            client.tradeskillmanager.butchering.queue.push('butcher corpse');\n            run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n        }\n    })(args);"
+                            "type": "alias",
+                            "items": [],
+                            "actions": [
+                                {
+                                    "action": "script",
+                                    "script": "(function () {\n        var _a, _b, _c;\n        // Delete when got all plants in all environments\n        send_command('plants');\n        client.tradeskillmanager.harvesting.queue = [];\n        for (const environment in client.tradeskillmanager.harvesting.environments) {\n            if (((_a = client.gmcpservice.latest['Room.Info']) === null || _a === void 0 ? void 0 : _a.environment) === environment) {\n                const toHarvest = client.tradeskillmanager.harvesting.environments[environment];\n                toHarvest.forEach(harvestable => {\n                    client.tradeskillmanager.harvesting.queue.push(`harvest ${harvestable}`);\n                    client.tradeskillmanager.harvesting.running = true;\n                });\n                break;\n            }\n        }\n        if (client.tradeskillmanager.harvesting.running) {\n            run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n        }\n        else if ((_b = client.gmcpservice.latest['Room.Info']) === null || _b === void 0 ? void 0 : _b.environment) {\n            display_notice(`Tradeskill Manager: Found nothing to harvest from '${(_c = client.gmcpservice.latest['Room.Info']) === null || _c === void 0 ? void 0 : _c.environment}'.`, '#FF0000');\n        }\n    })(args);"
+                                }
+                            ],
+                            "name": "Harvest",
+                            "enabled": true,
+                            "id": 18,
+                            "matching": "regexp",
+                            "whole_words": true,
+                            "case_sensitive": true,
+                            "prefix_suffix": true,
+                            "text": "^harvest$"
                         }
                     ],
-                    "name": "Butchered",
+                    "actions": [],
+                    "name": "Aliases",
                     "enabled": true,
-                    "id": 11,
-                    "matching": "regexp",
-                    "whole_words": false,
-                    "case_sensitive": false,
-                    "text": "(?:^Skilfully, you butcher the corpse of [\\w\\W]+, separating flesh from bone with your cleaver and preparing (a group of \\d+ |an |a |some |\\d+ )?([\\w\\W]+)\\.$|^As you set about butchering the corpse, you realise you have made a mistake and mutilated it beyond redemption\\.$)"
+                    "id": 19
                 },
                 {
-                    "type": "trigger",
-                    "items": [],
-                    "actions": [
+                    "type": "group",
+                    "items": [
                         {
-                            "action": "script",
-                            "script": "(function () {\n        if (client.tradeskillmanager.butchering.running) {\n            gag_current_line();\n        }\n        run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n    })(args);"
+                            "type": "trigger",
+                            "items": [],
+                            "actions": [
+                                {
+                                    "action": "script",
+                                    "script": "(function () {\n        if (client.tradeskillmanager.harvesting.running) {\n            gag_current_line();\n        }\n        run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n    })(args);"
+                                }
+                            ],
+                            "name": "Can't Harvest",
+                            "enabled": true,
+                            "id": 20,
+                            "matching": "regexp",
+                            "whole_words": false,
+                            "case_sensitive": false,
+                            "text": "(?:^You carefully dig through the soft soil of the riverbed but are unable to find any suitable clay\\.$|^You carefully search the cracks and crevices of the surrounding rock, but find nothing\\.$|^You have already harvested from this plant recently\\.$|^That plant has been fully harvested\\.$|^What do you wish to harvest\\?|^What would you like to gather\\?|^This location will not yield \\w+\\.$)"
+                        },
+                        {
+                            "type": "trigger",
+                            "items": [],
+                            "actions": [
+                                {
+                                    "action": "script",
+                                    "script": "(function (args) {\n        if (client.tradeskillmanager.harvesting.running) {\n            run_function('tradeskill-manager:inrift', args, 'Tradeskill Manager');\n            run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n        }\n    })(args);"
+                                }
+                            ],
+                            "name": "Harvested",
+                            "enabled": true,
+                            "id": 21,
+                            "matching": "regexp",
+                            "whole_words": false,
+                            "case_sensitive": false,
+                            "text": "(?:^You reach out and carefully harvest (a group of \\d+ |an |a |some |\\d+ )?([\\w\\W]+)\\.$)"
                         }
                     ],
-                    "name": "Can't Butcher",
+                    "actions": [],
+                    "name": "Triggers",
                     "enabled": true,
-                    "id": 12,
-                    "matching": "regexp",
-                    "whole_words": false,
-                    "case_sensitive": false,
-                    "text": "(?:^Butcher with what? Your fingernails\\?$|^Butcher what\\?$|^You have no corpse suitable for butchering\\.$)"
-                },
-                {
-                    "type": "trigger",
-                    "items": [],
-                    "actions": [
-                        {
-                            "action": "script",
-                            "script": "(function () {\n        if (client.tradeskillmanager.extracting.running) {\n            gag_current_line();\n        }\n        run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n    })(args);"
-                        }
-                    ],
-                    "name": "Can't Extract",
-                    "enabled": true,
-                    "id": 13,
-                    "matching": "regexp",
-                    "whole_words": false,
-                    "case_sensitive": false,
-                    "text": "(?:^You carefully search the cracks and crevices of the surrounding rock, but find nothing\\.$|^What do you wish to extract\\?|^This location's extractable \\w+ has been exhausted\\.$|^This location will not yield \\w+\\.$|^You have already extracted minerals from this location\\.$|^The environment here will not yield any minerals\\.$)"
-                },
-                {
-                    "type": "trigger",
-                    "items": [],
-                    "actions": [
-                        {
-                            "action": "script",
-                            "script": "(function () {\n        if (client.tradeskillmanager.gathering.running) {\n            gag_current_line();\n        }\n        run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n    })(args);"
-                        }
-                    ],
-                    "name": "Can't Gather",
-                    "enabled": true,
-                    "id": 14,
-                    "matching": "regexp",
-                    "whole_words": false,
-                    "case_sensitive": false,
-                    "text": "(?:^You carefully dig through the soft soil of the riverbed but are unable to find any suitable clay\\.$|^You carefully search the cracks and crevices of the surrounding rock, but find nothing\\.$|^Exactly where do you see farmland around here to gather from\\?|^You have already gathered from that plant recently\\.$|^That plant has been fully harvested\\.$|^What do you wish to harvest\\?|^What would you like to gather\\?|^This location will not yield \\w+\\.$)"
-                },
-                {
-                    "type": "trigger",
-                    "items": [],
-                    "actions": [
-                        {
-                            "action": "script",
-                            "script": "(function () {\n        if (client.tradeskillmanager.harvesting.running) {\n            gag_current_line();\n        }\n        run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n    })(args);"
-                        }
-                    ],
-                    "name": "Can't Harvest",
-                    "enabled": true,
-                    "id": 15,
-                    "matching": "regexp",
-                    "whole_words": false,
-                    "case_sensitive": false,
-                    "text": "(?:^You carefully dig through the soft soil of the riverbed but are unable to find any suitable clay\\.$|^You carefully search the cracks and crevices of the surrounding rock, but find nothing\\.$|^You have already harvested from this plant recently\\.$|^That plant has been fully harvested\\.$|^What do you wish to harvest\\?|^What would you like to gather\\?|^This location will not yield \\w+\\.$)"
-                },
-                {
-                    "type": "trigger",
-                    "items": [],
-                    "actions": [
-                        {
-                            "action": "script",
-                            "script": "(function (args) {\n        var _a;\n        const environment = (_a = client.gmcpservice.latest['Room.Info']) === null || _a === void 0 ? void 0 : _a.environment;\n        const item = `${args[2] || args[3]}`.trim().toLowerCase();\n        if (client.tradeskillmanager.harvesting.running || client.tradeskillmanager.extracting.running || client.tradeskillmanager.gathering.running) {\n            gag_current_line();\n        }\n        if (item === 'undefined' || environment === undefined) {\n            return;\n        }\n        const inHarvesting = (client.tradeskillmanager.harvesting.environments[environment] || []).includes(item);\n        const inExtracting = (client.tradeskillmanager.extracting.environments[environment] || []).includes(item);\n        const inGathering = (client.tradeskillmanager.gathering.environments[environment] || []).includes(item);\n        if (!inHarvesting && !inExtracting && !inGathering) {\n            display_notice(`Tradeskill Manager: Missing item '${item}' in '${environment}'.`, '#FF0000');\n        }\n    })(args);"
-                        }
-                    ],
-                    "name": "Check Missing Item",
-                    "enabled": true,
-                    "id": 9,
-                    "matching": "regexp",
-                    "whole_words": false,
-                    "case_sensitive": false,
-                    "text": "(?:^The following plants are growing in this room:$|^([\\w\\W]+) \\((\\w+)\\)\\s+(?:Plentiful|Abundant|Moderate|Sparse)$|^You spot the following minerals here:$|^([\\w\\W]+)\\s+(?:Plentiful|Abundant|Moderate|Sparse)$)"
-                },
-                {
-                    "type": "trigger",
-                    "items": [],
-                    "actions": [
-                        {
-                            "action": "script",
-                            "script": "(function (args) {\n        if (client.tradeskillmanager.extracting.running) {\n            run_function('tradeskill-manager:inrift', args, 'Tradeskill Manager');\n            run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n        }\n    })(args);"
-                        }
-                    ],
-                    "name": "Extracted",
-                    "enabled": true,
-                    "id": 16,
-                    "matching": "regexp",
-                    "whole_words": false,
-                    "case_sensitive": false,
-                    "text": "(?:^You kneel and collect chunks of earth, using a strong\\-smelling solvent to pull (a group of \\d+ |an |a |some |\\d+ )?([\\w\\W]+) from the dirt and rock\\. This delicate process completed, you set the minerals aside to dry\\.$)"
-                },
-                {
-                    "type": "trigger",
-                    "items": [],
-                    "actions": [
-                        {
-                            "action": "script",
-                            "script": "(function (args) {\n        if (client.tradeskillmanager.gathering.running) {\n            run_function('tradeskill-manager:inrift', args, 'Tradeskill Manager');\n            run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n        }\n    })(args);"
-                        }
-                    ],
-                    "name": "Gathered",
-                    "enabled": true,
-                    "id": 18,
-                    "matching": "regexp",
-                    "whole_words": false,
-                    "case_sensitive": false,
-                    "text": "(?:^You reach out and carefully harvest (a group of \\d+ |an |a |some |\\d+ )?([\\w\\W]+)\\.$|^Sifting through the soft riverbed with your fingers, you collect (a group of \\d+ |an |a |some |\\d+ )?([\\w\\W]+)\\.$|^Carefully scouring the nooks and crannies of the surrounding rock, you gather (a group of \\d+ |an |a |some |\\d+ )?([\\w\\W]+)\\.$)"
-                },
-                {
-                    "type": "trigger",
-                    "items": [],
-                    "actions": [
-                        {
-                            "action": "script",
-                            "script": "(function (args) {\n        run_function('tradeskill-manager:inrift', args, 'Tradeskill Manager');\n    })(args);"
-                        }
-                    ],
-                    "name": "Gathered Extra",
-                    "enabled": true,
-                    "id": 10,
-                    "matching": "regexp",
-                    "whole_words": false,
-                    "case_sensitive": false,
-                    "text": "(?:^As you cleanse the clay in the riverwater, you discover (a group of \\d+ |an |a |some |\\d+ )?([\\w\\W]+) hidden by the silt\\.$|^With your keen eyes, you spot some additional edibles and you gather (a group of \\d+ |an |a |some |\\d+ )?([\\w\\W]+) to supplement your collection\\.$)"
-                },
-                {
-                    "type": "trigger",
-                    "items": [],
-                    "actions": [
-                        {
-                            "action": "script",
-                            "script": "(function (args) {\n        if (client.tradeskillmanager.harvesting.running) {\n            run_function('tradeskill-manager:inrift', args, 'Tradeskill Manager');\n            run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n        }\n    })(args);"
-                        }
-                    ],
-                    "name": "Harvested",
-                    "enabled": true,
-                    "id": 17,
-                    "matching": "regexp",
-                    "whole_words": false,
-                    "case_sensitive": false,
-                    "text": "(?:^You reach out and carefully harvest (a group of \\d+ |an |a |some |\\d+ )?([\\w\\W]+)\\.$)"
-                },
-                {
-                    "type": "trigger",
-                    "items": [],
-                    "actions": [
-                        {
-                            "action": "script",
-                            "script": "(function (args) {\n        run_function('tradeskill-manager:inrift', [args[0], '2', 'venom sacs'], 'Tradeskill Manager');\n        run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n    })(args);"
-                        }
-                    ],
-                    "name": "Harvested Sac",
-                    "enabled": true,
-                    "id": 19,
-                    "matching": "regexp",
-                    "whole_words": false,
-                    "case_sensitive": false,
-                    "text": "(?:^You reach down and expertly pry back the jaws of the dead snake\\. Reaching in with your fingers, careful to avoid the sharp fangs, you tear out the two venom sacs\\.$)"
-                },
-                {
-                    "type": "trigger",
-                    "items": [],
-                    "actions": [
-                        {
-                            "action": "script",
-                            "script": "(function (args) {\n        run_function('tradeskill-manager:inrift', [args[0], '2', 'sidewinder skins'], 'Tradeskill Manager');\n        run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n    })(args);"
-                        }
-                    ],
-                    "name": "Harvested Skin",
-                    "enabled": true,
-                    "id": 20,
-                    "matching": "regexp",
-                    "whole_words": false,
-                    "case_sensitive": false,
-                    "text": "(?:^You reach down and carefully peel off two long strips of skin from the dead sidewinder\\.$)"
-                },
-                {
-                    "type": "trigger",
-                    "items": [],
-                    "actions": [
-                        {
-                            "action": "script",
-                            "script": "(function () {\n        if (client.tradeskillmanager.inkmilling.running) {\n            display_notice('Tradeskill Manager: Inkmilling failed!', '#FF0000');\n            run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n        }\n    })(args);"
-                        }
-                    ],
-                    "name": "Mill Failed",
-                    "enabled": true,
-                    "id": 23,
-                    "matching": "regexp",
-                    "whole_words": false,
-                    "case_sensitive": false,
-                    "text": "(?:^Lacking the rattle of a successful milling, you realise that you've done something wrong and spoiled the batch, which you empty onto the ground in disgust\\.$)"
-                },
-                {
-                    "type": "trigger",
-                    "items": [],
-                    "actions": [
-                        {
-                            "action": "script",
-                            "script": "(function () {\n        if (client.tradeskillmanager.inkmilling.running) {\n            send_command(`get group ink from mill|get ink from mill|inrift 50 ink`, 1);\n            run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n        }\n    })(args);"
-                        }
-                    ],
-                    "name": "Milled",
-                    "enabled": true,
-                    "id": 24,
-                    "matching": "regexp",
-                    "whole_words": false,
-                    "case_sensitive": false,
-                    "text": "(?:^With a satisfying rattle, you note that the milling is complete as the fruit of your labours drops into the opening at the base of the mill\\.$)"
-                },
-                {
-                    "type": "trigger",
-                    "items": [],
-                    "actions": [
-                        {
-                            "action": "script",
-                            "script": "(function () {\n        if (client.tradeskillmanager.harvesting.running\n            || client.tradeskillmanager.extracting.running\n            || client.tradeskillmanager.gathering.running\n            || client.tradeskillmanager.butchering.running\n            || client.tradeskillmanager.inkmilling.running) {\n            gag_current_line();\n        }\n    })(args);"
-                        }
-                    ],
-                    "name": "System Queue Add",
-                    "enabled": true,
-                    "id": 21,
-                    "matching": "regexp",
-                    "whole_words": false,
-                    "case_sensitive": false,
-                    "text": "(?:^\\[System\\]: Added ([\\w\\W]+) to your eqbal queue\\.$|^([\\w\\W]+) was added to your balance queue\\.$')"
-                },
-                {
-                    "type": "trigger",
-                    "items": [],
-                    "actions": [
-                        {
-                            "action": "script",
-                            "script": "(function () {\n        if (client.tradeskillmanager.harvesting.running\n            || client.tradeskillmanager.extracting.running\n            || client.tradeskillmanager.gathering.running\n            || client.tradeskillmanager.butchering.running\n            || client.tradeskillmanager.inkmilling.running) {\n            gag_current_line();\n        }\n    })(args);"
-                        }
-                    ],
-                    "name": "System Queue Remove",
-                    "enabled": true,
-                    "id": 22,
-                    "matching": "regexp",
-                    "whole_words": false,
-                    "case_sensitive": false,
-                    "text": "(?:^\\[System\\]: Running queued eqbal command: ([\\w\\W]+)$)"
+                    "id": 22
                 }
             ],
             "actions": [],
-            "name": "Triggers",
+            "name": "Harvesting",
             "enabled": true,
-            "id": 25
+            "id": 23
+        },
+        {
+            "type": "group",
+            "items": [
+                {
+                    "type": "group",
+                    "items": [
+                        {
+                            "type": "alias",
+                            "items": [],
+                            "actions": [
+                                {
+                                    "action": "script",
+                                    "script": "(function (args) {\n        const total = Number(args[1]);\n        const colour = args[2];\n        const inkReagents = client.tradeskillmanager.inkmilling.inks[colour];\n        if (!inkReagents) {\n            display_notice(`Tradeskill Manager: Unknown ink colour '${colour}'.`, '#FF0000');\n            return;\n        }\n        if (!total || total < 0) {\n            display_notice(`Tradeskill Manager: Unexpected amount '${total}'.`, '#FF0000');\n            return;\n        }\n        for (let i = 0; i < total; i += 5) {\n            const amount = i + 5 > total ? total - i : 5;\n            client.tradeskillmanager.inkmilling.queue.push(`${amount} ${colour}`);\n        }\n        client.tradeskillmanager.inkmilling.running = true;\n        run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n    })(args);"
+                                }
+                            ],
+                            "name": "Mill",
+                            "enabled": true,
+                            "id": 24,
+                            "matching": "regexp",
+                            "whole_words": true,
+                            "case_sensitive": true,
+                            "prefix_suffix": true,
+                            "text": "^mill (\\d+) (\\w+)$"
+                        }
+                    ],
+                    "actions": [],
+                    "name": "Aliases",
+                    "enabled": true,
+                    "id": 25
+                },
+                {
+                    "type": "group",
+                    "items": [
+                        {
+                            "type": "trigger",
+                            "items": [],
+                            "actions": [
+                                {
+                                    "action": "script",
+                                    "script": "(function () {\n        if (client.tradeskillmanager.inkmilling.running) {\n            gag_current_line();\n            client.tradeskillmanager.inkmilling.queue = [];\n            client.tradeskillmanager.inkmilling.running = false;\n            send_command('get 50 reagent from mill|inr 50 reagent|inr 50 reagent|inr 50 reagent|inr 50 reagent|inr 50 reagent|inr 50 reagent|inr 50 reagent|inr 50 reagent|inr 50 reagent', 1);\n            display_notice('Tradeskill Manager: Ran out of reagents. Queue has been cleared.', '#FF0000');\n        }\n        run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n    })(args);"
+                                }
+                            ],
+                            "name": "Can't Mill",
+                            "enabled": true,
+                            "id": 28,
+                            "matching": "regexp",
+                            "whole_words": false,
+                            "case_sensitive": false,
+                            "text": "(?:^Your mill does not hold the required amount of reagents to mill that\\.$)"
+                        },
+                        {
+                            "type": "trigger",
+                            "items": [],
+                            "actions": [
+                                {
+                                    "action": "script",
+                                    "script": "(function () {\n        if (client.tradeskillmanager.inkmilling.running) {\n            display_notice('Tradeskill Manager: Inkmilling failed!', '#FF0000');\n            run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n        }\n    })(args);"
+                                }
+                            ],
+                            "name": "Mill Failed",
+                            "enabled": true,
+                            "id": 26,
+                            "matching": "regexp",
+                            "whole_words": false,
+                            "case_sensitive": false,
+                            "text": "(?:^Lacking the rattle of a successful milling, you realise that you've done something wrong and spoiled the batch, which you empty onto the ground in disgust\\.$)"
+                        },
+                        {
+                            "type": "trigger",
+                            "items": [],
+                            "actions": [
+                                {
+                                    "action": "script",
+                                    "script": "(function () {\n        if (client.tradeskillmanager.inkmilling.running) {\n            send_command(`get group ink from mill|get ink from mill|inrift 50 ink`, 1);\n            run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n        }\n    })(args);"
+                                }
+                            ],
+                            "name": "Milled",
+                            "enabled": true,
+                            "id": 27,
+                            "matching": "regexp",
+                            "whole_words": false,
+                            "case_sensitive": false,
+                            "text": "(?:^With a satisfying rattle, you note that the milling is complete as the fruit of your labours drops into the opening at the base of the mill\\.$)"
+                        }
+                    ],
+                    "actions": [],
+                    "name": "Triggers",
+                    "enabled": true,
+                    "id": 29
+                }
+            ],
+            "actions": [],
+            "name": "Inkmilling",
+            "enabled": true,
+            "id": 30
+        },
+        {
+            "type": "group",
+            "items": [
+                {
+                    "type": "group",
+                    "items": [
+                        {
+                            "type": "alias",
+                            "items": [],
+                            "actions": [
+                                {
+                                    "action": "script",
+                                    "script": "(function () {\n        var _a, _b, _c;\n        // Delete when got all minerals in all environments\n        send_command('minerals');\n        client.tradeskillmanager.transmutation.queue = [];\n        for (const environment in client.tradeskillmanager.transmutation.environments) {\n            if (((_a = client.gmcpservice.latest['Room.Info']) === null || _a === void 0 ? void 0 : _a.environment) === environment) {\n                const toExtract = client.tradeskillmanager.transmutation.environments[environment];\n                toExtract.forEach(extractable => {\n                    client.tradeskillmanager.transmutation.queue.push(`extract ${extractable}`);\n                    client.tradeskillmanager.transmutation.running = true;\n                });\n                break;\n            }\n        }\n        if (client.tradeskillmanager.transmutation.running) {\n            run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n        }\n        else if ((_b = client.gmcpservice.latest['Room.Info']) === null || _b === void 0 ? void 0 : _b.environment) {\n            display_notice(`Tradeskill Manager: Found nothing to extract from '${(_c = client.gmcpservice.latest['Room.Info']) === null || _c === void 0 ? void 0 : _c.environment}'.`, '#FF0000');\n        }\n    })(args);"
+                                }
+                            ],
+                            "name": "Extract",
+                            "enabled": true,
+                            "id": 31,
+                            "matching": "regexp",
+                            "whole_words": true,
+                            "case_sensitive": true,
+                            "prefix_suffix": true,
+                            "text": "^extract$"
+                        }
+                    ],
+                    "actions": [],
+                    "name": "Aliases",
+                    "enabled": true,
+                    "id": 32
+                },
+                {
+                    "type": "group",
+                    "items": [
+                        {
+                            "type": "trigger",
+                            "items": [],
+                            "actions": [
+                                {
+                                    "action": "script",
+                                    "script": "(function () {\n        if (client.tradeskillmanager.transmutation.running) {\n            gag_current_line();\n        }\n        run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n    })(args);"
+                                }
+                            ],
+                            "name": "Can't Extract",
+                            "enabled": true,
+                            "id": 33,
+                            "matching": "regexp",
+                            "whole_words": false,
+                            "case_sensitive": false,
+                            "text": "(?:^You carefully search the cracks and crevices of the surrounding rock, but find nothing\\.$|^What do you wish to extract\\?|^This location's extractable \\w+ has been exhausted\\.$|^This location will not yield \\w+\\.$|^You have already extracted minerals from this location\\.$|^The environment here will not yield any minerals\\.$)"
+                        },
+                        {
+                            "type": "trigger",
+                            "items": [],
+                            "actions": [
+                                {
+                                    "action": "script",
+                                    "script": "(function (args) {\n        if (client.tradeskillmanager.transmutation.running) {\n            run_function('tradeskill-manager:inrift', args, 'Tradeskill Manager');\n            run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');\n        }\n    })(args);"
+                                }
+                            ],
+                            "name": "Extracted",
+                            "enabled": true,
+                            "id": 34,
+                            "matching": "regexp",
+                            "whole_words": false,
+                            "case_sensitive": false,
+                            "text": "(?:^You kneel and collect chunks of earth, using a strong\\-smelling solvent to pull (a group of \\d+ |an |a |some |\\d+ )?([\\w\\W]+) from the dirt and rock\\. This delicate process completed, you set the minerals aside to dry\\.$)"
+                        }
+                    ],
+                    "actions": [],
+                    "name": "Triggers",
+                    "enabled": true,
+                    "id": 35
+                }
+            ],
+            "actions": [],
+            "name": "Transmutation",
+            "enabled": true,
+            "id": 36
         }
     ],
     "actions": [],

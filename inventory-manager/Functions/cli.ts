@@ -1,4 +1,7 @@
 import { FunctionItem } from '../../source';
+import { InventoryManagerClient } from '../inventory-manager';
+
+declare const client: InventoryManagerClient;
 
 export const cli = new FunctionItem(
     'inventory-manager:cli',
@@ -6,8 +9,42 @@ export const cli = new FunctionItem(
         switch (args[0]) {
             case undefined:
             case 'show':
-            case 'config':
                 run_function('inventory-manager:cli-show', args.slice(1), 'Inventory Manager');
+                break;
+
+            case 'config':
+                if (args.length === 1) {
+                    run_function('inventory-manager:cli-show', args.slice(1), 'Inventory Manager');
+                }
+                else {
+                    switch (args[1]) {
+                        case 'enabled':
+                            switch (args[2]) {
+                                case 'true':
+                                case 'yes':
+                                case '1':
+                                    client.inventorymanager.enabled = true;
+
+                                    display_notice(`Inventory Manager: Enabled.`);
+                                    break;
+
+                                case 'false':
+                                case 'no':
+                                case '0':
+                                    client.inventorymanager.enabled = false;
+
+                                    display_notice(`Inventory Manager: Disabled.`);
+                                    break;
+
+                                default:
+                                    display_notice(`Inventory Manager: Could not parse value '${args[2]}'.`);
+                            }
+                            break;
+
+                        default:
+                            display_notice(`Inventory Manager: Unknown config setting '${args[1]}'.`);
+                    }
+                }
                 break;
 
             case 'help':

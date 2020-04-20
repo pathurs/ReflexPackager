@@ -25,11 +25,11 @@
                     "name": "cli",
                     "enabled": true,
                     "id": 7,
-                    "text": "^(?:im|inventory\\-manager|inventory manager)( [\\w\\W]+)?",
                     "matching": "regexp",
                     "whole_words": true,
                     "case_sensitive": true,
-                    "prefix_suffix": true
+                    "prefix_suffix": true,
+                    "text": "^(?:im|inventory\\-manager|inventory manager)( [\\w\\W]+)?"
                 },
                 {
                     "type": "alias",
@@ -43,11 +43,11 @@
                     "name": "Get From",
                     "enabled": true,
                     "id": 8,
-                    "text": "^get ([\\w\\W]+?) from ([\\w\\W]+?)$",
                     "matching": "regexp",
                     "whole_words": true,
                     "case_sensitive": true,
-                    "prefix_suffix": true
+                    "prefix_suffix": true,
+                    "text": "^get ([\\w\\W]+?) from ([\\w\\W]+?)$"
                 },
                 {
                     "type": "alias",
@@ -61,11 +61,11 @@
                     "name": "Info Inventory (ii)",
                     "enabled": true,
                     "id": 3,
-                    "text": "ii",
-                    "matching": "exact",
+                    "matching": "regexp",
                     "whole_words": true,
                     "case_sensitive": true,
-                    "prefix_suffix": true
+                    "prefix_suffix": true,
+                    "text": "^ii$"
                 },
                 {
                     "type": "alias",
@@ -79,11 +79,11 @@
                     "name": "Put In",
                     "enabled": true,
                     "id": 9,
-                    "text": "^put ([\\w\\W]+?) in ([\\w\\W]+?)$",
                     "matching": "regexp",
                     "whole_words": true,
                     "case_sensitive": true,
-                    "prefix_suffix": true
+                    "prefix_suffix": true,
+                    "text": "^put ([\\w\\W]+?) in ([\\w\\W]+?)$"
                 },
                 {
                     "type": "alias",
@@ -91,17 +91,17 @@
                     "actions": [
                         {
                             "action": "script",
-                            "script": "(function (args) {\n        send_command(args[0], 1);\n        const currentLeft = client.inventorymanager.items.find(value => { var _a; return (_a = value.attrib) === null || _a === void 0 ? void 0 : _a.includes('l'); });\n        const currentRight = client.inventorymanager.items.find(value => { var _a; return (_a = value.attrib) === null || _a === void 0 ? void 0 : _a.includes('L'); });\n        switch (args[1]) {\n            case 'left':\n                client.inventorymanager.wielding.expectdWield = 'left';\n                if (currentLeft) {\n                    client.inventorymanager.wielding.expectdUnwield = 'left';\n                }\n                break;\n            case 'right':\n                client.inventorymanager.wielding.expectdWield = 'right';\n                if (currentRight) {\n                    client.inventorymanager.wielding.expectdUnwield = 'right';\n                }\n                break;\n            default:\n                if (currentLeft && currentRight) {\n                    client.inventorymanager.wielding.expectdUnwield = 'left';\n                    client.inventorymanager.wielding.expectdWield = 'left';\n                }\n                else if (currentLeft) {\n                    client.inventorymanager.wielding.expectdWield = 'right';\n                }\n                else {\n                    client.inventorymanager.wielding.expectdWield = 'left';\n                }\n                break;\n        }\n        if (currentLeft && currentRight && currentLeft === currentRight) {\n            client.inventorymanager.wielding.expectdUnwield = 'both';\n        }\n    })(args);"
+                            "script": "(function (args) {\n        send_command(args[0], 1);\n        const currentLeft = client.inventorymanager.items.find(value => { var _a; return (_a = value.attrib) === null || _a === void 0 ? void 0 : _a.includes('l'); });\n        const currentRight = client.inventorymanager.items.find(value => { var _a; return (_a = value.attrib) === null || _a === void 0 ? void 0 : _a.includes('L'); });\n        switch (args[1]) {\n            case 'left':\n                client.inventorymanager.wielding.expectdWield = 'left';\n                if (currentLeft) {\n                    client.inventorymanager.wielding.expectdUnwield = 'left';\n                }\n                break;\n            case 'right':\n                client.inventorymanager.wielding.expectdWield = 'right';\n                if (currentRight) {\n                    client.inventorymanager.wielding.expectdUnwield = 'right';\n                }\n                break;\n            default:\n                if (currentLeft && currentRight) {\n                    client.inventorymanager.wielding.expectdUnwield = 'left';\n                    client.inventorymanager.wielding.expectdWield = 'left';\n                }\n                else if (currentLeft) {\n                    client.inventorymanager.wielding.expectdWield = 'right';\n                }\n                else {\n                    client.inventorymanager.wielding.expectdWield = 'left';\n                }\n                break;\n        }\n        if (currentLeft && currentRight && currentLeft === currentRight) {\n            client.inventorymanager.wielding.expectdUnwield = 'both';\n        }\n        run_function('inventory-manager:save', undefined, 'Inventory Manager');\n    })(args);"
                         }
                     ],
                     "name": "Wield",
                     "enabled": true,
                     "id": 4,
-                    "text": "^wield (?:(left|right) ?)?([\\w\\d]+)$",
                     "matching": "regexp",
                     "whole_words": true,
                     "case_sensitive": true,
-                    "prefix_suffix": true
+                    "prefix_suffix": true,
+                    "text": "^wield (?:(left|right) ?)?([\\w\\d]+)$"
                 },
                 {
                     "type": "alias",
@@ -109,17 +109,17 @@
                     "actions": [
                         {
                             "action": "script",
-                            "script": "(function (args) {\n        send_command(args[0], 1);\n        const currentLeft = client.inventorymanager.items.find(value => { var _a; return (_a = value.attrib) === null || _a === void 0 ? void 0 : _a.includes('l'); });\n        const currentRight = client.inventorymanager.items.find(value => { var _a; return (_a = value.attrib) === null || _a === void 0 ? void 0 : _a.includes('L'); });\n        if (currentLeft && currentRight && currentLeft === currentRight) {\n            client.inventorymanager.wielding.expectdUnwield = 'both';\n            client.inventorymanager.wielding.expectedLeftId = undefined;\n            client.inventorymanager.wielding.expectdRightId = undefined;\n        }\n        else {\n            switch (args[1]) {\n                case 'left':\n                    client.inventorymanager.wielding.expectedLeftId = undefined;\n                    client.inventorymanager.wielding.expectdUnwield = 'left';\n                    break;\n                case 'right':\n                    client.inventorymanager.wielding.expectdRightId = undefined;\n                    client.inventorymanager.wielding.expectdUnwield = 'right';\n                    break;\n                default:\n                    client.inventorymanager.wielding.expectdUnwield = 'any';\n                    break;\n            }\n        }\n    })(args);"
+                            "script": "(function (args) {\n        send_command(args[0], 1);\n        const currentLeft = client.inventorymanager.items.find(value => { var _a; return (_a = value.attrib) === null || _a === void 0 ? void 0 : _a.includes('l'); });\n        const currentRight = client.inventorymanager.items.find(value => { var _a; return (_a = value.attrib) === null || _a === void 0 ? void 0 : _a.includes('L'); });\n        if (currentLeft && currentRight && currentLeft === currentRight) {\n            client.inventorymanager.wielding.expectdUnwield = 'both';\n            client.inventorymanager.wielding.expectedLeftId = undefined;\n            client.inventorymanager.wielding.expectdRightId = undefined;\n        }\n        else {\n            switch (args[1]) {\n                case 'left':\n                    client.inventorymanager.wielding.expectedLeftId = undefined;\n                    client.inventorymanager.wielding.expectdUnwield = 'left';\n                    break;\n                case 'right':\n                    client.inventorymanager.wielding.expectdRightId = undefined;\n                    client.inventorymanager.wielding.expectdUnwield = 'right';\n                    break;\n                default:\n                    client.inventorymanager.wielding.expectdUnwield = 'any';\n                    break;\n            }\n        }\n        run_function('inventory-manager:save', undefined, 'Inventory Manager');\n    })(args);"
                         }
                     ],
                     "name": "Unwield",
                     "enabled": true,
                     "id": 5,
-                    "text": "^unwield (left|right|[\\w\\d]+)$",
                     "matching": "regexp",
                     "whole_words": true,
                     "case_sensitive": true,
-                    "prefix_suffix": true
+                    "prefix_suffix": true,
+                    "text": "^unwield (left|right|[\\w\\d]+)$"
                 },
                 {
                     "type": "alias",
@@ -127,17 +127,17 @@
                     "actions": [
                         {
                             "action": "script",
-                            "script": "(function () {\n        send_command('swap hands', 1);\n        const expectdLeft = client.inventorymanager.wielding.expectedLeftId;\n        const expectdRight = client.inventorymanager.wielding.expectdRightId;\n        client.inventorymanager.wielding.expectedLeftId = expectdRight;\n        client.inventorymanager.wielding.expectdRightId = expectdLeft;\n        client.inventorymanager.wielding.expectdSwapHands = true;\n    })(args);"
+                            "script": "(function () {\n        send_command('swap hands', 1);\n        const expectdLeft = client.inventorymanager.wielding.expectedLeftId;\n        const expectdRight = client.inventorymanager.wielding.expectdRightId;\n        client.inventorymanager.wielding.expectedLeftId = expectdRight;\n        client.inventorymanager.wielding.expectdRightId = expectdLeft;\n        client.inventorymanager.wielding.expectdSwapHands = true;\n        run_function('inventory-manager:save', undefined, 'Inventory Manager');\n    })(args);"
                         }
                     ],
                     "name": "Swap Hands",
                     "enabled": true,
                     "id": 6,
-                    "text": "^swap hands$",
                     "matching": "regexp",
                     "whole_words": true,
                     "case_sensitive": true,
-                    "prefix_suffix": true
+                    "prefix_suffix": true,
+                    "text": "^swap hands$"
                 }
             ],
             "actions": [],
@@ -155,7 +155,7 @@
                     "name": "inventory-manager:cli",
                     "enabled": true,
                     "id": 13,
-                    "code": "(function (args) {\n    switch (args[0]) {\n        case undefined:\n        case 'show':\n        case 'config':\n            run_function('inventory-manager:cli-show', args.slice(1), 'Inventory Manager');\n            break;\n        case 'help':\n        default:\n            break;\n        case 'pack':\n        case 'packs':\n        case 'container':\n        case 'containers':\n            run_function('inventory-manager:cli-containers', args.slice(1) || '', 'Inventory Manager');\n            break;\n    }\n})(args);"
+                    "code": "(function (args) {\n    switch (args[0]) {\n        case undefined:\n        case 'show':\n            run_function('inventory-manager:cli-show', args.slice(1), 'Inventory Manager');\n            break;\n        case 'config':\n            if (args.length === 1) {\n                run_function('inventory-manager:cli-show', args.slice(1), 'Inventory Manager');\n            }\n            else {\n                switch (args[1]) {\n                    case 'enabled':\n                        switch (args[2]) {\n                            case 'true':\n                            case 'yes':\n                            case '1':\n                                client.inventorymanager.enabled = true;\n                                display_notice(`Inventory Manager: Enabled.`);\n                                break;\n                            case 'false':\n                            case 'no':\n                            case '0':\n                                client.inventorymanager.enabled = false;\n                                display_notice(`Inventory Manager: Disabled.`);\n                                break;\n                            default:\n                                display_notice(`Inventory Manager: Could not parse value '${args[2]}'.`);\n                        }\n                        break;\n                    default:\n                        display_notice(`Inventory Manager: Unknown config setting '${args[1]}'.`);\n                }\n            }\n            break;\n        case 'help':\n        default:\n            break;\n        case 'pack':\n        case 'packs':\n        case 'container':\n        case 'containers':\n            run_function('inventory-manager:cli-containers', args.slice(1) || '', 'Inventory Manager');\n            break;\n    }\n})(args);"
                 },
                 {
                     "type": "function",
@@ -164,7 +164,7 @@
                     "name": "inventory-manager:cli-containers",
                     "enabled": true,
                     "id": 16,
-                    "code": "(function (args) {\n    switch (args[0]) {\n        case undefined:\n        case 'show':\n            client.displayservice.table('Inventory Manager - Containers', [\n                {\n                    title: undefined,\n                    columns: 4,\n                    items: [\n                        {\n                            label: 'Enabled',\n                            value: 'Yes',\n                        }\n                    ]\n                },\n                {\n                    title: 'Tracking',\n                    columns: 1,\n                    items: client.inventorymanager.items\n                        .filter(item => { var _a; return (_a = item.attrib) === null || _a === void 0 ? void 0 : _a.includes('c'); })\n                        .map(container => {\n                        const label = `${container.id} ${container.name}`;\n                        const value = client.inventorymanager.containers.tracked.find(value => value.id == container.id)\n                            ? client.displayservice.clickify('Yes', `inventory-manager containers untrack ${container.id}`, `Untrack ${container.name}`, '#00ff00')\n                            : client.displayservice.clickify('No', `inventory-manager containers track ${container.id}`, `Track ${container.name}`, '#ff0000');\n                        return {\n                            label,\n                            value\n                        };\n                    })\n                }\n            ]);\n            break;\n        case 'track':\n            {\n                const containerId = args[1];\n                const container = client.inventorymanager.items.find(item => item.id === containerId);\n                if (!container) {\n                    throw new Error(`Inventory Manager(inventory-manager:containers): Unknown container '${containerId}'`);\n                }\n                if (!client.inventorymanager.containers.tracked.find(value => value.id == container.id)) {\n                    client.inventorymanager.containers.tracked.push({\n                        id: container.id,\n                        items: []\n                    });\n                    send_command(`close ${containerId}`, 1);\n                    send_GMCP('Char.Items.Contents', Number(containerId));\n                    display_notice(`Inventory Manager: Now tracking container '${container.name} (${container.id})'.`);\n                }\n                else {\n                    display_notice(`Inventory Manager: Already tracking container '${container.name} (${container.id})'.`);\n                }\n            }\n            break;\n        case 'untrack':\n            {\n                const containerId = args[1];\n                const container = client.inventorymanager.items.find(item => item.id === containerId);\n                if (!container) {\n                    throw new Error(`Inventory Manager(inventory-manager:containers): Unknown container '${containerId}'`);\n                }\n                const index = client.inventorymanager.containers.tracked.findIndex(value => value.id === containerId);\n                if (index !== -1) {\n                    client.inventorymanager.containers.tracked.splice(index, 1);\n                    display_notice(`Inventory Manager: No longer tracking container '${container.name} (${container.id})'.`);\n                }\n                else {\n                    display_notice(`Inventory Manager: Already not tracking container '${container.name} (${container.id})'.`);\n                }\n            }\n            break;\n        case 'help':\n        default:\n            break;\n    }\n})(args);"
+                    "code": "(function (args) {\n    switch (args[0]) {\n        case undefined:\n        case 'show':\n            client.displayservice.table('Inventory Manager - Containers', [\n                {\n                    title: undefined,\n                    columns: 4,\n                    items: [\n                        {\n                            label: 'Enabled',\n                            value: 'Yes',\n                        }\n                    ]\n                },\n                {\n                    title: 'Tracking',\n                    columns: 1,\n                    items: client.inventorymanager.items\n                        .filter(item => { var _a; return (_a = item.attrib) === null || _a === void 0 ? void 0 : _a.includes('c'); })\n                        .map(container => {\n                        const label = `${container.id} ${container.name}`;\n                        const value = client.inventorymanager.containers.tracked.find(value => value.id == container.id)\n                            ? client.displayservice.clickify('Yes', `inventory-manager containers untrack ${container.id}`, `Untrack ${container.name}`, '#00ff00')\n                            : client.displayservice.clickify('No', `inventory-manager containers track ${container.id}`, `Track ${container.name}`, '#ff0000');\n                        return {\n                            label,\n                            value\n                        };\n                    })\n                }\n            ]);\n            break;\n        case 'track':\n            {\n                const containerId = args[1];\n                const container = client.inventorymanager.items.find(item => item.id === containerId);\n                if (!container) {\n                    throw new Error(`Inventory Manager(inventory-manager:containers): Unknown container '${containerId}'`);\n                }\n                if (!client.inventorymanager.containers.tracked.find(value => value.id == container.id)) {\n                    client.inventorymanager.containers.tracked.push({\n                        id: container.id,\n                        items: []\n                    });\n                    send_command(`close ${containerId}`, 1);\n                    send_GMCP('Char.Items.Contents', Number(containerId));\n                    display_notice(`Inventory Manager: Now tracking container '${container.name} (${container.id})'.`);\n                }\n                else {\n                    display_notice(`Inventory Manager: Already tracking container '${container.name} (${container.id})'.`);\n                }\n            }\n            break;\n        case 'untrack':\n            {\n                const containerId = args[1];\n                const container = client.inventorymanager.items.find(item => item.id === containerId);\n                if (!container) {\n                    throw new Error(`Inventory Manager(inventory-manager:containers): Unknown container '${containerId}'`);\n                }\n                const index = client.inventorymanager.containers.tracked.findIndex(value => value.id === containerId);\n                if (index !== -1) {\n                    client.inventorymanager.containers.tracked.splice(index, 1);\n                    display_notice(`Inventory Manager: No longer tracking container '${container.name} (${container.id})'.`);\n                }\n                else {\n                    display_notice(`Inventory Manager: Already not tracking container '${container.name} (${container.id})'.`);\n                }\n            }\n            break;\n        case 'help':\n        default:\n            break;\n    }\n    run_function('inventory-manager:save', undefined, 'Inventory Manager');\n})(args);"
                 },
                 {
                     "type": "function",
@@ -173,7 +173,7 @@
                     "name": "inventory-manager:cli-show",
                     "enabled": true,
                     "id": 17,
-                    "code": "(function () {\n    client.displayservice.table('Inventory Manager', [\n        {\n            title: undefined,\n            columns: 3,\n            items: [\n                {\n                    label: 'Enabled',\n                    value: 'Yes',\n                },\n                {\n                    label: 'Mode',\n                    value: 'Default',\n                },\n                {\n                    label: 'Selfishness',\n                    value: 'Yes',\n                }\n            ]\n        },\n        {\n            title: 'Wielding / Unwielding',\n            columns: 3,\n            items: [\n                {\n                    label: 'Enabled',\n                    value: 'Yes',\n                },\n                {\n                    label: 'Gripping',\n                    value: 'Yes',\n                }\n            ]\n        },\n        {\n            title: 'Wearables',\n            columns: 3,\n            items: [\n                {\n                    label: 'Enabled',\n                    value: 'Yes',\n                }\n            ]\n        },\n        {\n            title: 'Groupables',\n            columns: 3,\n            items: [\n                {\n                    label: 'Enabled',\n                    value: 'Yes',\n                }\n            ]\n        },\n        {\n            title: 'Containers',\n            columns: 3,\n            items: [\n                {\n                    label: 'Enabled',\n                    value: 'Yes',\n                }\n            ]\n        },\n        {\n            title: 'Corpses',\n            columns: 3,\n            items: [\n                {\n                    label: 'Enabled',\n                    value: 'Yes',\n                }\n            ]\n        }\n    ]);\n})(args);"
+                    "code": "(function () {\n    client.displayservice.table('Inventory Manager', [\n        {\n            title: undefined,\n            columns: 3,\n            items: [\n                {\n                    label: 'Enabled',\n                    value: makeBooleanValue(client.inventorymanager.enabled, 'inventory-manager config enabled false', 'Disable Inventory Manager.', 'inventory-manager config enabled true', 'Enable Inventory Manager.')\n                },\n                {\n                    label: 'Mode',\n                    value: 'Default',\n                }\n            ]\n        },\n        {\n            title: 'Wielding / Unwielding',\n            columns: 3,\n            items: [\n                {\n                    label: 'Enabled',\n                    value: 'Yes',\n                }\n            ]\n        },\n        {\n            title: 'Wearables',\n            columns: 3,\n            items: [\n                {\n                    label: 'Enabled',\n                    value: 'Yes',\n                }\n            ]\n        },\n        {\n            title: 'Groupables',\n            columns: 3,\n            items: [\n                {\n                    label: 'Enabled',\n                    value: 'Yes',\n                }\n            ]\n        },\n        {\n            title: 'Containers',\n            columns: 3,\n            items: [\n                {\n                    label: 'Enabled',\n                    value: 'Yes',\n                }\n            ]\n        },\n        {\n            title: 'Corpses',\n            columns: 3,\n            items: [\n                {\n                    label: 'Enabled',\n                    value: 'Yes',\n                }\n            ]\n        }\n    ]);\n    function makeBooleanValue(value, trueCommand, trueHint, falseCommand, falseHint) {\n        return value\n            ? client.displayservice.clickify('Yes', trueCommand, trueHint, '#00ff00')\n            : client.displayservice.clickify('No', falseCommand, falseHint, '#ff0000');\n    }\n})(args);"
                 },
                 {
                     "type": "function",
@@ -182,7 +182,7 @@
                     "name": "inventory-manager:onContentsChange",
                     "enabled": true,
                     "id": 15,
-                    "code": "(function (args) {\n    const containerId = (args.gmcp_args.location.match(/rep(\\d+)/) || [])[1];\n    const trackedContainer = client.inventorymanager.containers.tracked.find(value => value.id == containerId);\n    if (!trackedContainer) {\n        return;\n    }\n    const container = trackedContainer;\n    switch (args.gmcp_method) {\n        case 'Char.Items.List':\n            const items = new Set([\n                ...container.items.map(item => item.id),\n                ...args.gmcp_args.items.map(item => item.id)\n            ]);\n            items.forEach(itemId => {\n                const oldItem = container.items.find(value => value.id === itemId);\n                const newItem = args.gmcp_args.items.find(value => value.id === itemId);\n                if (oldItem && newItem) {\n                    updateItem(oldItem, newItem);\n                }\n                else if (oldItem) {\n                    removeItem(oldItem);\n                }\n                else if (newItem) {\n                    addItem(newItem);\n                }\n                else {\n                    throw new Error(`Inventory Manager(inventory-manager:onContentsChange): Unknown item: '${itemId}'`);\n                }\n            });\n            break;\n        case 'Char.Items.Add':\n            {\n                const item = args.gmcp_args.item;\n                const oldItem = container.items.find(value => value.id === item.id);\n                if (oldItem) {\n                    updateItem(oldItem, item);\n                }\n                else {\n                    addItem(item);\n                }\n            }\n            break;\n        case 'Char.Items.Remove':\n            {\n                const item = args.gmcp_args.item;\n                const oldItem = container.items.find(value => value.id === item.id);\n                if (oldItem) {\n                    removeItem(item);\n                }\n            }\n            break;\n        case 'Char.Items.Update':\n            {\n                const item = args.gmcp_args.item;\n                const oldItem = container.items.find(value => value.id === item.id);\n                if (oldItem) {\n                    updateItem(oldItem, item);\n                }\n                else {\n                    addItem(item);\n                }\n            }\n            break;\n    }\n    set_variable('inventory-manager:containers', client.inventorymanager.containers);\n    function addItem(item) {\n        container.items.push(item);\n    }\n    function removeItem(item) {\n        const index = container.items.findIndex(value => value.id === item.id);\n        container.items.splice(index, 1);\n    }\n    function updateItem(_oldItem, item) {\n        const index = container.items.findIndex(value => value.id === item.id);\n        container.items[index] = item;\n    }\n})(args);"
+                    "code": "(function (args) {\n    const containerId = (args.gmcp_args.location.match(/rep(\\d+)/) || [])[1];\n    const trackedContainer = client.inventorymanager.containers.tracked.find(value => value.id == containerId);\n    if (!trackedContainer) {\n        return;\n    }\n    const container = trackedContainer;\n    switch (args.gmcp_method) {\n        case 'Char.Items.List':\n            const items = new Set([\n                ...container.items.map(item => item.id),\n                ...args.gmcp_args.items.map(item => item.id)\n            ]);\n            items.forEach(itemId => {\n                const oldItem = container.items.find(value => value.id === itemId);\n                const newItem = args.gmcp_args.items.find(value => value.id === itemId);\n                if (oldItem && newItem) {\n                    updateItem(oldItem, newItem);\n                }\n                else if (oldItem) {\n                    removeItem(oldItem);\n                }\n                else if (newItem) {\n                    addItem(newItem);\n                }\n                else {\n                    throw new Error(`Inventory Manager(inventory-manager:onContentsChange): Unknown item: '${itemId}'`);\n                }\n            });\n            break;\n        case 'Char.Items.Add':\n            {\n                const item = args.gmcp_args.item;\n                const oldItem = container.items.find(value => value.id === item.id);\n                if (oldItem) {\n                    updateItem(oldItem, item);\n                }\n                else {\n                    addItem(item);\n                }\n            }\n            break;\n        case 'Char.Items.Remove':\n            {\n                const item = args.gmcp_args.item;\n                const oldItem = container.items.find(value => value.id === item.id);\n                if (oldItem) {\n                    removeItem(item);\n                }\n            }\n            break;\n        case 'Char.Items.Update':\n            {\n                const item = args.gmcp_args.item;\n                const oldItem = container.items.find(value => value.id === item.id);\n                if (oldItem) {\n                    updateItem(oldItem, item);\n                }\n                else {\n                    addItem(item);\n                }\n            }\n            break;\n    }\n    run_function('inventory-manager:save', undefined, 'Inventory Manager');\n    function addItem(item) {\n        container.items.push(item);\n    }\n    function removeItem(item) {\n        const index = container.items.findIndex(value => value.id === item.id);\n        container.items.splice(index, 1);\n    }\n    function updateItem(_oldItem, item) {\n        const index = container.items.findIndex(value => value.id === item.id);\n        container.items[index] = item;\n    }\n})(args);"
                 },
                 {
                     "type": "function",
@@ -191,7 +191,7 @@
                     "name": "inventory-manager:onInventoryChange",
                     "enabled": true,
                     "id": 11,
-                    "code": "(function (args) {\n    switch (args.gmcp_method) {\n        case 'Char.Items.List':\n            const items = new Set([\n                ...client.inventorymanager.items.map(item => item.id),\n                ...args.gmcp_args.items.map(item => item.id)\n            ]);\n            items.forEach(itemId => {\n                const oldItem = client.inventorymanager.items.find(value => value.id === itemId);\n                const newItem = args.gmcp_args.items.find(value => value.id === itemId);\n                if (oldItem && newItem) {\n                    updateItem(oldItem, newItem);\n                }\n                else if (oldItem) {\n                    removeItem(oldItem);\n                }\n                else if (newItem) {\n                    addItem(newItem);\n                }\n                else {\n                    throw new Error(`Inventory Manager(inventory-manager:onInventoryChange): Unknown item: '${itemId}'`);\n                }\n            });\n            break;\n        case 'Char.Items.Add':\n            {\n                const item = args.gmcp_args.item;\n                const oldItem = client.inventorymanager.items.find(value => value.id === item.id);\n                if (oldItem) {\n                    updateItem(oldItem, item);\n                }\n                else {\n                    addItem(item);\n                }\n            }\n            break;\n        case 'Char.Items.Remove':\n            {\n                const item = args.gmcp_args.item;\n                const oldItem = client.inventorymanager.items.find(value => value.id === item.id);\n                if (oldItem) {\n                    removeItem(item);\n                }\n            }\n            break;\n        case 'Char.Items.Update':\n            {\n                const item = args.gmcp_args.item;\n                const oldItem = client.inventorymanager.items.find(value => value.id === item.id);\n                if (oldItem) {\n                    updateItem(oldItem, item);\n                }\n                else {\n                    addItem(item);\n                }\n            }\n            break;\n    }\n    set_variable('inventory-manager:items', client.inventorymanager.items);\n    set_variable('inventory-manager:wielding', client.inventorymanager.wielding);\n    set_variable('inventory-manager:wearables', client.inventorymanager.wearables);\n    set_variable('inventory-manager:groupables', client.inventorymanager.groupables);\n    set_variable('inventory-manager:containers', client.inventorymanager.containers);\n    set_variable('inventory-manager:corpses', client.inventorymanager.corpses);\n    function hasAttribute(item, attribute) {\n        var _a;\n        return item.attrib !== undefined && ((_a = item.attrib) === null || _a === void 0 ? void 0 : _a.includes(attribute));\n    }\n    function attributeChange(oldItem, newItem, attribute) {\n        if (!hasAttribute(oldItem, attribute) && hasAttribute(newItem, attribute)) {\n            return 'add';\n        }\n        else if (hasAttribute(oldItem, attribute) && !hasAttribute(newItem, attribute)) {\n            return 'remove';\n        }\n        else {\n            return 'none';\n        }\n    }\n    function addItem(item) {\n        client.inventorymanager.items.push(item);\n    }\n    function removeItem(item) {\n        const index = client.inventorymanager.items.findIndex(value => value.id === item.id);\n        client.inventorymanager.items.splice(index, 1);\n    }\n    function updateItem(oldItem, item) {\n        const index = client.inventorymanager.items.findIndex(value => value.id === item.id);\n        client.inventorymanager.items[index] = item;\n        // Wielded, Left\n        if (attributeChange(oldItem, item, 'l') === 'add') {\n            client.inventorymanager.wielding.currentLeftId = item.id;\n            if (client.inventorymanager.wielding.expectdWield === 'left') {\n                client.inventorymanager.wielding.expectedLeftId = item.id;\n                client.inventorymanager.wielding.expectdWield = undefined;\n            }\n        }\n        else if (attributeChange(oldItem, item, 'l') === 'remove') {\n            if (!client.inventorymanager.wielding.expectdSwapHands) {\n                client.inventorymanager.wielding.currentLeftId = undefined;\n            }\n            if (client.inventorymanager.wielding.expectedLeftId === item.id) {\n                if (['any', 'left', 'both'].includes(client.inventorymanager.wielding.expectdUnwield)) {\n                    client.inventorymanager.wielding.expectedLeftId = undefined;\n                    client.inventorymanager.wielding.expectdUnwield = undefined;\n                }\n                else {\n                    send_command(`wield left ${item.id}`, 1);\n                }\n            }\n            else if (client.inventorymanager.wielding.expectdUnwield) {\n                client.inventorymanager.wielding.expectdUnwield = undefined;\n            }\n        }\n        // Wielded, Right\n        if (attributeChange(oldItem, item, 'L') === 'add') {\n            client.inventorymanager.wielding.currentRightId = item.id;\n            if (client.inventorymanager.wielding.expectdWield === 'right') {\n                client.inventorymanager.wielding.expectdRightId = item.id;\n                client.inventorymanager.wielding.expectdWield = undefined;\n            }\n        }\n        else if (attributeChange(oldItem, item, 'L') === 'remove') {\n            if (!client.inventorymanager.wielding.expectdSwapHands) {\n                client.inventorymanager.wielding.currentRightId = undefined;\n            }\n            if (client.inventorymanager.wielding.expectdRightId === item.id) {\n                if (['any', 'right', 'both'].includes(client.inventorymanager.wielding.expectdUnwield)) {\n                    client.inventorymanager.wielding.expectdRightId = undefined;\n                    client.inventorymanager.wielding.expectdUnwield = undefined;\n                }\n                else {\n                    send_command(`wield right ${item.id}`, 1);\n                }\n            }\n            else if (client.inventorymanager.wielding.expectdUnwield) {\n                client.inventorymanager.wielding.expectdUnwield = undefined;\n            }\n        }\n    }\n})(args);"
+                    "code": "(function (args) {\n    switch (args.gmcp_method) {\n        case 'Char.Items.List':\n            const items = new Set([\n                ...client.inventorymanager.items.map(item => item.id),\n                ...args.gmcp_args.items.map(item => item.id)\n            ]);\n            items.forEach(itemId => {\n                const oldItem = client.inventorymanager.items.find(value => value.id === itemId);\n                const newItem = args.gmcp_args.items.find(value => value.id === itemId);\n                if (oldItem && newItem) {\n                    updateItem(oldItem, newItem);\n                }\n                else if (oldItem) {\n                    removeItem(oldItem);\n                }\n                else if (newItem) {\n                    addItem(newItem);\n                }\n                else {\n                    throw new Error(`Inventory Manager(inventory-manager:onInventoryChange): Unknown item: '${itemId}'`);\n                }\n            });\n            break;\n        case 'Char.Items.Add':\n            {\n                const item = args.gmcp_args.item;\n                const oldItem = client.inventorymanager.items.find(value => value.id === item.id);\n                if (oldItem) {\n                    updateItem(oldItem, item);\n                }\n                else {\n                    addItem(item);\n                }\n            }\n            break;\n        case 'Char.Items.Remove':\n            {\n                const item = args.gmcp_args.item;\n                const oldItem = client.inventorymanager.items.find(value => value.id === item.id);\n                if (oldItem) {\n                    removeItem(item);\n                }\n            }\n            break;\n        case 'Char.Items.Update':\n            {\n                const item = args.gmcp_args.item;\n                const oldItem = client.inventorymanager.items.find(value => value.id === item.id);\n                if (oldItem) {\n                    updateItem(oldItem, item);\n                }\n                else {\n                    addItem(item);\n                }\n            }\n            break;\n    }\n    run_function('inventory-manager:save', undefined, 'Inventory Manager');\n    function hasAttribute(item, attribute) {\n        var _a;\n        return item.attrib !== undefined && ((_a = item.attrib) === null || _a === void 0 ? void 0 : _a.includes(attribute));\n    }\n    function attributeChange(oldItem, newItem, attribute) {\n        if (!hasAttribute(oldItem, attribute) && hasAttribute(newItem, attribute)) {\n            return 'add';\n        }\n        else if (hasAttribute(oldItem, attribute) && !hasAttribute(newItem, attribute)) {\n            return 'remove';\n        }\n        else {\n            return 'none';\n        }\n    }\n    function addItem(item) {\n        client.inventorymanager.items.push(item);\n    }\n    function removeItem(item) {\n        const index = client.inventorymanager.items.findIndex(value => value.id === item.id);\n        client.inventorymanager.items.splice(index, 1);\n    }\n    function updateItem(oldItem, item) {\n        const index = client.inventorymanager.items.findIndex(value => value.id === item.id);\n        client.inventorymanager.items[index] = item;\n        // Wielded, Left\n        if (attributeChange(oldItem, item, 'l') === 'add') {\n            if (client.inventorymanager.wielding.expectdWield === 'left') {\n                client.inventorymanager.wielding.expectedLeftId = item.id;\n                client.inventorymanager.wielding.expectdWield = undefined;\n            }\n        }\n        else if (attributeChange(oldItem, item, 'l') === 'remove') {\n            if (client.inventorymanager.wielding.expectedLeftId === item.id) {\n                if (['any', 'left', 'both'].includes(client.inventorymanager.wielding.expectdUnwield)) {\n                    client.inventorymanager.wielding.expectedLeftId = undefined;\n                    client.inventorymanager.wielding.expectdUnwield = undefined;\n                }\n                else {\n                    send_command(`wield left ${item.id}`, 1);\n                }\n            }\n            else if (client.inventorymanager.wielding.expectdUnwield) {\n                client.inventorymanager.wielding.expectdUnwield = undefined;\n            }\n        }\n        // Wielded, Right\n        if (attributeChange(oldItem, item, 'L') === 'add') {\n            if (client.inventorymanager.wielding.expectdWield === 'right') {\n                client.inventorymanager.wielding.expectdRightId = item.id;\n                client.inventorymanager.wielding.expectdWield = undefined;\n            }\n        }\n        else if (attributeChange(oldItem, item, 'L') === 'remove') {\n            if (client.inventorymanager.wielding.expectdRightId === item.id) {\n                if (['any', 'right', 'both'].includes(client.inventorymanager.wielding.expectdUnwield)) {\n                    client.inventorymanager.wielding.expectdRightId = undefined;\n                    client.inventorymanager.wielding.expectdUnwield = undefined;\n                }\n                else {\n                    send_command(`wield right ${item.id}`, 1);\n                }\n            }\n            else if (client.inventorymanager.wielding.expectdUnwield) {\n                client.inventorymanager.wielding.expectdUnwield = undefined;\n            }\n        }\n    }\n})(args);"
                 },
                 {
                     "type": "function",
@@ -200,7 +200,7 @@
                     "name": "inventory-manager:reset",
                     "enabled": true,
                     "id": 12,
-                    "code": "(function () {\n    client.inventorymanager = {\n        enabled: true,\n        items: [],\n        wielding: {\n            enabled: true\n        },\n        wearables: {\n            enabled: true,\n            expectedIds: []\n        },\n        groupables: {\n            enabled: true\n        },\n        containers: {\n            enabled: true,\n            tracked: []\n        },\n        corpses: {\n            enabled: true\n        },\n    };\n    set_variable('inventory-manager:enabled', client.inventorymanager.enabled);\n    set_variable('inventory-manager:items', client.inventorymanager.items);\n    set_variable('inventory-manager:wielding', client.inventorymanager.wielding);\n    set_variable('inventory-manager:wearables', client.inventorymanager.wearables);\n    set_variable('inventory-manager:groupables', client.inventorymanager.groupables);\n    set_variable('inventory-manager:containers', client.inventorymanager.containers);\n    set_variable('inventory-manager:corpses', client.inventorymanager.corpses);\n    send_GMCP('Char.Items.Inv');\n    display_notice('Inventory Manager: Reset.');\n})(args);"
+                    "code": "(function () {\n    client.inventorymanager = {\n        enabled: true,\n        items: [],\n        wielding: {\n            enabled: true\n        },\n        wearables: {\n            enabled: true,\n            expectedIds: []\n        },\n        groupables: {\n            enabled: true\n        },\n        containers: {\n            enabled: true,\n            tracked: []\n        },\n        corpses: {\n            enabled: true\n        },\n    };\n    run_function('inventory-manager:save', undefined, 'Inventory Manager');\n    send_GMCP('Char.Items.Inv');\n    display_notice('Inventory Manager: Reset.');\n})(args);"
                 },
                 {
                     "type": "function",
@@ -226,16 +226,16 @@
                     "actions": [
                         {
                             "action": "script",
-                            "script": "(function (args) {\n        const containerDescription = args[1];\n        if (!containerDescription) {\n            return;\n        }\n        const containers = client.inventorymanager.items\n            .filter(value => { var _a; return ((_a = value.attrib) === null || _a === void 0 ? void 0 : _a.includes('c')) && value.name === containerDescription; });\n        const trackedContainers = client.inventorymanager.containers.tracked\n            .filter(value => containers.map(value => value.id).includes(value.id));\n        if (trackedContainers.length === 0) {\n            return;\n        }\n        trackedContainers.forEach(trackedContainer => {\n            trackedContainer.closeable = true;\n            trackedContainer.possiblyOpen = false;\n        });\n        client.inventorymanager.containers.expectedClose = undefined;\n    })(args);"
+                            "script": "(function (args) {\n        const containerDescription = args[1];\n        if (!containerDescription) {\n            return;\n        }\n        const containers = client.inventorymanager.items\n            .filter(value => { var _a; return ((_a = value.attrib) === null || _a === void 0 ? void 0 : _a.includes('c')) && value.name === containerDescription; });\n        const trackedContainers = client.inventorymanager.containers.tracked\n            .filter(value => containers.map(value => value.id).includes(value.id));\n        if (trackedContainers.length === 0) {\n            return;\n        }\n        trackedContainers.forEach(trackedContainer => {\n            trackedContainer.closeable = true;\n            trackedContainer.possiblyOpen = false;\n        });\n        client.inventorymanager.containers.expectedClose = undefined;\n        run_function('inventory-manager:save', undefined, 'Inventory Manager');\n    })(args);"
                         }
                     ],
                     "name": "Already Closed",
                     "enabled": true,
-                    "id": 26,
-                    "text": "([ \\w\\W]+) is already closed.",
+                    "id": 24,
                     "matching": "regexp",
                     "whole_words": false,
-                    "case_sensitive": false
+                    "case_sensitive": false,
+                    "text": "^([\\w\\W]+) is already closed\\.$"
                 },
                 {
                     "type": "trigger",
@@ -243,16 +243,16 @@
                     "actions": [
                         {
                             "action": "script",
-                            "script": "(function (args) {\n        const containerDescription = args[1];\n        if (!containerDescription) {\n            return;\n        }\n        const containers = client.inventorymanager.items\n            .filter(value => { var _a; return ((_a = value.attrib) === null || _a === void 0 ? void 0 : _a.includes('c')) && value.name === containerDescription; });\n        const trackedContainers = client.inventorymanager.containers.tracked\n            .filter(value => containers.map(value => value.id).includes(value.id));\n        if (trackedContainers.length === 0) {\n            return;\n        }\n        trackedContainers.forEach(trackedContainer => {\n            trackedContainer.closeable = true;\n            trackedContainer.possiblyOpen = true;\n        });\n        client.inventorymanager.containers.expectedOpen = undefined;\n    })(args);"
+                            "script": "(function (args) {\n        const containerDescription = args[1];\n        if (!containerDescription) {\n            return;\n        }\n        const containers = client.inventorymanager.items\n            .filter(value => { var _a; return ((_a = value.attrib) === null || _a === void 0 ? void 0 : _a.includes('c')) && value.name === containerDescription; });\n        const trackedContainers = client.inventorymanager.containers.tracked\n            .filter(value => containers.map(value => value.id).includes(value.id));\n        if (trackedContainers.length === 0) {\n            return;\n        }\n        trackedContainers.forEach(trackedContainer => {\n            trackedContainer.closeable = true;\n            trackedContainer.possiblyOpen = true;\n        });\n        client.inventorymanager.containers.expectedOpen = undefined;\n        run_function('inventory-manager:save', undefined, 'Inventory Manager');\n    })(args);"
                         }
                     ],
                     "name": "Already Closed",
                     "enabled": true,
-                    "id": 27,
-                    "text": "([ \\w\\W]+) is already open.",
+                    "id": 25,
                     "matching": "regexp",
                     "whole_words": false,
-                    "case_sensitive": false
+                    "case_sensitive": false,
+                    "text": "^([\\w\\W]+) is already open\\.$"
                 },
                 {
                     "type": "trigger",
@@ -260,50 +260,16 @@
                     "actions": [
                         {
                             "action": "script",
-                            "script": "(function () {\n        client.inventorymanager.wielding.expectdWield = undefined;\n    })(args);"
-                        }
-                    ],
-                    "name": "Already Wielding",
-                    "enabled": true,
-                    "id": 20,
-                    "text": "You are already wielding that.",
-                    "matching": "exact",
-                    "whole_words": false,
-                    "case_sensitive": false
-                },
-                {
-                    "type": "trigger",
-                    "items": [],
-                    "actions": [
-                        {
-                            "action": "script",
-                            "script": "(function () {\n        client.inventorymanager.wielding.expectdUnwield = undefined;\n    })(args);"
-                        }
-                    ],
-                    "name": "Aren't Wielding",
-                    "enabled": true,
-                    "id": 19,
-                    "text": "You aren't wielding anything.",
-                    "matching": "exact",
-                    "whole_words": false,
-                    "case_sensitive": false
-                },
-                {
-                    "type": "trigger",
-                    "items": [],
-                    "actions": [
-                        {
-                            "action": "script",
-                            "script": "(function (args) {\n        const containerDescription = args[1];\n        if (!containerDescription) {\n            return;\n        }\n        const containers = client.inventorymanager.items\n            .filter(value => { var _a; return ((_a = value.attrib) === null || _a === void 0 ? void 0 : _a.includes('c')) && value.name === containerDescription; });\n        const trackedContainers = client.inventorymanager.containers.tracked\n            .filter(value => containers.map(value => value.id).includes(value.id));\n        if (trackedContainers.length === 0) {\n            return;\n        }\n        trackedContainers.forEach(trackedContainer => {\n            trackedContainer.closeable = true;\n            trackedContainer.possiblyOpen = false;\n        });\n        client.inventorymanager.containers.expectedClose = undefined;\n    })(args);"
+                            "script": "(function (args) {\n        const containerDescription = args[1];\n        if (!containerDescription) {\n            return;\n        }\n        const containers = client.inventorymanager.items\n            .filter(value => { var _a; return ((_a = value.attrib) === null || _a === void 0 ? void 0 : _a.includes('c')) && value.name === containerDescription; });\n        const trackedContainers = client.inventorymanager.containers.tracked\n            .filter(value => containers.map(value => value.id).includes(value.id));\n        if (trackedContainers.length === 0) {\n            return;\n        }\n        trackedContainers.forEach(trackedContainer => {\n            trackedContainer.closeable = true;\n            trackedContainer.possiblyOpen = false;\n        });\n        client.inventorymanager.containers.expectedClose = undefined;\n        run_function('inventory-manager:save', undefined, 'Inventory Manager');\n    })(args);"
                         }
                     ],
                     "name": "Container Closed",
                     "enabled": true,
-                    "id": 23,
-                    "text": "You close ([ \\w\\W]+).",
+                    "id": 21,
                     "matching": "regexp",
                     "whole_words": false,
-                    "case_sensitive": false
+                    "case_sensitive": false,
+                    "text": "^You close ([\\w\\W]+)\\.$"
                 },
                 {
                     "type": "trigger",
@@ -311,16 +277,16 @@
                     "actions": [
                         {
                             "action": "script",
-                            "script": "(function (args) {\n        const containerDescription = args[1];\n        if (!containerDescription) {\n            return;\n        }\n        const containers = client.inventorymanager.items\n            .filter(value => { var _a; return ((_a = value.attrib) === null || _a === void 0 ? void 0 : _a.includes('c')) && value.name === containerDescription; });\n        const trackedContainers = client.inventorymanager.containers.tracked\n            .filter(value => containers.map(value => value.id).includes(value.id));\n        if (trackedContainers.length === 0) {\n            return;\n        }\n        trackedContainers.forEach(trackedContainer => {\n            trackedContainer.closeable = true;\n            trackedContainer.possiblyOpen = true;\n            send_GMCP('Char.Items.Contents', Number(trackedContainer.id));\n            if (client.inventorymanager.containers.expectedOpen !== trackedContainer.id) {\n                send_command(`close ${trackedContainer.id}`, 1);\n            }\n        });\n        client.inventorymanager.containers.expectedOpen = undefined;\n    })(args);"
+                            "script": "(function (args) {\n        const containerDescription = args[1];\n        if (!containerDescription) {\n            return;\n        }\n        const containers = client.inventorymanager.items\n            .filter(value => { var _a; return ((_a = value.attrib) === null || _a === void 0 ? void 0 : _a.includes('c')) && value.name === containerDescription; });\n        const trackedContainers = client.inventorymanager.containers.tracked\n            .filter(value => containers.map(value => value.id).includes(value.id));\n        if (trackedContainers.length === 0) {\n            return;\n        }\n        trackedContainers.forEach(trackedContainer => {\n            trackedContainer.closeable = true;\n            trackedContainer.possiblyOpen = true;\n            send_GMCP('Char.Items.Contents', Number(trackedContainer.id));\n            if (client.inventorymanager.containers.expectedOpen !== trackedContainer.id) {\n                send_command(`close ${trackedContainer.id}`, 1);\n            }\n        });\n        client.inventorymanager.containers.expectedOpen = undefined;\n        run_function('inventory-manager:save', undefined, 'Inventory Manager');\n    })(args);"
                         }
                     ],
                     "name": "Container Opened",
                     "enabled": true,
-                    "id": 24,
-                    "text": "You open ([ \\w\\W]+).",
+                    "id": 22,
                     "matching": "regexp",
                     "whole_words": false,
-                    "case_sensitive": false
+                    "case_sensitive": false,
+                    "text": "^You open ([\\w\\W]+)\\.$"
                 },
                 {
                     "type": "trigger",
@@ -328,16 +294,16 @@
                     "actions": [
                         {
                             "action": "script",
-                            "script": "(function (args) {\n        const containerDescription = args[1];\n        if (!containerDescription) {\n            return;\n        }\n        const containers = client.inventorymanager.items\n            .filter(value => { var _a; return ((_a = value.attrib) === null || _a === void 0 ? void 0 : _a.includes('c')) && value.name === containerDescription; });\n        const trackedContainers = client.inventorymanager.containers.tracked\n            .filter(value => containers.map(value => value.id).includes(value.id));\n        if (trackedContainers.length === 0) {\n            return;\n        }\n        trackedContainers.forEach(trackedContainer => {\n            if (client.inventorymanager.containers.expectedOpen === trackedContainer.id || client.inventorymanager.containers.expectedClose === trackedContainer.id) {\n                trackedContainer.closeable = false;\n                trackedContainer.possiblyOpen = undefined;\n            }\n        });\n    })(args);"
+                            "script": "(function (args) {\n        const containerDescription = args[1];\n        if (!containerDescription) {\n            return;\n        }\n        const containers = client.inventorymanager.items\n            .filter(value => { var _a; return ((_a = value.attrib) === null || _a === void 0 ? void 0 : _a.includes('c')) && value.name === containerDescription; });\n        const trackedContainers = client.inventorymanager.containers.tracked\n            .filter(value => containers.map(value => value.id).includes(value.id));\n        if (trackedContainers.length === 0) {\n            return;\n        }\n        trackedContainers.forEach(trackedContainer => {\n            if (client.inventorymanager.containers.expectedOpen === trackedContainer.id || client.inventorymanager.containers.expectedClose === trackedContainer.id) {\n                trackedContainer.closeable = false;\n                trackedContainer.possiblyOpen = undefined;\n            }\n        });\n        run_function('inventory-manager:save', undefined, 'Inventory Manager');\n    })(args);"
                         }
                     ],
                     "name": "Not Closeable",
                     "enabled": true,
-                    "id": 25,
-                    "text": "([ \\w\\W]+) doesn't have a lid or top of any sort to be (opened|closed).",
+                    "id": 23,
                     "matching": "regexp",
                     "whole_words": false,
-                    "case_sensitive": false
+                    "case_sensitive": false,
+                    "text": "^([\\w\\W]+) doesn't have a lid or top of any sort to be (?:opened|closed)\\.$"
                 },
                 {
                     "type": "trigger",
@@ -345,16 +311,16 @@
                     "actions": [
                         {
                             "action": "script",
-                            "script": "(function () {\n        client.inventorymanager.wielding.expectdSwapHands = undefined;\n    })(args);"
+                            "script": "(function () {\n        client.inventorymanager.wielding.expectdSwapHands = undefined;\n        run_function('inventory-manager:save', undefined, 'Inventory Manager');\n    })(args);"
                         }
                     ],
                     "name": "Swapped Hands",
                     "enabled": true,
-                    "id": 21,
-                    "text": "^(?:You exchange the contents of your hands and begin wielding ([\\w\\W]+)? in your left hand and ([\\w\\W]+)? in your right.)|(?:You shift ([\\w\\W]+)? from your (right|left) to (right|left) hand.)$",
+                    "id": 19,
                     "matching": "regexp",
                     "whole_words": false,
-                    "case_sensitive": false
+                    "case_sensitive": false,
+                    "text": "(?:^You exchange the contents of your hands and begin wielding ([\\w\\W]+)? in your left hand and ([\\w\\W]+)? in your right\\.$|^You shift ([\\w\\W]+)? from your (right|left) to (right|left) hand\\.$)"
                 },
                 {
                     "type": "trigger",
@@ -362,22 +328,22 @@
                     "actions": [
                         {
                             "action": "script",
-                            "script": "(function () {\n        client.inventorymanager.wielding.expectdWield = undefined;\n        client.inventorymanager.wielding.expectdUnwield = undefined;\n    })(args);"
+                            "script": "(function () {\n        client.inventorymanager.wielding.expectdWield = undefined;\n        client.inventorymanager.wielding.expectdUnwield = undefined;\n        run_function('inventory-manager:save', undefined, 'Inventory Manager');\n    })(args);"
                         }
                     ],
-                    "name": "Wield What?",
+                    "name": "Wield Failed",
                     "enabled": true,
-                    "id": 22,
-                    "text": "What do you wish to wield?",
-                    "matching": "exact",
+                    "id": 20,
+                    "matching": "regexp",
                     "whole_words": false,
-                    "case_sensitive": false
+                    "case_sensitive": false,
+                    "text": "(?:^What do you wish to wield\\?$|^You are already wielding that\\.$)"
                 }
             ],
             "actions": [],
             "name": "Triggers",
             "enabled": true,
-            "id": 28
+            "id": 26
         }
     ],
     "actions": [],
