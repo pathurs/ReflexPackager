@@ -13,9 +13,8 @@ export const extracted = new TriggerItem(
         new ExecuteScriptAction(
             function (args: TriggerFunctionArgs) {
                 if (client.tradeskillmanager.transmutation.running) {
-                    run_function('tradeskill-manager:inrift', args, 'Tradeskill Manager');
-
-                    run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');
+                    client.tradeskillmanager.inrift(args);
+                    client.tradeskillmanager.runQueue();
                 }
             }
         )

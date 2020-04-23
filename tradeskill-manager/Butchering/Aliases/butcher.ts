@@ -14,14 +14,20 @@ export const butcher = new AliasItem(
                 const corpses = client.inventorymanager.items.filter(value => value.name.startsWith('the corpse of'));
 
                 if (corpses.length > 0) {
-                    client.tradeskillmanager.butchering.queue.push('butcher corpse for reagents');
+                    if (client.inventorymanager.wielding.expectedLeftId) {
+                        client.tradeskillmanager.butchering.itemToRewield = client.inventorymanager.wielding.expectedLeftId;
+                    }
+
+                    send_command('wield left cleaver');
+
+                    client.tradeskillmanager.butchering.queue.push('butcher corpse for reagent');
 
                     client.tradeskillmanager.butchering.running = true;
 
-                    run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');
+                    client.tradeskillmanager.runQueue();
                 }
                 else {
-                    display_notice(`Tradeskill Manager: You have no corpses.`, '#FF0000');
+                    client.tradeskillmanager.error(`You have no corpses.`);
                 }
             }
         )

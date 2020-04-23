@@ -7,6 +7,12 @@ export const onLoad = new FunctionItem(
     'onLoad',
     function () {
         client.displayservice = {
+            echo(text: string) {
+                ow_Write('#output_main', client.displayservice.colorify(text));
+            },
+            color(text: string, color: string) {
+                return `<span style="color: ${color};">${text}</span>`;
+            },
             table(title, groups) {
                 const lines: string[] = [];
 
@@ -18,22 +24,17 @@ export const onLoad = new FunctionItem(
 
                 displayTableFooter();
 
-                // Use print() because it allows HTML
-                print(lines.map(line => `<div>${line}</div>`).join(''));
-
-                function getLength(text: string) {
-                    return (new DOMParser().parseFromString(text, 'text/html').body.textContent || '').length;
-                }
+                client.displayservice.echo(lines.map(line => `<div>${line}</div>`).join(''));
 
                 function displayTableTitle(title: string) {
-                    const left = 39 - Math.floor(getLength(title) / 2);
-                    const right = 39 - Math.ceil(getLength(title) / 2);
+                    const left = 39 - Math.floor(client.displayservice.getLength(title) / 2);
+                    const right = 39 - Math.ceil(client.displayservice.getLength(title) / 2);
 
-                    lines.push(`+${'-'.repeat(left)}${title}${'-'.repeat(right)}+`);
+                    lines.push(`+${safeRepeat('-', left)}${title}${safeRepeat('-', right)}+`);
                 }
 
                 function displayTableFooter() {
-                    lines.push(`+${'-'.repeat(78)}+`);
+                    lines.push(`+${safeRepeat('-', 78)}+`);
                 }
 
                 function displayTableGroup(group: TableGroupDefinition) {
@@ -47,9 +48,9 @@ export const onLoad = new FunctionItem(
                 }
 
                 function displayTableGroupTitle(title: string) {
-                    const right = 76 - getLength(title);
+                    const right = 76 - client.displayservice.getLength(title);
 
-                    lines.push(`+-${title}${'-'.repeat(right)}-+`);
+                    lines.push(`+-${title}${safeRepeat('-', right)}-+`);
                 }
 
                 function displayTableGroupItems(items: TableGroupItemDefinition[], columns: 1 | 2 | 3 | 4) {
@@ -82,30 +83,80 @@ export const onLoad = new FunctionItem(
 
                     for (let i = 0; i < items.length; i++) {
                         const item = items[i];
-                        const label = item.label.substring(0, columnWidth - getLength(item.value) - labelValueSpacerWidth);
-                        const parsed = `${item.label}${' '.repeat(columnWidth - getLength(label) - getLength(item.value))}${item.value}`;
+                        const label = item.label.substring(0, columnWidth - client.displayservice.getLength(item.value) - labelValueSpacerWidth);
+                        const parsed = `${item.label}${safeRepeat(' ', columnWidth - client.displayservice.getLength(label) - client.displayservice.getLength(item.value))}${item.value}`;
 
                         if (i !== 0) {
-                            line += ' '.repeat(columnSpacerWidth);
+                            line += safeRepeat(' ', columnSpacerWidth);
                         }
 
                         line += parsed;
                     }
 
-                    line += ' '.repeat(74 - getLength(line));
+                    line += safeRepeat(' ', 74 - client.displayservice.getLength(line));
 
                     lines.push(`|   ${line} |`);
                 }
             },
-            clickify(text, command, hint, fgcolor, bgcolor) {
-                return `<a
-                    class="url_link"
-                    onclick="handle_aliases('${command}')"
-                    title="${hint}"
-                    style="cursor: pointer; ${fgcolor ? `color: ${fgcolor};` : ''} ${bgcolor ? `background-color: ${bgcolor};` : ''}">${text}</a>`;
+            colorify(message: string) {
+                let result = message;
+
+                const pattern = /%([a-zA-Z0-9#]+)%/;
+                let first = true;
+                let match;
+
+                while (match = pattern.exec(result)) {
+                    let replacement = '';
+
+                    if (first && match[1] == 'reset') {
+                        //skip a reset as the first tag...
+                    }
+                    else if (match[1] == 'reset') {
+                        replacement = '</span>';
+                        first = true;
+                    }
+                    else if (first) {
+                        replacement = `<span style="color: ${match[1]};">`;
+                        first = false;
+                    }
+                    else {
+                        replacement = `</span><span style="color: ${match[1]};">`;
+                    }
+
+                    result = result.replace(pattern, replacement);
+                }
+
+                if (!first) {
+                    result += '</span>';
+                }
+
+                return result;
+            },
+            commandify(text, command, hint) {
+                return client.displayservice.clickify(
+                    text,
+                    `handle_aliases('${command}')`,
+                    hint
+                );
+            },
+            clickify(text, code, hint) {
+                const anchorTag = $(`<a>${client.displayservice.colorify(text)}</a>`);
+
+                anchorTag.attr('onclick', code + ';return false;');
+                anchorTag.attr('title', hint);
+                anchorTag.attr('style', 'cursor: pointer; text-decoration: underline;')
+
+                return anchorTag.prop('outerHTML');
+            },
+            getLength(text: string) {
+                return $($.parseHTML(text)).text().length;
             }
         };
 
-        display_notice('Display Service: Loaded.');
+        function safeRepeat(text: string, count: number): string {
+            return text.repeat(Math.max(count, 0));
+        }
+
+        client.displayservice.echo('%white%[%reset%%deepskyblue%Display Service%reset%%white%]:%reset% Loaded.');
     }
 );

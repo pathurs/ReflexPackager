@@ -1,8 +1,7 @@
 import { AliasItem, AliasType, ExecuteScriptAction } from '../../../source';
 import { TradeskillManagerClient, InkmillingInks } from '../../tradeskill-manager';
-import { InventoryManagerClient } from '../../../inventory-manager/inventory-manager'
 
-declare const client: TradeskillManagerClient & InventoryManagerClient;
+declare const client: TradeskillManagerClient;
 
 export const mill = new AliasItem(
     'Mill',
@@ -17,13 +16,13 @@ export const mill = new AliasItem(
                 const inkReagents: InkmillingInks[keyof InkmillingInks] | undefined = client.tradeskillmanager.inkmilling.inks[<keyof InkmillingInks>colour];
 
                 if (!inkReagents) {
-                    display_notice(`Tradeskill Manager: Unknown ink colour '${colour}'.`, '#FF0000');
+                    client.tradeskillmanager.error(`Unknown ink colour '${colour}'.`);
 
                     return;
                 }
 
                 if (!total || total < 0) {
-                    display_notice(`Tradeskill Manager: Unexpected amount '${total}'.`, '#FF0000');
+                    client.tradeskillmanager.error(`Unexpected amount '${total}'.`);
 
                     return;
                 }
@@ -36,7 +35,7 @@ export const mill = new AliasItem(
 
                 client.tradeskillmanager.inkmilling.running = true;
 
-                run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');
+                client.tradeskillmanager.runQueue();
             }
         )
     ]

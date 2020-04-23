@@ -10,8 +10,13 @@ interface TableGroupDefinition {
 }
 
 interface DisplayService {
+    echo(message: string): void;
+    color(message: string, color: string): void;
     table(title: string, groups: TableGroupDefinition[]): void;
-    clickify(text: string, commands: string, hint: string, fgcolor?: string, bgcolor?: string): string;
+    colorify(text: string): string;
+    commandify(text: string, commands: string, hint: string): string;
+    clickify(text: string, code: string, hint: string): string;
+    getLength(text: string): number;
 }
 
 export type DisplayServiceClient = typeof client & {

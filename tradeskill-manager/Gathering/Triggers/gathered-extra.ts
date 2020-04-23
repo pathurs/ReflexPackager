@@ -13,7 +13,7 @@ export const gatheredExtra = new TriggerItem(
     [
         new ExecuteScriptAction(
             function (args: TriggerFunctionArgs) {
-                run_function('tradeskill-manager:inrift', args, 'Tradeskill Manager');
+                client.tradeskillmanager.inrift(args);
             }
         )
     ]

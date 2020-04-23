@@ -1,11 +1,13 @@
 import { createFromFile } from '../source';
 import { onLoad } from './onLoad';
-import { Functions } from './Functions';
+import { Aliases } from './Aliases';
+import { Triggers } from './Triggers';
 
 createFromFile(
     [
         onLoad,
-        Functions
+        Aliases,
+        Triggers
     ],
     'hunting-manager/rpconfig.json'
 );

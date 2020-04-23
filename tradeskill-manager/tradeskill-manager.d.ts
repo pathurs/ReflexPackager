@@ -178,6 +178,10 @@ interface GatheringNamesDictionary {
     'venom sacs': 'sac';
     'sidewinder skin': 'skin';
     'sidewinder skins': 'skin';
+    'sip of milk': 'milk';
+    'sips of milk': 'milk';
+    'sip of saltwater': 'saltwater';
+    'sips of saltwater': 'saltwater';
 }
 
 interface Gathering {
@@ -215,6 +219,8 @@ interface ButcheringNamesDictionary {
     'pieces of meat': 'meat';
     'poultry breast': 'poultry';
     'pieces of poultry': 'poultry';
+    'unprocessed animal skin': 'skin';
+    'skins': 'skin';
 }
 
 interface Butchering {
@@ -222,6 +228,7 @@ interface Butchering {
     queue: string[];
     running: boolean;
     names: ButcheringNamesDictionary;
+    itemToRewield?: string;
 }
 
 interface InkmillingMill {
@@ -326,12 +333,17 @@ interface Inkmilling {
 }
 
 interface TradeskillManager {
+    enabled: boolean;
     running: boolean;
     harvesting: Harvesting;
     transmutation: Transmutation;
     gathering: Gathering;
     butchering: Butchering;
     inkmilling: Inkmilling;
+    echo(message: string): void;
+    error(text: string): void;
+    runQueue(): void;
+    inrift(args: TriggerFunctionArgs): void;
 }
 
 export type TradeskillManagerClient = typeof client & {

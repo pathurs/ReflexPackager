@@ -30,10 +30,10 @@ export const gather = new AliasItem(
                 }
 
                 if (client.tradeskillmanager.gathering.running) {
-                    run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');
+                    client.tradeskillmanager.runQueue();
                 }
                 else if (client.gmcpservice.latest['Room.Info']?.environment) {
-                    display_notice(`Tradeskill Manager: Found nothing to gather from '${client.gmcpservice.latest['Room.Info']?.environment}'.`, '#FF0000');
+                    client.tradeskillmanager.echo(`Found nothing to gather from '%white%${client.gmcpservice.latest['Room.Info']?.environment}%reset%'.`);
                 }
             }
         )

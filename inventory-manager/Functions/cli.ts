@@ -25,7 +25,7 @@ export const cli = new FunctionItem(
                                 case '1':
                                     client.inventorymanager.enabled = true;
 
-                                    display_notice(`Inventory Manager: Enabled.`);
+                                    client.inventorymanager.echo(`%lime%Enabled%reset%.`);
                                     break;
 
                                 case 'false':
@@ -33,16 +33,16 @@ export const cli = new FunctionItem(
                                 case '0':
                                     client.inventorymanager.enabled = false;
 
-                                    display_notice(`Inventory Manager: Disabled.`);
+                                    client.inventorymanager.echo(`%red%Disabled%reset%.`);
                                     break;
 
                                 default:
-                                    display_notice(`Inventory Manager: Could not parse value '${args[2]}'.`);
+                                    client.inventorymanager.error(`Could not parse value '${args[2]}'.`);
                             }
                             break;
 
                         default:
-                            display_notice(`Inventory Manager: Unknown config setting '${args[1]}'.`);
+                            client.inventorymanager.error(`Unknown config setting '${args[1]}'.`);
                     }
                 }
                 break;

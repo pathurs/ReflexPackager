@@ -13,9 +13,9 @@ export const millFailed = new TriggerItem(
         new ExecuteScriptAction(
             function () {
                 if (client.tradeskillmanager.inkmilling.running) {
-                    display_notice('Tradeskill Manager: Inkmilling failed!', '#FF0000');
+                    client.tradeskillmanager.echo('Inkmilling failed!');
 
-                    run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');
+                    client.tradeskillmanager.runQueue();
                 }
             }
         )

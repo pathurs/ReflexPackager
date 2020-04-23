@@ -12,9 +12,8 @@ export const harvestedSkin = new TriggerItem(
     [
         new ExecuteScriptAction(
             function (args: TriggerFunctionArgs) {
-                run_function('tradeskill-manager:inrift', [args[0], '2', 'sidewinder skins'], 'Tradeskill Manager');
-
-                run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');
+                client.tradeskillmanager.inrift([args[0], '2', 'sidewinder skins']);
+                client.tradeskillmanager.runQueue();
             }
         )
     ]

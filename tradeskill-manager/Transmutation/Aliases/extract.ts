@@ -30,10 +30,10 @@ export const extract = new AliasItem(
                 }
 
                 if (client.tradeskillmanager.transmutation.running) {
-                    run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');
+                    client.tradeskillmanager.runQueue();
                 }
                 else if (client.gmcpservice.latest['Room.Info']?.environment) {
-                    display_notice(`Tradeskill Manager: Found nothing to extract from '${client.gmcpservice.latest['Room.Info']?.environment}'.`, '#FF0000');
+                    client.tradeskillmanager.error(`Found nothing to extract from '${client.gmcpservice.latest['Room.Info']?.environment}'.`);
                 }
             }
         )

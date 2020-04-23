@@ -32,7 +32,7 @@ export const checkMissingItem = new TriggerItem(
                 const inGathering = (<string[]>(client.tradeskillmanager.gathering.environments[<keyof GatheringEnvironmentDictionary>environment] || [])).includes(item);
 
                 if (!inHarvesting && !inTransmutation && !inGathering) {
-                    display_notice(`Tradeskill Manager: Missing item '${item}' in '${environment}'.`, '#FF0000');
+                    client.tradeskillmanager.error(`Missing item '${item}' in '${environment}'.`);
                 }
             }
         )

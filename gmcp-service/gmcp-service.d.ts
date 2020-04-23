@@ -10,8 +10,10 @@ interface GMCPSubscription<TMethod extends GMCPServerMethod> {
 interface GMCPService {
     latest: GMCPLatest;
     subscriptions: GMCPSubscription<GMCPServerMethod>[];
+    echo(message: string): void;
+    error(text: string): void;
     subscribe<TMethod extends GMCPServerMethod>(methods: TMethod[], subscriber: GMCPSubscriber<TMethod>): GMCPSubscription<TMethod>;
-    unsubscribe(subscriber: GMCPSubscription<GMCPServerMethod>): void;
+    unsubscribe(subscription: GMCPSubscription<GMCPServerMethod>): void;
     once<TMethod extends GMCPServerMethod>(methods: TMethod[], subscriber: GMCPSubscriber<TMethod>): GMCPSubscription<TMethod>;
 }
 

@@ -12,9 +12,8 @@ export const harvestedSac = new TriggerItem(
     [
         new ExecuteScriptAction(
             function (args: TriggerFunctionArgs) {
-                run_function('tradeskill-manager:inrift', [args[0], '2', 'venom sacs'], 'Tradeskill Manager');
-
-                run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');
+                client.tradeskillmanager.inrift([args[0], '2', 'venom sacs']);
+                client.tradeskillmanager.runQueue();
             }
         )
     ]

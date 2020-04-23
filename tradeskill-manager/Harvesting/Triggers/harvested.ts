@@ -13,9 +13,8 @@ export const harvested = new TriggerItem(
         new ExecuteScriptAction(
             function (args: TriggerFunctionArgs) {
                 if (client.tradeskillmanager.harvesting.running) {
-                    run_function('tradeskill-manager:inrift', args, 'Tradeskill Manager');
-
-                    run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');
+                    client.tradeskillmanager.inrift(args);
+                    client.tradeskillmanager.runQueue();
                 }
             }
         )

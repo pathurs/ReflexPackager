@@ -8,10 +8,11 @@
         "test": "ts-node test",
         "display-service": "ts-node display-service",
         "gmcp-service": "ts-node gmcp-service",
+        "queue-service": "ts-node queue-service",
         "inventory-manager": "ts-node inventory-manager",
         "defence-manager": "ts-node defence-manager",
-        "tradeskill-manager": "ts-node tradeskill-manager",
-        "hunting-manager": "ts-node hunting-manager"
+        "hunting-manager": "ts-node hunting-manager",
+        "tradeskill-manager": "ts-node tradeskill-manager"
     },
     "repository": {
         "type": "git",

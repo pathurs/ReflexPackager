@@ -15,7 +15,7 @@ export const milled = new TriggerItem(
                 if (client.tradeskillmanager.inkmilling.running) {
                     send_command(`get group ink from mill|get ink from mill|inrift 50 ink`, 1);
 
-                    run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');
+                    client.tradeskillmanager.runQueue();
                 }
             }
         )

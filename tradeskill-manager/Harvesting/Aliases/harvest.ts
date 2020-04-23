@@ -30,10 +30,10 @@ export const harvest = new AliasItem(
                 }
 
                 if (client.tradeskillmanager.harvesting.running) {
-                    run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');
+                    client.tradeskillmanager.runQueue();
                 }
                 else if (client.gmcpservice.latest['Room.Info']?.environment) {
-                    display_notice(`Tradeskill Manager: Found nothing to harvest from '${client.gmcpservice.latest['Room.Info']?.environment}'.`, '#FF0000');
+                    client.tradeskillmanager.echo(`Found nothing to harvest from '${client.gmcpservice.latest['Room.Info']?.environment}'.`);
                 }
             }
         )

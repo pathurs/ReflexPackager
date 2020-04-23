@@ -33,8 +33,8 @@ export const cliContainers = new FunctionItem(
                                     container => {
                                         const label = `${container.id} ${container.name}`;
                                         const value = client.inventorymanager.containers.tracked.find(value => value.id == container.id)
-                                            ? client.displayservice.clickify('Yes', `inventory-manager containers untrack ${container.id}`, `Untrack ${container.name}`, '#00ff00')
-                                            : client.displayservice.clickify('No', `inventory-manager containers track ${container.id}`, `Track ${container.name}`, '#ff0000');
+                                            ? client.displayservice.commandify('%lime%Yes', `inventory-manager containers untrack ${container.id}`, `Untrack ${container.name}`)
+                                            : client.displayservice.commandify('%red%No', `inventory-manager containers track ${container.id}`, `Track ${container.name}`);
 
                                         return {
                                             label,
@@ -53,7 +53,9 @@ export const cliContainers = new FunctionItem(
                     const container = client.inventorymanager.items.find(item => item.id === containerId);
 
                     if (!container) {
-                        throw new Error(`Inventory Manager(inventory-manager:containers): Unknown container '${containerId}'`);
+                        client.inventorymanager.error(`Unknown container '${containerId}'.`);
+
+                        return;
                     }
 
                     if (!client.inventorymanager.containers.tracked.find(value => value.id == container.id)) {
@@ -65,10 +67,10 @@ export const cliContainers = new FunctionItem(
                         send_command(`close ${containerId}`, 1);
                         send_GMCP('Char.Items.Contents', Number(containerId));
 
-                        display_notice(`Inventory Manager: Now tracking container '${container.name} (${container.id})'.`);
+                        client.inventorymanager.echo(`Now tracking container '%white%${container.name}%reset% (%white%${container.id}%reset%)'.`);
                     }
                     else {
-                        display_notice(`Inventory Manager: Already tracking container '${container.name} (${container.id})'.`);
+                        client.inventorymanager.echo(`Already tracking container '%white%${container.name}%reset% (%white%${container.id}%reset%)'.`);
                     }
                 }
                 break;
@@ -79,7 +81,9 @@ export const cliContainers = new FunctionItem(
                     const container = client.inventorymanager.items.find(item => item.id === containerId);
 
                     if (!container) {
-                        throw new Error(`Inventory Manager(inventory-manager:containers): Unknown container '${containerId}'`);
+                        client.inventorymanager.error(`Unknown container '${containerId}'`);
+
+                        return;
                     }
 
                     const index = client.inventorymanager.containers.tracked.findIndex(value => value.id === containerId);
@@ -87,10 +91,10 @@ export const cliContainers = new FunctionItem(
                     if (index !== -1) {
                         client.inventorymanager.containers.tracked.splice(index, 1);
 
-                        display_notice(`Inventory Manager: No longer tracking container '${container.name} (${container.id})'.`);
+                        client.inventorymanager.echo(`No longer tracking container '%white%${container.name}%reset% (%white%${container.id})%reset%'.`);
                     }
                     else {
-                        display_notice(`Inventory Manager: Already not tracking container '${container.name} (${container.id})'.`);
+                        client.inventorymanager.echo(`Already not tracking container '%white%${container.name}%reset% (%white%${container.id})%reset%'.`);
                     }
                 }
                 break;

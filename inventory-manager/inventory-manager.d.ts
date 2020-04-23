@@ -42,6 +42,8 @@ export interface InventoryManager {
     groupables: Groupables;
     containers: Containers;
     corpses: Corpses;
+    echo(message: string): void;
+    error(text: string): void;
 }
 
 export type InventoryManagerClient = typeof client & {

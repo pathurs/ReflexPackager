@@ -107,6 +107,8 @@ interface DefenceManager {
     defences: Defences;
     currentDefenceIds: string[];
     expectedDefenceIds: string[];
+    echo(text: string): void;
+    error(text: string): void;
 }
 
 export type DefenceManagerClient = typeof client & {

@@ -1,13 +1,42 @@
 import { FunctionItem } from '../source';
 import { InventoryManagerClient } from './inventory-manager';
 import { GMCPServiceClient } from '../gmcp-service/gmcp-service';
+import { DisplayServiceClient } from '../display-service/display-service';
 
-declare const client: InventoryManagerClient & GMCPServiceClient;
+declare const client: InventoryManagerClient & GMCPServiceClient & DisplayServiceClient;
 
 export const onLoad = new FunctionItem(
     'onLoad',
     function () {
-        run_function('inventory-manager:setup', undefined, 'Inventory Manager');
+        const enabled: boolean | undefined = get_variable('inventory-manager:enabled');
+
+        client.inventorymanager = get_variable('inventory-manager:config') || {
+            enabled: enabled != undefined ? enabled : true,
+            items: get_variable('inventory-manager:items') || [],
+            wielding: get_variable('inventory-manager:wielding') || {
+                enabled: true
+            },
+            wearables: get_variable('inventory-manager:wearables') || {
+                enabled: true,
+                expectedIds: []
+            },
+            groupables: get_variable('inventory-manager:groupables') || {
+                enabled: true
+            },
+            containers: get_variable('inventory-manager:containers') || {
+                enabled: true,
+                tracked: []
+            },
+            corpses: get_variable('inventory-manager:corpses') || {
+                enabled: true
+            },
+            echo(text) {
+                client.displayservice.echo(`%white%[%reset%%deepskyblue%Inventory Manager%reset%%white%]:%reset% ${text}`);
+            },
+            error(text) {
+                client.inventorymanager.echo(`%red%${text}`);
+            }
+        };
 
         send_GMCP('Char.Items.Inv');
 
@@ -24,6 +53,6 @@ export const onLoad = new FunctionItem(
             }
         });
 
-        display_notice('Inventory Manager: Loaded.');
+        client.inventorymanager.echo('Loaded.');
     }
 );

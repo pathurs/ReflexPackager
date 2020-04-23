@@ -1,14 +1,25 @@
 
 import { FunctionItem } from '../source';
-import { TradeskillManagerClient } from './tradeskill-manager';
+import {
+    TradeskillManagerClient,
+    HarvestingNamesDictionary,
+    TransmutationNamesDictionary,
+    GatheringNamesDictionary,
+    ButcheringNamesDictionary,
+    InkmillingNamesDictionary,
+    InkmillingInks,
+    InkmillingReagents
+} from './tradeskill-manager';
 import { InventoryManagerClient } from '../inventory-manager/inventory-manager';
+import { DisplayServiceClient } from '../display-service/display-service';
 
-declare const client: TradeskillManagerClient & InventoryManagerClient;
+declare const client: TradeskillManagerClient & InventoryManagerClient & DisplayServiceClient;
 
 export const onLoad = new FunctionItem(
     'onLoad',
     function () {
         client.tradeskillmanager = {
+            enabled: true,
             running: false,
             harvesting: {
                 enabled: true,
@@ -182,7 +193,11 @@ export const onLoad = new FunctionItem(
                     'venom sac': 'sac',
                     'venom sacs': 'sac',
                     'sidewinder skin': 'skin',
-                    'sidewinder skins': 'skin'
+                    'sidewinder skins': 'skin',
+                    'sip of milk': 'milk',
+                    'sips of milk': 'milk',
+                    'sip of saltwater': 'saltwater',
+                    'sips of saltwater': 'saltwater'
                 }
             },
             butchering: {
@@ -215,7 +230,9 @@ export const onLoad = new FunctionItem(
                     'tender cut of meat': 'meat',
                     'pieces of meat': 'meat',
                     'poultry breast': 'poultry',
-                    'pieces of poultry': 'poultry'
+                    'pieces of poultry': 'poultry',
+                    'unprocessed animal skin': 'skin',
+                    'skins': 'skin'
                 }
             },
             inkmilling: {
@@ -296,9 +313,207 @@ export const onLoad = new FunctionItem(
                     'black ink': 'blackink',
                     'black inks': 'blackink'
                 }
+            },
+            echo(text) {
+                client.displayservice.echo(`%white%[%reset%%deepskyblue%Tradeskill Manager%reset%%white%]:%reset% ${client.displayservice.colorify(text)}`);
+            },
+            error(text) {
+                client.tradeskillmanager.echo(`%red%${text}`);
+            },
+            runQueue() {
+                if (client.tradeskillmanager.running) {
+                    return;
+                }
+                else {
+                    client.tradeskillmanager.running = true;
+
+                    setTimeout(function () {
+                        client.tradeskillmanager.running = false;
+                    });
+                }
+
+                if (client.tradeskillmanager.harvesting.running) {
+                    if (client.tradeskillmanager.harvesting.queue.length > 0) {
+                        // client.tradeskillmanager.echo(`Harvesting Queue: ${client.tradeskillmanager.harvesting.queue.join(', ')}`);
+
+                        const command = client.tradeskillmanager.harvesting.queue.pop();
+
+                        if (command) {
+                            send_command(`queue add eqbal ${command}`);
+
+                            return;
+                        }
+                    }
+                    else {
+                        client.tradeskillmanager.echo(`Harvesting Complete!`);
+
+                        client.tradeskillmanager.harvesting.running = false;
+                    }
+                }
+
+                if (client.tradeskillmanager.transmutation.running) {
+                    if (client.tradeskillmanager.transmutation.queue.length > 0) {
+                        // client.inventotradeskillmanagerrymanager.echo(`${client.tradeskillmanager.transmutation.queue.join(', ')}`);
+
+                        const command = client.tradeskillmanager.transmutation.queue.pop();
+
+                        if (command) {
+                            send_command(`queue add eqbal ${command}`);
+
+                            return;
+                        }
+                    }
+                    else {
+                        client.tradeskillmanager.echo(`Transmutation Complete!`);
+
+                        client.tradeskillmanager.transmutation.running = false;
+                    }
+                }
+
+
+                if (client.tradeskillmanager.gathering.running) {
+                    if (client.tradeskillmanager.gathering.queue.length > 0) {
+                        // client.tradeskillmanager.echo(`Gathering Queue: ${client.tradeskillmanager.gathering.queue.join(', ')}`);
+
+                        const command = client.tradeskillmanager.gathering.queue.pop();
+
+                        if (command) {
+                            send_command(`queue add eqbal ${command}`);
+
+                            return;
+                        }
+                    }
+                    else {
+                        client.tradeskillmanager.echo(`Gathering Complete!`);
+
+                        client.tradeskillmanager.gathering.running = false;
+                    }
+                }
+
+                if (client.tradeskillmanager.butchering.running) {
+                    if (client.tradeskillmanager.butchering.queue.length > 0) {
+                        // client.tradeskillmanager.echo(`Butchering Queue: ${client.tradeskillmanager.butchering.queue.join(', ')}`);
+
+                        const command = client.tradeskillmanager.butchering.queue.pop();
+
+                        if (command) {
+                            send_command(`queue add eqbal ${command}`);
+
+                            return;
+                        }
+                    }
+                    else {
+                        if (client.tradeskillmanager.butchering.itemToRewield) {
+                            send_command(`wield left ${client.tradeskillmanager.butchering.itemToRewield}`);
+                        }
+                        else {
+                            send_command('unwield cleaver');
+                        }
+
+                        client.tradeskillmanager.echo(`Butchering Complete!`);
+
+                        client.tradeskillmanager.butchering.running = false;
+                    }
+                }
+
+                if (client.tradeskillmanager.inkmilling.running) {
+                    if (client.tradeskillmanager.inkmilling.queue.length > 0) {
+                        // client.tradeskillmanager.echo(`Inkmilling Queue: ${client.tradeskillmanager.inkmilling.queue.join(', ')}`);
+
+                        const next = client.tradeskillmanager.inkmilling.queue.pop();
+                        const match = next?.match(/(\d+) (\w+)/) || [];
+                        const amount = Number(match[1]);
+                        const colour = match[2];
+
+                        if (!amount || !colour) {
+                            return;
+                        }
+
+                        const inkReagents: InkmillingInks[keyof InkmillingInks] | undefined = client.tradeskillmanager.inkmilling.inks[<keyof InkmillingInks>colour];
+
+                        const outriftCommands: string[] = [];
+                        const putInMillCommands: string[] = [];
+
+                        for (let inkReagent in inkReagents) {
+                            const reagentAmount = amount * inkReagents[<keyof typeof inkReagents>inkReagent];
+                            const reagents = client.tradeskillmanager.inkmilling.reagents[<keyof InkmillingReagents>inkReagent];
+                            // Actually check rift
+                            const reagent = reagents[0];
+
+
+                            if (reagentAmount === 1) {
+                                outriftCommands.push(`outrift ${reagent}`);
+                                putInMillCommands.push(`put ${reagent} in mill`);
+                            }
+                            else {
+                                outriftCommands.push(`outrift ${reagentAmount} ${reagent}`);
+                                putInMillCommands.push(`put group ${reagent} in mill`);
+                            }
+                        }
+
+                        send_command(outriftCommands.join('|'), 1);
+                        send_command(putInMillCommands.join('|'), 1);
+                        send_command(`mill for ${amount} ${colour}`, 1);
+                    }
+                    else {
+                        client.tradeskillmanager.echo(`Inkmilling Complete!`);
+
+                        client.tradeskillmanager.inkmilling.running = false;
+                    }
+                }
+            },
+            inrift(args: TriggerFunctionArgs): void {
+                const amountMatch = args[1] || args[3] || args[5] || args[7] || args[9] || args[11] || '';
+                const itemNameMatch = args[2] || args[4] || args[6] || args[8] || args[10] || args[12] || '';
+
+                const amount = amountMatch.match(/(\d+)/)?.[1] || '1';
+
+                if (itemNameMatch in client.tradeskillmanager.harvesting.names) {
+                    const item: HarvestingNamesDictionary[keyof HarvestingNamesDictionary] | undefined = client.tradeskillmanager.harvesting.names[<keyof HarvestingNamesDictionary>itemNameMatch];
+
+                    if (item) {
+                        send_command(`inrift ${amount} ${item}`);
+                    }
+                }
+                else if (itemNameMatch in client.tradeskillmanager.transmutation.names) {
+                    const item: TransmutationNamesDictionary[keyof TransmutationNamesDictionary] | undefined = client.tradeskillmanager.transmutation.names[<keyof TransmutationNamesDictionary>itemNameMatch];
+
+                    if (item) {
+                        send_command(`inrift ${amount} ${item}`);
+                    }
+                }
+                else if (itemNameMatch in client.tradeskillmanager.gathering.names) {
+                    const item: GatheringNamesDictionary[keyof GatheringNamesDictionary] | undefined = client.tradeskillmanager.gathering.names[<keyof GatheringNamesDictionary>itemNameMatch];
+
+                    if (item) {
+                        if (item === 'milk' || item === 'saltwater') {
+                            send_command(`pour ${item} into rift`);
+                        }
+                        else {
+                            send_command(`inrift ${amount} ${item}`);
+                        }
+                    }
+                }
+                else if (itemNameMatch in client.tradeskillmanager.butchering.names) {
+                    const item: ButcheringNamesDictionary[keyof ButcheringNamesDictionary] | undefined = client.tradeskillmanager.butchering.names[<keyof ButcheringNamesDictionary>itemNameMatch];
+
+                    if (item) {
+                        send_command(`inrift ${amount} ${item}`);
+                    }
+                }
+                else if (itemNameMatch in client.tradeskillmanager.inkmilling.names) {
+                    const item: InkmillingNamesDictionary[keyof InkmillingNamesDictionary] | undefined = client.tradeskillmanager.inkmilling.names[<keyof InkmillingNamesDictionary>itemNameMatch];
+
+                    if (item) {
+                        send_command(`inrift ${amount} ${item}`);
+                    }
+                }
+                else if (itemNameMatch) {
+                    client.tradeskillmanager.echo(`Unknown item '${itemNameMatch}'.`);
+                }
             }
         };
 
-        display_notice('Tradeskill Manager: Loaded.');
+        client.tradeskillmanager.echo('Loaded.');
     }
 );

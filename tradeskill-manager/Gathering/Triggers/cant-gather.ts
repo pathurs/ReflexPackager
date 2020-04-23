@@ -23,7 +23,7 @@ export const cantGather = new TriggerItem(
                     gag_current_line();
                 }
 
-                run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');
+                client.tradeskillmanager.runQueue();
             }
         )
     ]

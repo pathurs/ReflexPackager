@@ -91,8 +91,8 @@ export const cliShow = new FunctionItem(
 
         function makeBooleanValue(value: boolean, trueCommand: string, trueHint: string, falseCommand: string, falseHint: string) {
             return value
-                ? client.displayservice.clickify('Yes', trueCommand, trueHint, '#00ff00')
-                : client.displayservice.clickify('No', falseCommand, falseHint, '#ff0000');
+                ? client.displayservice.commandify('%lime%Yes', trueCommand, trueHint)
+                : client.displayservice.commandify('%red%No', falseCommand, falseHint);
         }
     }
 );

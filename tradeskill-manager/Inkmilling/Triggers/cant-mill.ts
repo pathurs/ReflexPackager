@@ -20,11 +20,11 @@ export const cantMill = new TriggerItem(
 
                     send_command('get 50 reagent from mill|inr 50 reagent|inr 50 reagent|inr 50 reagent|inr 50 reagent|inr 50 reagent|inr 50 reagent|inr 50 reagent|inr 50 reagent|inr 50 reagent', 1);
 
-                    display_notice('Tradeskill Manager: Ran out of reagents. Queue has been cleared.', '#FF0000');
+                    client.tradeskillmanager.error('Ran out of reagents. Queue has been cleared.');
                 }
 
 
-                run_function('tradeskill-manager:run-queue', undefined, 'Tradeskill Manager');
+                client.tradeskillmanager.runQueue();
             }
         )
     ]

@@ -298,6 +298,16 @@ interface GMCPRoomInfo {
     exits: RoomExits;
 }
 
+// IRE.Target
+
+type GMCPIRETargetSet = string;
+
+interface GMCPIRETargetInfo {
+    short_desc: string;
+    hpperc: string;
+    id: string;
+}
+
 //
 
 interface GMCPServerMethodToArgsMap {
@@ -350,8 +360,8 @@ interface GMCPServerMethodToArgsMap {
     'IRE.Sound.Stop': unknown;
     'IRE.Sound.Stopall': unknown;
     'IRE.Sound.Preload': unknown;
-    'IRE.Target.Set': unknown;
-    'IRE.Target.Info': unknown;
+    'IRE.Target.Set': GMCPIRETargetSet;
+    'IRE.Target.Info': GMCPIRETargetInfo;
     'IRE.Target.Request': unknown;
     'IRE.Tasks.List': unknown;
     'IRE.Tasks.Update': unknown;
@@ -372,9 +382,15 @@ type GMCPServerArgs =
     | GMCPCharItemsUpdate
     ;
 
-type TriggerFunctionArgs = RegExpMatchArray;
+interface TriggerFunctionArgs {
+    0: string;
+    [key: number]: string | undefined;
+}
 
-type AliasFunctionArgs = RegExpMatchArray;
+interface AliasFunctionArgs {
+    0: string;
+    [key: number]: string | undefined;
+}
 
 interface GMCPFunctionArgs<
     TMethod extends GMCPServerMethod = GMCPServerMethod,
@@ -386,7 +402,7 @@ interface GMCPFunctionArgs<
 
 interface GMCPAliasRegexArgs {
     0: string;
-    [key: number]: string | null;
+    [key: number]: string | undefined;
 }
 
 interface ScriptsArgs {
@@ -426,6 +442,8 @@ declare function display_notice(text: string, fgcolor?: string, bgcolor?: string
  * @param bgcolor
  */
 declare function print(text: string, fgcolor?: string, bgcolor?: string): void;
+
+declare function ow_Write(selector: string, text: string): void;
 
 // Variables
 
@@ -590,6 +608,7 @@ declare function send_GMCP(message: 'Char.Skills.Get', args: GMCPCharSkillsGet):
 declare function send_GMCP(message: 'Char.Items.Inv'): void;
 declare function send_GMCP(message: 'Char.Items.Contents', args: number): void;
 declare function send_GMCP(message: 'Char.Items.Room'): void;
+declare function send_GMCP(message: 'IRE.Target.Set', args: string): void;
 // declare function send_GMCP(message: GMCPClientMethod, args?: unknown): void;
 
 
