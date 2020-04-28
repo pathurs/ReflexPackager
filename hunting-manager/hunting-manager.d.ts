@@ -30,8 +30,8 @@ interface HuntingManager {
     echo(message: string): void;
     error(text: string): void;
     addArea(area: string): void;
+    save(): void;
     addMonster(area: string, monster: string): void;
-    saveAreas(): void;
     onRoomChange(args: GMCPFunctionArgs<'Char.Items.List' | 'Char.Items.Add' | 'Char.Items.Remove' | 'Char.Items.Update'>): void;
     start(): void;
     stop(): void;

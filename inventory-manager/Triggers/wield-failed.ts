@@ -13,10 +13,11 @@ export const wieldFailed = new TriggerItem(
     [
         new ExecuteScriptAction(
             function () {
-                client.inventorymanager.wielding.expectdWield = undefined;
+                client.inventorymanager.wielding.expectedWield = undefined;
                 client.inventorymanager.wielding.expectdUnwield = undefined;
 
-                run_function('inventory-manager:save', undefined, 'Inventory Manager');
+
+                client.inventorymanager.save();
             }
         )
     ]

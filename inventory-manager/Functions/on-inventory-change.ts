@@ -72,8 +72,6 @@ export const onInventoryChange = new FunctionItem(
                 break;
         }
 
-        run_function('inventory-manager:save', undefined, 'Inventory Manager');
-
         function hasAttribute(item: GMCPCharItemsItem, attribute: GMCPCharItemsItemAttribute): boolean {
             return item.attrib !== undefined && item.attrib?.includes(attribute);
         }
@@ -107,10 +105,11 @@ export const onInventoryChange = new FunctionItem(
 
             // Wielded, Left
             if (attributeChange(oldItem, item, 'l') === 'add') {
-                if (client.inventorymanager.wielding.expectdWield === 'left') {
+                if (client.inventorymanager.wielding.expectedWield === 'left') {
                     client.inventorymanager.wielding.expectedLeftId = item.id;
+                    client.inventorymanager.wielding.expectedWield = undefined;
 
-                    client.inventorymanager.wielding.expectdWield = undefined;
+                    client.inventorymanager.save();
                 }
             }
             else if (attributeChange(oldItem, item, 'l') === 'remove') {
@@ -130,10 +129,11 @@ export const onInventoryChange = new FunctionItem(
 
             // Wielded, Right
             if (attributeChange(oldItem, item, 'L') === 'add') {
-                if (client.inventorymanager.wielding.expectdWield === 'right') {
+                if (client.inventorymanager.wielding.expectedWield === 'right') {
                     client.inventorymanager.wielding.expectdRightId = item.id;
+                    client.inventorymanager.wielding.expectedWield = undefined;
 
-                    client.inventorymanager.wielding.expectdWield = undefined;
+                    client.inventorymanager.save();
                 }
             }
             else if (attributeChange(oldItem, item, 'L') === 'remove') {

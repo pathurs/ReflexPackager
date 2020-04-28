@@ -7,7 +7,7 @@ interface Wielding {
     enabled: boolean;
     expectedLeftId?: string;
     expectdRightId?: string;
-    expectdWield?: 'left' | 'right' | 'both';
+    expectedWield?: 'left' | 'right' | 'both';
     expectdUnwield?: 'any' | 'left' | 'right' | 'both';
     expectdSwapHands?: boolean;
 }
@@ -44,6 +44,7 @@ export interface InventoryManager {
     corpses: Corpses;
     echo(message: string): void;
     error(text: string): void;
+    save(): void;
 }
 
 export type InventoryManagerClient = typeof client & {

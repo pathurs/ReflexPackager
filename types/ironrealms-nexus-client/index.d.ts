@@ -2,6 +2,12 @@
 
 declare var client: typeof window;
 
+interface NexusClientGMCP {
+    Target?: string;
+}
+
+declare var GMCP: NexusClientGMCP;
+
 // Types
 
 type ReflexType =
@@ -611,4 +617,10 @@ declare function send_GMCP(message: 'Char.Items.Room'): void;
 declare function send_GMCP(message: 'IRE.Target.Set', args: string): void;
 // declare function send_GMCP(message: GMCPClientMethod, args?: unknown): void;
 
+/**
+ * Save the whole reflex system to IRE.
+ * @param report
+ */
+declare function gmcp_save_system(report?: boolean): void;
 
+declare function set_current_target_info(desc: string, hp: string, isPlayer?: boolean): void;

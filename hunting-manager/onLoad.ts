@@ -2,9 +2,10 @@ import { FunctionItem } from '../source';
 import { HuntingManagerClient } from './hunting-manager';
 import { DisplayServiceClient } from '../display-service/display-service';
 import { GMCPServiceClient } from '../gmcp-service/gmcp-service';
+import { SystemServiceClient } from '../system-service/system-service';
 import { QueueServiceClient, QueueSubscription, QueueType } from '../queue-service/queue-service'
 
-declare const client: HuntingManagerClient & DisplayServiceClient & GMCPServiceClient & QueueServiceClient;
+declare const client: HuntingManagerClient & DisplayServiceClient & GMCPServiceClient & SystemServiceClient & QueueServiceClient;
 
 export const onLoad = new FunctionItem(
     'onLoad',
@@ -22,10 +23,18 @@ export const onLoad = new FunctionItem(
             areas: get_variable('hunting-manager:areas') || {},
             roomMonsters: [],
             echo(text) {
-                client.displayservice.echo(`%white%[%reset%%deepskyblue%Hunting Manager%reset%%white%]:%reset% ${text}`);
+                client.displayservice.echo(`%white%[%deepskyblue%Hunting Manager%end%]:%end% ${text}`);
             },
             error(text) {
                 client.huntingmanager.echo(`%red%${text}`);
+            },
+            save() {
+                client.systemservice.save('hunting-manager', () => {
+                    set_variable('hunting-manager:areas', client.huntingmanager.areas);
+                    set_variable('hunting-manager:settings', client.huntingmanager.settings);
+
+                    client.huntingmanager.echo('Settings saved.');
+                });
             },
             addArea(area: string) {
                 if (client.huntingmanager.areas[area]) {
@@ -37,9 +46,9 @@ export const onLoad = new FunctionItem(
                     monsters: []
                 };
 
-                client.huntingmanager.echo(`Add new area: '%white%${area}%reset%'.`);
+                client.huntingmanager.echo(`Add new area: '%white%${area}%end%'.`);
 
-                client.huntingmanager.saveAreas();
+                client.huntingmanager.save();
             },
             addMonster(area: string, monster: string) {
                 if (!client.huntingmanager.areas[area]) {
@@ -52,12 +61,9 @@ export const onLoad = new FunctionItem(
 
                 client.huntingmanager.areas[area].monsters.push(monster);
 
-                client.huntingmanager.echo(`Add new monster '%white%${monster}%reset%' to area '%white%${area}%reset%'.`);
+                client.huntingmanager.echo(`Add new monster '%white%${monster}%end%' to area '%white%${area}%end%'.`);
 
-                client.huntingmanager.saveAreas();
-            },
-            saveAreas() {
-                set_variable('hunting-manager:areas', client.huntingmanager.areas);
+                client.huntingmanager.save();
             },
             onRoomChange(args: GMCPFunctionArgs<'Char.Items.List' | 'Char.Items.Add' | 'Char.Items.Remove' | 'Char.Items.Update'>): void {
                 switch (args.gmcp_method) {
@@ -126,20 +132,33 @@ export const onLoad = new FunctionItem(
                         break;
                 }
 
-                function addMonster(item: GMCPCharItemsItem) {
-                    client.huntingmanager.roomMonsters.push(item);
+                function addMonster(monster: GMCPCharItemsItem) {
+                    client.huntingmanager.roomMonsters.push(monster);
                 }
 
-                function removeMonster(item: GMCPCharItemsItem) {
-                    const index = client.huntingmanager.roomMonsters.findIndex(value => value.id === item.id);
+                function removeMonster(monster: GMCPCharItemsItem) {
+                    const index = client.huntingmanager.roomMonsters.findIndex(value => value.id === monster.id);
 
                     client.huntingmanager.roomMonsters.splice(index, 1);
+
+                    if (client.huntingmanager.currentTarget && client.huntingmanager.currentTarget.id === monster.id) {
+                        client.huntingmanager.tryTargetNext();
+                    }
                 }
 
-                function updateMonster(_oldMonster: GMCPCharItemsItem, item: GMCPCharItemsItem) {
-                    const index = client.huntingmanager.roomMonsters.findIndex(value => value.id === item.id);
+                function updateMonster(_oldMonster: GMCPCharItemsItem, newMonster: GMCPCharItemsItem) {
+                    const index = client.huntingmanager.roomMonsters.findIndex(value => value.id === newMonster.id);
 
-                    client.huntingmanager.roomMonsters[index] = item;
+                    client.huntingmanager.roomMonsters[index] = newMonster;
+
+                    if (client.huntingmanager.currentTarget && client.huntingmanager.currentTarget.id === newMonster.id) {
+                        if (newMonster.attrib?.includes('d')) {
+                            client.huntingmanager.tryTargetNext();
+                        }
+                        else {
+                            client.huntingmanager.currentTarget = newMonster;
+                        }
+                    }
                 }
             },
             start() {
@@ -180,6 +199,10 @@ export const onLoad = new FunctionItem(
                 }
             },
             findTarget() {
+                if (!client.huntingmanager.areas[client.huntingmanager.room.area]) {
+                    return;
+                }
+
                 for (const areaMonsterName of client.huntingmanager.areas[client.huntingmanager.room.area].monsters) {
                     for (const roomMonster of client.huntingmanager.roomMonsters) {
                         if (roomMonster.name === areaMonsterName) {
@@ -199,9 +222,15 @@ export const onLoad = new FunctionItem(
                     return;
                 }
 
+                GMCP.Target = client.huntingmanager.currentTarget.id;
+
+                set_variable('tar', client.huntingmanager.currentTarget.id);
+
+                set_current_target_info(client.huntingmanager.currentTarget.name, '100%', undefined);
+
                 send_GMCP('IRE.Target.Set', client.huntingmanager.currentTarget.id);
 
-                client.huntingmanager.echo(`Targetting %white%${client.huntingmanager.currentTarget.name}%reset% (%white%${client.huntingmanager.currentTarget.id}%reset%)`);
+                client.huntingmanager.echo(`Targetting %white%${client.huntingmanager.currentTarget.name}%end% (%white%${client.huntingmanager.currentTarget.id}%end%)`);
 
             },
             tryTargetNext() {
@@ -217,7 +246,7 @@ export const onLoad = new FunctionItem(
 
                 send_command(`queue add eqbal ${client.huntingmanager.settings.attackCommand} ${client.huntingmanager.currentTarget.id}`, 1);
 
-                client.huntingmanager.echo(`Attacking %white%${client.huntingmanager.currentTarget.name}%reset% (%white%${client.huntingmanager.currentTarget.id}%reset%)`);
+                client.huntingmanager.echo(`Attacking %white%${client.huntingmanager.currentTarget.name}%end% (%white%${client.huntingmanager.currentTarget.id}%end%)`);
             },
             tryAttack() {
                 if (client.huntingmanager.currentTarget) {
@@ -238,11 +267,9 @@ export const onLoad = new FunctionItem(
                     return;
                 }
 
-                send_command(`queue addclear eqbal ${client.huntingmanager.settings.razeCommand}`, 1);
+                send_command(`queue prepend eqbal ${client.huntingmanager.settings.razeCommand}`, 1);
 
-                client.huntingmanager.tryAttack();
-
-                client.huntingmanager.echo(`Razing %white%${client.huntingmanager.currentTarget.name}%reset% (%white%${client.huntingmanager.currentTarget.id}%reset%)`);
+                client.huntingmanager.echo(`Razing %white%${client.huntingmanager.currentTarget.name}%end% (%white%${client.huntingmanager.currentTarget.id}%end%)`);
             },
             tryRaze() {
                 if (client.huntingmanager.settings.razeCommand && client.huntingmanager.currentTarget) {
@@ -278,32 +305,32 @@ export const onLoad = new FunctionItem(
         });
 
         client.gmcpservice.subscribe(['IRE.Target.Set'], args => {
-            if (!args.gmcp_args) {
+            if (!args.gmcp_args && !client.huntingmanager.currentTarget) {
                 client.huntingmanager.tryTargetNext();
 
                 return;
             }
 
-            const target = client.huntingmanager.roomMonsters.find(monster => monster.id === args.gmcp_args);
+            // const target = client.huntingmanager.roomMonsters.find(monster => monster.id === args.gmcp_args);
 
-            if (target) {
-                client.huntingmanager.currentTarget = target;
-            }
-            else {
-                client.huntingmanager.error(`IRE.Target.Set sent invalid target '${args.gmcp_args}'.`);
-            }
+            // if (target) {
+            //     client.huntingmanager.target(target);
+            // }
+            // else {
+            //     client.huntingmanager.error(`IRE.Target.Set sent invalid target '${args.gmcp_args}'.`);
+            // }
         });
 
-        client.gmcpservice.subscribe(['IRE.Target.Info'], args => {
-            const target = client.huntingmanager.roomMonsters.find(monster => monster.id === args.gmcp_args.id);
+        // client.gmcpservice.subscribe(['IRE.Target.Info'], args => {
+        //     const target = client.huntingmanager.roomMonsters.find(monster => monster.id === args.gmcp_args.id);
 
-            if (target) {
-                client.huntingmanager.currentTarget = target;
-            }
-            else {
-                client.huntingmanager.error(`IRE.Target.Info sent invalid target '${JSON.stringify(args.gmcp_args)}'.`);
-            }
-        });
+        //     if (target) {
+        //         client.huntingmanager.currentTarget = target;
+        //     }
+        //     else {
+        //         client.huntingmanager.error(`IRE.Target.Info sent invalid target '${JSON.stringify(args.gmcp_args)}'.`);
+        //     }
+        // });
 
         send_GMCP('Char.Items.Room');
 

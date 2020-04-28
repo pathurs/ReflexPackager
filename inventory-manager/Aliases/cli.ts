@@ -2,7 +2,7 @@ import { AliasItem, AliasType, ExecuteScriptAction } from '../../source';
 
 export const cli = new AliasItem(
     'cli',
-    /^(?:im|inventory\-manager|inventory manager)( [\w\W]+)?/,
+    /^(?:im|inventory\-manager|inventory manager) ([\w\W]+)?/,
     AliasType.RegularExpression,
     [
         new ExecuteScriptAction(

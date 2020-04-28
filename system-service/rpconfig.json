@@ -1,0 +1,5 @@
+{
+    "name": "System Service",
+    "description": "A System Service",
+    "outFile": "./packages/system-service.nxs"
+}

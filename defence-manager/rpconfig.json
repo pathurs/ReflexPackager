@@ -1,5 +1,5 @@
 {
     "name": "Defence Manager",
     "description": "A Defence Manager",
-    "outFile": "./defence-manager.nxs"
+    "outFile": "./packages/defence-manager.nxs"
 }

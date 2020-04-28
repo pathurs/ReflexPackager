@@ -81,7 +81,7 @@ export const onContentsChange = new FunctionItem(
                 break;
         }
 
-        run_function('inventory-manager:save', undefined, 'Inventory Manager');
+        client.inventorymanager.save();
 
         function addItem(item: GMCPCharItemsItem) {
             container.items.push(item);

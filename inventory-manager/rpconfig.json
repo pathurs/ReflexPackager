@@ -1,5 +1,5 @@
 {
     "name": "Inventory Manager",
     "description": "An Inventory Manager.",
-    "outFile": "./inventory-manager.nxs"
+    "outFile": "./packages/inventory-manager.nxs"
 }

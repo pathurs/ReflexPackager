@@ -33,7 +33,7 @@ export const notCloseable = new TriggerItem(
                     }
                 });
 
-                run_function('inventory-manager:save', undefined, 'Inventory Manager');
+                client.inventorymanager.save();
             }
         )
     ]

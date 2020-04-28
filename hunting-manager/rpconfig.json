@@ -1,5 +1,5 @@
 {
     "name": "Hunting Manager",
     "description": "A Hunting Manager",
-    "outFile": "./hunting-manager.nxs"
+    "outFile": "./packages/hunting-manager.nxs"
 }

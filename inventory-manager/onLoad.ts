@@ -1,18 +1,19 @@
 import { FunctionItem } from '../source';
 import { InventoryManagerClient } from './inventory-manager';
-import { GMCPServiceClient } from '../gmcp-service/gmcp-service';
 import { DisplayServiceClient } from '../display-service/display-service';
+import { GMCPServiceClient } from '../gmcp-service/gmcp-service';
+import { SystemServiceClient } from '../system-service/system-service';
 
-declare const client: InventoryManagerClient & GMCPServiceClient & DisplayServiceClient;
+declare const client: InventoryManagerClient & DisplayServiceClient & GMCPServiceClient & SystemServiceClient;
 
 export const onLoad = new FunctionItem(
     'onLoad',
     function () {
         const enabled: boolean | undefined = get_variable('inventory-manager:enabled');
 
-        client.inventorymanager = get_variable('inventory-manager:config') || {
+        client.inventorymanager = {
             enabled: enabled != undefined ? enabled : true,
-            items: get_variable('inventory-manager:items') || [],
+            items: [],
             wielding: get_variable('inventory-manager:wielding') || {
                 enabled: true
             },
@@ -31,10 +32,22 @@ export const onLoad = new FunctionItem(
                 enabled: true
             },
             echo(text) {
-                client.displayservice.echo(`%white%[%reset%%deepskyblue%Inventory Manager%reset%%white%]:%reset% ${text}`);
+                client.displayservice.echo(`%white%[%deepskyblue%Inventory Manager%end%]:%end% ${text}`);
             },
             error(text) {
                 client.inventorymanager.echo(`%red%${text}`);
+            },
+            save() {
+                client.systemservice.save('inventory-manager', () => {
+                    set_variable('inventory-manager:enabled', client.inventorymanager.enabled);
+                    set_variable('inventory-manager:wielding', client.inventorymanager.wielding);
+                    set_variable('inventory-manager:wearables', client.inventorymanager.wearables);
+                    set_variable('inventory-manager:groupables', client.inventorymanager.groupables);
+                    set_variable('inventory-manager:containers', client.inventorymanager.containers);
+                    set_variable('inventory-manager:corpses', client.inventorymanager.corpses);
+
+                    client.inventorymanager.echo('Settings saved.');
+                });
             }
         };
 

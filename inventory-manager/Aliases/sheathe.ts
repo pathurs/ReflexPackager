@@ -39,7 +39,7 @@ export const sheathe = new AliasItem(
                     }
                 }
 
-                run_function('inventory-manager:save', undefined, 'Inventory Manager');
+                client.inventorymanager.save();
             }
         )
     ]

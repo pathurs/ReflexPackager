@@ -643,13 +643,18 @@ export const onLoad = new FunctionItem(
                     ]
                 }
             },
-            currentDefenceIds: get_variable('defence-manager:current') || [],
-            expectedDefenceIds: get_variable('defence-manager:expected') || [],
+            currentDefenceIds: [],
+            expectedDefenceIds: [],
             echo(text) {
-                client.displayservice.echo(`%white%[%reset%%deepskyblue%Defence Manager%reset%%white%]:%reset% ${text}`);
+                client.displayservice.echo(`%white%[%deepskyblue%Defence Manager%end%]:%end% ${text}`);
             },
             error(text) {
                 client.defencemanager.echo(`%red%${text}`);
+            },
+            save() {
+                gmcp_save_system();
+
+                client.defencemanager.echo('Settings saved.');
             }
         };
 

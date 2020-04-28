@@ -57,7 +57,7 @@ export const percentToLevel = new AliasItem(
                 const to = Number(args[2]);
                 const percent = percentageTo(from, to);
 
-                client.huntingmanager.echo(`Percent from level '%white%${from}%reset%' to level '%white%${to}%reset%' is '%white%${percent}%%reset%'.`);
+                client.huntingmanager.echo(`Percent from level '%white%${from}%end%' to level '%white%${to}%end%' is '%white%${percent}%%end%'.`);
 
                 function getExperience(level: number): number {
                     const levelInteger = Math.floor(level);

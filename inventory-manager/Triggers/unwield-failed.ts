@@ -15,7 +15,7 @@ export const unwieldFailed = new TriggerItem(
             function () {
                 client.inventorymanager.wielding.expectdUnwield = undefined;
 
-                run_function('inventory-manager:save', undefined, 'Inventory Manager');
+                client.inventorymanager.save();
             }
         )
     ]

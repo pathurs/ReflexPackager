@@ -36,7 +36,7 @@ export const onLoad = new FunctionItem(
                 return subscription;
             },
             echo(text) {
-                client.displayservice.echo(`%white%[%reset%%deepskyblue%GMCP Service%reset%%white%]:%reset% ${text}`);
+                client.displayservice.echo(`%white%[%deepskyblue%GMCP Service%end%]:%end% ${text}`);
             },
             error(text) {
                 client.gmcpservice.echo(`%red%${text}`);

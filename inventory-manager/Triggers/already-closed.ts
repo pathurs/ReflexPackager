@@ -33,7 +33,7 @@ export const alreadyClosed = new TriggerItem(
 
                 client.inventorymanager.containers.expectedClose = undefined;
 
-                run_function('inventory-manager:save', undefined, 'Inventory Manager');
+                client.inventorymanager.save();
             }
         )
     ]

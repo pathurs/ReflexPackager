@@ -20,7 +20,7 @@ export const swapHands = new AliasItem(
 
                 client.inventorymanager.wielding.expectdSwapHands = true;
 
-                run_function('inventory-manager:save', undefined, 'Inventory Manager');
+                client.inventorymanager.save();
             }
         )
     ]

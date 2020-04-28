@@ -17,7 +17,7 @@ export const wield = new AliasItem(
 
                 switch (args[1]) {
                     case 'left':
-                        client.inventorymanager.wielding.expectdWield = 'left';
+                        client.inventorymanager.wielding.expectedWield = 'left';
 
                         if (currentLeft) {
                             client.inventorymanager.wielding.expectdUnwield = 'left';
@@ -25,7 +25,7 @@ export const wield = new AliasItem(
                         break;
 
                     case 'right':
-                        client.inventorymanager.wielding.expectdWield = 'right';
+                        client.inventorymanager.wielding.expectedWield = 'right';
 
                         if (currentRight) {
                             client.inventorymanager.wielding.expectdUnwield = 'right';
@@ -35,13 +35,13 @@ export const wield = new AliasItem(
                     default:
                         if (currentLeft && currentRight) {
                             client.inventorymanager.wielding.expectdUnwield = 'left';
-                            client.inventorymanager.wielding.expectdWield = 'left';
+                            client.inventorymanager.wielding.expectedWield = 'left';
                         }
                         else if (currentLeft) {
-                            client.inventorymanager.wielding.expectdWield = 'right';
+                            client.inventorymanager.wielding.expectedWield = 'right';
                         }
                         else {
-                            client.inventorymanager.wielding.expectdWield = 'left';
+                            client.inventorymanager.wielding.expectedWield = 'left';
                         }
                         break;
                 }
@@ -50,7 +50,7 @@ export const wield = new AliasItem(
                     client.inventorymanager.wielding.expectdUnwield = 'both';
                 }
 
-                run_function('inventory-manager:save', undefined, 'Inventory Manager');
+                client.inventorymanager.save();
             }
         )
     ]

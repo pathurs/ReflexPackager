@@ -1,0 +1,160 @@
+{
+    "type": "group",
+    "items": [
+        {
+            "type": "function",
+            "items": [],
+            "actions": [],
+            "name": "onLoad",
+            "enabled": true,
+            "id": 2,
+            "code": "(function () {\n    client.shopmanager = {\n        enabled: true,\n        shops: get_variable('shop-manager:shops') || [],\n        echo(text) {\n            client.displayservice.echo(`%white%[%deepskyblue%Shop Manager%end%]:%end% ${text}`);\n        },\n        error(text) {\n            client.shopmanager.echo(`%red%${text}`);\n        },\n        save() {\n            client.systemservice.save('shop-manager', () => {\n                set_variable('shop-manager:shops', client.shopmanager.shops);\n                client.shopmanager.echo('Settings saved.');\n            });\n        }\n    };\n    client.shopmanager.echo('Loaded.');\n})(args);"
+        },
+        {
+            "type": "group",
+            "items": [
+                {
+                    "type": "alias",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        var _a;\n        const parts = ((_a = args[1]) === null || _a === void 0 ? void 0 : _a.trim().toLowerCase().split(' ')) || [];\n        const command = parts.join(' ');\n        client.shopmanager.echo(`test ${parts} ${command}`);\n    })(args);"
+                        }
+                    ],
+                    "name": "Shop Manager Create",
+                    "enabled": true,
+                    "id": 3,
+                    "matching": "regexp",
+                    "whole_words": true,
+                    "case_sensitive": true,
+                    "prefix_suffix": true,
+                    "text": "^(?:sm|shop\\-manager|shop manager) create"
+                },
+                {
+                    "type": "alias",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        var _a;\n        const parts = ((_a = args[1]) === null || _a === void 0 ? void 0 : _a.trim().toLowerCase().split(' ')) || [];\n        const command = parts.join(' ');\n        if (!command) {\n            client.shopmanager.error(`You need to specify a command.`);\n            return;\n        }\n        client.shopmanager.echo(`Doing: '%white%${command}%end%'.`);\n        send_command(`unlock door down|open door down|down|close door up|lock door up`, 1);\n        send_command(command, 1);\n        send_command(`unlock door up|open door up|up|close door down|lock door down`, 1);\n    })(args);"
+                        }
+                    ],
+                    "name": "Shop Manager Do",
+                    "enabled": true,
+                    "id": 4,
+                    "matching": "regexp",
+                    "whole_words": true,
+                    "case_sensitive": true,
+                    "prefix_suffix": true,
+                    "text": "^(?:sm|shop\\-manager|shop manager) do ([\\w\\W]*)"
+                },
+                {
+                    "type": "alias",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function () {\n        const room = client.gmcpservice.latest['Room.Info'];\n        if (!room) {\n            client.shopmanager.error(`Cannot find room, please %white%look%end% then try again.`);\n            return;\n        }\n        const currentShop = client.shopmanager.shops.find(value => value.room.num === room.num);\n        if (currentShop) {\n            client.shopmanager.error(`Already registered room '%white%${room === null || room === void 0 ? void 0 : room.name}%end%' (%white%${room === null || room === void 0 ? void 0 : room.num}%end%) as our shop.`);\n            return;\n        }\n        client.shopmanager.shops.push({\n            room,\n            storefront: {\n                items: [],\n                expectedOther: []\n            },\n            stockroom: {\n                items: [],\n                expectedOther: []\n            }\n        });\n        client.shopmanager.echo(`Registered room '%white%${room === null || room === void 0 ? void 0 : room.name}%end%' (%white%${room === null || room === void 0 ? void 0 : room.num}%end%) as our shop.`);\n    })(args);"
+                        }
+                    ],
+                    "name": "Shop Manager Register Shop",
+                    "enabled": true,
+                    "id": 5,
+                    "matching": "regexp",
+                    "whole_words": true,
+                    "case_sensitive": true,
+                    "prefix_suffix": true,
+                    "text": "^(?:sm|shop\\-manager|shop manager) register(?: ?shop)?$"
+                },
+                {
+                    "type": "alias",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function () {\n        const room = client.gmcpservice.latest['Room.Info'];\n        if (!room) {\n            client.shopmanager.error(`Cannot find room, please %white%look%end% then try again.`);\n            return;\n        }\n        const index = client.shopmanager.shops.findIndex(value => value.room.num === room.num);\n        if (index === -1) {\n            client.shopmanager.error(`Room '%white%${room === null || room === void 0 ? void 0 : room.name}%end%' (%white%${room === null || room === void 0 ? void 0 : room.num}%end%) is not registered as our shop.`);\n            return;\n        }\n        client.shopmanager.shops.splice(index, 1);\n        client.shopmanager.echo(`Unregistered room '%white%${room === null || room === void 0 ? void 0 : room.name}%end%' (%white%${room === null || room === void 0 ? void 0 : room.num}%end%) as our shop.`);\n    })(args);"
+                        }
+                    ],
+                    "name": "Shop Manager Unregister Shop",
+                    "enabled": true,
+                    "id": 6,
+                    "matching": "regexp",
+                    "whole_words": true,
+                    "case_sensitive": true,
+                    "prefix_suffix": true,
+                    "text": "^(?:sm|shop\\-manager|shop manager) unregister(?: ?shop)?$"
+                }
+            ],
+            "actions": [],
+            "name": "Aliases",
+            "enabled": true,
+            "id": 7
+        },
+        {
+            "type": "group",
+            "items": [
+                {
+                    "type": "trigger",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        client.shopmanager.echo(JSON.stringify(args));\n    })(args);"
+                        }
+                    ],
+                    "name": "Report Profits",
+                    "enabled": true,
+                    "id": 8,
+                    "matching": "regexp",
+                    "whole_words": false,
+                    "case_sensitive": false,
+                    "text": "^Profits for this period were tallied, with a result of (\\d+) gold sovereigns? deposited into the stockroom\\.$"
+                },
+                {
+                    "type": "trigger",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        client.shopmanager.echo(JSON.stringify(args));\n    })(args);"
+                        }
+                    ],
+                    "name": "Report Purchase",
+                    "enabled": true,
+                    "id": 9,
+                    "matching": "regexp",
+                    "whole_words": false,
+                    "case_sensitive": false,
+                    "text": "^Someone purchased ([\\w\\W]+) \\((\\d+)\\) for (\\d+) gold\\.$"
+                },
+                {
+                    "type": "trigger",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        client.shopmanager.echo(JSON.stringify(args));\n    })(args);"
+                        }
+                    ],
+                    "name": "Report Read",
+                    "enabled": true,
+                    "id": 10,
+                    "matching": "regexp",
+                    "whole_words": false,
+                    "case_sensitive": false,
+                    "text": "^Stockroom report, penned upon the (\\d+)(?:st|nd|rd|th) of (\\w+), (\\d+) AF:$"
+                }
+            ],
+            "actions": [],
+            "name": "Triggers",
+            "enabled": true,
+            "id": 11
+        }
+    ],
+    "actions": [],
+    "name": "Shop Manager",
+    "enabled": true,
+    "id": 1,
+    "description": "A Shop Manager"
+}

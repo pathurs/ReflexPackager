@@ -1,5 +1,5 @@
 {
     "name": "Display Service",
     "description": "A Display Service",
-    "outFile": "./display-service.nxs"
+    "outFile": "./packages/display-service.nxs"
 }

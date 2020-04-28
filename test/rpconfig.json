@@ -1,5 +1,5 @@
 {
     "name": "test",
     "description": "test test",
-    "outFile": "./test.nxs"
+    "outFile": "./packages/test.nxs"
 }

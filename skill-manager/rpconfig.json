@@ -1,0 +1,5 @@
+{
+    "name": "Skill Manager",
+    "description": "A Skill Manager",
+    "outFile": "./packages/skill-manager.nxs"
+}

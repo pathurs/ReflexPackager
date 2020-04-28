@@ -39,7 +39,7 @@ export const containerOpened = new TriggerItem(
 
                 client.inventorymanager.containers.expectedOpen = undefined;
 
-                run_function('inventory-manager:save', undefined, 'Inventory Manager');
+                client.inventorymanager.save();
             }
         )
     ]

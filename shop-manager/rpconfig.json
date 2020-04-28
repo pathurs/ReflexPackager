@@ -1,0 +1,5 @@
+{
+    "name": "Shop Manager",
+    "description": "A Shop Manager",
+    "outFile": "./packages/shop-manager.nxs"
+}

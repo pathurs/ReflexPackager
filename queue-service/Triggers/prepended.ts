@@ -14,8 +14,8 @@ export const prepended = new TriggerItem(
                     gag_current_line();
                 }
 
-                const queue = args[1];
-                const command = args[2];
+                const queue = args[2];
+                const command = args[1];
 
                 switch (queue) {
                     case 'bal':
@@ -93,6 +93,7 @@ export const prepended = new TriggerItem(
 
                     default:
                         client.queueservice.error(`Unknown queue type '${queue}'.`);
+                        client.queueservice.error(`Original line '${args[0]}'.`);
                         return;
                 }
             }

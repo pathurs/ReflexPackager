@@ -15,7 +15,7 @@ export const swappedHands = new TriggerItem(
             function () {
                 client.inventorymanager.wielding.expectdSwapHands = undefined;
 
-                run_function('inventory-manager:save', undefined, 'Inventory Manager');
+                client.inventorymanager.save();
             }
         )
     ]

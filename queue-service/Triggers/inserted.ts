@@ -118,6 +118,7 @@ export const inserted = new TriggerItem(
 
                     default:
                         client.queueservice.error(`Unknown queue type '${queue}'.`);
+                        client.queueservice.error(`Original line '${args[0]}'.`);
                         return;
                 }
             }

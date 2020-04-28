@@ -1,0 +1,181 @@
+{
+    "type": "group",
+    "items": [
+        {
+            "type": "function",
+            "items": [],
+            "actions": [],
+            "name": "onLoad",
+            "enabled": true,
+            "id": 2,
+            "code": "(function () {\n    client.queueservice = {\n        enabled: true,\n        gag: true,\n        balanceQueue: [],\n        equilibriumQueue: [],\n        equilibriumBalanceQueue: [],\n        classQueue: [],\n        shipQueue: [],\n        subscriptions: [],\n        subscribe(queues, subscriber) {\n            const subscription = {\n                queues,\n                subscriber\n            };\n            client.queueservice.subscriptions.push(subscription);\n            return subscription;\n        },\n        unsubscribe(subscription) {\n            const index = client.queueservice.subscriptions.findIndex(value => value === subscription);\n            client.queueservice.subscriptions.splice(index, 1);\n        },\n        once(queues, subscriber) {\n            const subscription = client.queueservice.subscribe(queues, function (queue, method, commands) {\n                subscriber(queue, method, commands);\n                client.queueservice.unsubscribe(subscription);\n            });\n            return subscription;\n        },\n        echo(text) {\n            client.displayservice.echo(`%white%[%deepskyblue%Queue Service%end%]:%end% ${text}`);\n        },\n        error(text) {\n            client.queueservice.echo(`%red%${text}`);\n        }\n    };\n    client.queueservice.echo('Loaded.');\n})(args);"
+        },
+        {
+            "type": "group",
+            "items": [
+                {
+                    "type": "trigger",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        if (client.queueservice.gag) {\n            gag_current_line();\n        }\n        const command = args[1];\n        const queue = args[2];\n        switch (queue) {\n            case 'bal':\n            case 'balance':\n                client.queueservice.balanceQueue.push(command);\n                client.queueservice.subscriptions.forEach(subscription => {\n                    if (subscription.queues.includes('bal')) {\n                        subscription.subscriber('bal', 'add', { index: client.queueservice.balanceQueue.length - 1, command });\n                    }\n                });\n                break;\n            case 'eq':\n            case 'equilibrium':\n                client.queueservice.equilibriumQueue.push(command);\n                client.queueservice.subscriptions.forEach(subscription => {\n                    if (subscription.queues.includes('eq')) {\n                        subscription.subscriber('eq', 'add', { index: client.queueservice.equilibriumQueue.length - 1, command });\n                    }\n                });\n                break;\n            case 'eqbal':\n            case 'equilibriumbalance':\n                client.queueservice.equilibriumBalanceQueue.push(command);\n                client.queueservice.subscriptions.forEach(subscription => {\n                    if (subscription.queues.includes('eqbal')) {\n                        subscription.subscriber('eqbal', 'add', { index: client.queueservice.equilibriumBalanceQueue.length - 1, command });\n                    }\n                });\n                break;\n            case 'class':\n                client.queueservice.classQueue.push(command);\n                client.queueservice.subscriptions.forEach(subscription => {\n                    if (subscription.queues.includes('class')) {\n                        subscription.subscriber('class', 'add', { index: client.queueservice.classQueue.length - 1, command });\n                    }\n                });\n                break;\n            case 'ship':\n                client.queueservice.shipQueue.push(command);\n                client.queueservice.subscriptions.forEach(subscription => {\n                    if (subscription.queues.includes('ship')) {\n                        subscription.subscriber('ship', 'add', { index: client.queueservice.shipQueue.length - 1, command });\n                    }\n                });\n                break;\n            default:\n                client.queueservice.error(`Unknown queue type '${queue}'.`);\n                client.queueservice.error(`Original line '${args[0]}'.`);\n                return;\n        }\n    })(args);"
+                        }
+                    ],
+                    "name": "Automatically Added",
+                    "enabled": true,
+                    "id": 11,
+                    "matching": "regexp",
+                    "whole_words": false,
+                    "case_sensitive": false,
+                    "text": "^([\\w\\W]+) was added to your (\\w+) queue\\.$"
+                },
+                {
+                    "type": "trigger",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function () {\n        if (client.queueservice.gag) {\n            gag_current_line();\n        }\n        client.queueservice.balanceQueue = [];\n        client.queueservice.subscriptions.forEach(subscription => {\n            if (subscription.queues.includes('bal')) {\n                subscription.subscriber('bal', 'clear', { index: -1, command: '' });\n            }\n        });\n        client.queueservice.equilibriumQueue = [];\n        client.queueservice.subscriptions.forEach(subscription => {\n            if (subscription.queues.includes('eq')) {\n                subscription.subscriber('eq', 'clear', { index: -1, command: '' });\n            }\n        });\n        client.queueservice.equilibriumBalanceQueue = [];\n        client.queueservice.subscriptions.forEach(subscription => {\n            if (subscription.queues.includes('eqbal')) {\n                subscription.subscriber('eqbal', 'clear', { index: -1, command: '' });\n            }\n        });\n        client.queueservice.classQueue = [];\n        client.queueservice.subscriptions.forEach(subscription => {\n            if (subscription.queues.includes('class')) {\n                subscription.subscriber('class', 'clear', { index: -1, command: '' });\n            }\n        });\n        client.queueservice.shipQueue = [];\n        client.queueservice.subscriptions.forEach(subscription => {\n            if (subscription.queues.includes('ship')) {\n                subscription.subscriber('ship', 'clear', { index: -1, command: '' });\n            }\n        });\n    })(args);"
+                        }
+                    ],
+                    "name": "Cleared All Queues",
+                    "enabled": true,
+                    "id": 3,
+                    "matching": "regexp",
+                    "whole_words": false,
+                    "case_sensitive": false,
+                    "text": "^Cleared your queues\\.$"
+                },
+                {
+                    "type": "trigger",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        if (client.queueservice.gag) {\n            gag_current_line();\n        }\n        const queue = args[1];\n        switch (queue) {\n            case 'bal':\n            case 'balance':\n                client.queueservice.balanceQueue = [];\n                client.queueservice.subscriptions.forEach(subscription => {\n                    if (subscription.queues.includes('bal')) {\n                        subscription.subscriber('bal', 'clear', { index: -1, command: '' });\n                    }\n                });\n                break;\n            case 'eq':\n            case 'equilibrium':\n                client.queueservice.equilibriumQueue = [];\n                client.queueservice.subscriptions.forEach(subscription => {\n                    if (subscription.queues.includes('eq')) {\n                        subscription.subscriber('eq', 'clear', { index: -1, command: '' });\n                    }\n                });\n                break;\n            case 'eqbal':\n            case 'equilibriumbalance':\n                client.queueservice.equilibriumBalanceQueue = [];\n                client.queueservice.subscriptions.forEach(subscription => {\n                    if (subscription.queues.includes('eqbal')) {\n                        subscription.subscriber('eqbal', 'clear', { index: -1, command: '' });\n                    }\n                });\n                break;\n            case 'class':\n                client.queueservice.classQueue = [];\n                client.queueservice.subscriptions.forEach(subscription => {\n                    if (subscription.queues.includes('class')) {\n                        subscription.subscriber('class', 'clear', { index: -1, command: '' });\n                    }\n                });\n                break;\n            case 'ship':\n                client.queueservice.shipQueue = [];\n                client.queueservice.subscriptions.forEach(subscription => {\n                    if (subscription.queues.includes('ship')) {\n                        subscription.subscriber('ship', 'clear', { index: -1, command: '' });\n                    }\n                });\n                break;\n            default:\n                client.queueservice.error(`Unknown queue type '${queue}'.`);\n                client.queueservice.error(`Original line '${args[0]}'.`);\n                return;\n        }\n    })(args);"
+                        }
+                    ],
+                    "name": "Cleared Queue",
+                    "enabled": true,
+                    "id": 4,
+                    "matching": "regexp",
+                    "whole_words": false,
+                    "case_sensitive": false,
+                    "text": "^\\[System\\]: Queued (\\w+) commands cleared\\.$"
+                },
+                {
+                    "type": "trigger",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        if (client.queueservice.gag) {\n            gag_current_line();\n        }\n        const index = Number(args[1]) - 1;\n        const queue = args[2];\n        const command = args[3];\n        switch (queue) {\n            case 'bal':\n            case 'balance':\n                {\n                    const rest = client.queueservice.balanceQueue.slice(index);\n                    client.queueservice.balanceQueue.splice(index, rest.length, ...[command, ...rest]);\n                    if (client.queueservice.balanceQueue.length > 6) {\n                        client.queueservice.balanceQueue.splice(6);\n                    }\n                    client.queueservice.subscriptions.forEach(subscription => {\n                        if (subscription.queues.includes('bal')) {\n                            subscription.subscriber('bal', 'insert', { index, command });\n                        }\n                    });\n                }\n                break;\n            case 'eq':\n            case 'equilibrium':\n                {\n                    client.queueservice.equilibriumQueue.push(command);\n                    const rest = client.queueservice.equilibriumQueue.slice(index);\n                    client.queueservice.equilibriumQueue.splice(index, rest.length, ...[command, ...rest]);\n                    if (client.queueservice.equilibriumQueue.length > 6) {\n                        client.queueservice.equilibriumQueue.splice(6);\n                    }\n                    client.queueservice.subscriptions.forEach(subscription => {\n                        if (subscription.queues.includes('eq')) {\n                            subscription.subscriber('eq', 'insert', { index, command });\n                        }\n                    });\n                }\n                break;\n            case 'eqbal':\n            case 'equilibriumbalance':\n                {\n                    client.queueservice.equilibriumBalanceQueue.push(command);\n                    const rest = client.queueservice.equilibriumBalanceQueue.slice(index);\n                    client.queueservice.equilibriumBalanceQueue.splice(index, rest.length, ...[command, ...rest]);\n                    if (client.queueservice.equilibriumBalanceQueue.length > 6) {\n                        client.queueservice.equilibriumBalanceQueue.splice(6);\n                    }\n                    client.queueservice.subscriptions.forEach(subscription => {\n                        if (subscription.queues.includes('eqbal')) {\n                            subscription.subscriber('eqbal', 'insert', { index, command });\n                        }\n                    });\n                }\n                break;\n            case 'class':\n                {\n                    client.queueservice.classQueue.push(command);\n                    const rest = client.queueservice.classQueue.slice(index);\n                    client.queueservice.classQueue.splice(index, rest.length, ...[command, ...rest]);\n                    if (client.queueservice.classQueue.length > 6) {\n                        client.queueservice.classQueue.splice(6);\n                    }\n                    client.queueservice.subscriptions.forEach(subscription => {\n                        if (subscription.queues.includes('class')) {\n                            subscription.subscriber('class', 'insert', { index, command });\n                        }\n                    });\n                }\n                break;\n            case 'ship':\n                {\n                    client.queueservice.shipQueue.push(command);\n                    const rest = client.queueservice.shipQueue.slice(index);\n                    client.queueservice.shipQueue.splice(index, rest.length, ...[command, ...rest]);\n                    if (client.queueservice.shipQueue.length > 6) {\n                        client.queueservice.shipQueue.splice(6);\n                    }\n                    client.queueservice.subscriptions.forEach(subscription => {\n                        if (subscription.queues.includes('ship')) {\n                            subscription.subscriber('ship', 'insert', { index, command });\n                        }\n                    });\n                }\n                break;\n            default:\n                client.queueservice.error(`Unknown queue type '${queue}'.`);\n                client.queueservice.error(`Original line '${args[0]}'.`);\n                return;\n        }\n    })(args);"
+                        }
+                    ],
+                    "name": "Inserted",
+                    "enabled": true,
+                    "id": 5,
+                    "matching": "regexp",
+                    "whole_words": false,
+                    "case_sensitive": false,
+                    "text": "^\\[System\\]: inserted command #(\\d) in the (\\w+) queue with ([\\w\\W]+)\\.$"
+                },
+                {
+                    "type": "trigger",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        if (client.queueservice.gag) {\n            gag_current_line();\n        }\n        const command = args[1];\n        const queue = args[2];\n        switch (queue) {\n            case 'bal':\n            case 'balance':\n                client.queueservice.balanceQueue.push(command);\n                client.queueservice.subscriptions.forEach(subscription => {\n                    if (subscription.queues.includes('bal')) {\n                        subscription.subscriber('bal', 'add', { index: client.queueservice.balanceQueue.length - 1, command });\n                    }\n                });\n                break;\n            case 'eq':\n            case 'equilibrium':\n                client.queueservice.equilibriumQueue.push(command);\n                client.queueservice.subscriptions.forEach(subscription => {\n                    if (subscription.queues.includes('eq')) {\n                        subscription.subscriber('eq', 'add', { index: client.queueservice.equilibriumQueue.length - 1, command });\n                    }\n                });\n                break;\n            case 'eqbal':\n            case 'equilibriumbalance':\n                client.queueservice.equilibriumBalanceQueue.push(command);\n                client.queueservice.subscriptions.forEach(subscription => {\n                    if (subscription.queues.includes('eqbal')) {\n                        subscription.subscriber('eqbal', 'add', { index: client.queueservice.equilibriumBalanceQueue.length - 1, command });\n                    }\n                });\n                break;\n            case 'class':\n                client.queueservice.classQueue.push(command);\n                client.queueservice.subscriptions.forEach(subscription => {\n                    if (subscription.queues.includes('class')) {\n                        subscription.subscriber('class', 'add', { index: client.queueservice.classQueue.length - 1, command });\n                    }\n                });\n                break;\n            case 'ship':\n                client.queueservice.shipQueue.push(command);\n                client.queueservice.subscriptions.forEach(subscription => {\n                    if (subscription.queues.includes('ship')) {\n                        subscription.subscriber('ship', 'add', { index: client.queueservice.shipQueue.length - 1, command });\n                    }\n                });\n                break;\n            default:\n                client.queueservice.error(`Unknown queue type '${queue}'.`);\n                client.queueservice.error(`Original line '${args[0]}'.`);\n                return;\n        }\n    })(args);"
+                        }
+                    ],
+                    "name": "Manually Added",
+                    "enabled": true,
+                    "id": 6,
+                    "matching": "regexp",
+                    "whole_words": false,
+                    "case_sensitive": false,
+                    "text": "^\\[System\\]: Added ([\\w\\W]+) to your (\\w+) queue\\.$"
+                },
+                {
+                    "type": "trigger",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        if (client.queueservice.gag) {\n            gag_current_line();\n        }\n        const queue = args[2];\n        const command = args[1];\n        switch (queue) {\n            case 'bal':\n            case 'balance':\n                client.queueservice.balanceQueue.unshift(command);\n                if (client.queueservice.balanceQueue.length > 6) {\n                    client.queueservice.balanceQueue.splice(6);\n                }\n                client.queueservice.subscriptions.forEach(subscription => {\n                    if (subscription.queues.includes('bal')) {\n                        subscription.subscriber('bal', 'prepend', { index: 0, command });\n                    }\n                });\n                break;\n            case 'eq':\n            case 'equilibrium':\n                client.queueservice.equilibriumQueue.unshift(command);\n                if (client.queueservice.equilibriumQueue.length > 6) {\n                    client.queueservice.equilibriumQueue.splice(6);\n                }\n                client.queueservice.subscriptions.forEach(subscription => {\n                    if (subscription.queues.includes('eq')) {\n                        subscription.subscriber('eq', 'prepend', { index: 0, command });\n                    }\n                });\n                break;\n            case 'eqbal':\n            case 'equilibriumbalance':\n                client.queueservice.equilibriumBalanceQueue.unshift(command);\n                if (client.queueservice.equilibriumBalanceQueue.length > 6) {\n                    client.queueservice.equilibriumBalanceQueue.splice(6);\n                }\n                client.queueservice.subscriptions.forEach(subscription => {\n                    if (subscription.queues.includes('eqbal')) {\n                        subscription.subscriber('eqbal', 'prepend', { index: 0, command });\n                    }\n                });\n                break;\n            case 'class':\n                client.queueservice.classQueue.unshift(command);\n                if (client.queueservice.classQueue.length > 6) {\n                    client.queueservice.classQueue.splice(6);\n                }\n                client.queueservice.subscriptions.forEach(subscription => {\n                    if (subscription.queues.includes('class')) {\n                        subscription.subscriber('class', 'prepend', { index: 0, command });\n                    }\n                });\n                break;\n            case 'ship':\n                client.queueservice.shipQueue.unshift(args[2]);\n                if (client.queueservice.shipQueue.length > 6) {\n                    client.queueservice.shipQueue.splice(6);\n                }\n                client.queueservice.subscriptions.forEach(subscription => {\n                    if (subscription.queues.includes('ship')) {\n                        subscription.subscriber('ship', 'prepend', { index: 0, command });\n                    }\n                });\n                break;\n            default:\n                client.queueservice.error(`Unknown queue type '${queue}'.`);\n                client.queueservice.error(`Original line '${args[0]}'.`);\n                return;\n        }\n    })(args);"
+                        }
+                    ],
+                    "name": "Prepended",
+                    "enabled": true,
+                    "id": 7,
+                    "matching": "regexp",
+                    "whole_words": false,
+                    "case_sensitive": false,
+                    "text": "^\\[System\\]: Prepended ([\\w\\W]+) to your (\\w+) queue\\."
+                },
+                {
+                    "type": "trigger",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        if (client.queueservice.gag) {\n            gag_current_line();\n        }\n        const index = Number(args[1]) - 1;\n        const queue = args[2];\n        switch (queue) {\n            case 'bal':\n            case 'balance':\n                {\n                    const commands = client.queueservice.balanceQueue.splice(index, 1);\n                    client.queueservice.subscriptions.forEach(subscription => {\n                        if (subscription.queues.includes('bal')) {\n                            subscription.subscriber('bal', 'remove', { index, command: commands[0] });\n                        }\n                    });\n                }\n                break;\n            case 'eq':\n            case 'equilibrium':\n                {\n                    const commands = client.queueservice.equilibriumQueue.splice(index, 1);\n                    client.queueservice.subscriptions.forEach(subscription => {\n                        if (subscription.queues.includes('eq')) {\n                            subscription.subscriber('eq', 'remove', { index, command: commands[0] });\n                        }\n                    });\n                }\n                break;\n            case 'eqbal':\n            case 'equilibriumbalance':\n                {\n                    const commands = client.queueservice.equilibriumBalanceQueue.splice(index, 1);\n                    client.queueservice.subscriptions.forEach(subscription => {\n                        if (subscription.queues.includes('eqbal')) {\n                            subscription.subscriber('eqbal', 'remove', { index, command: commands[0] });\n                        }\n                    });\n                }\n                break;\n            case 'class':\n                {\n                    const commands = client.queueservice.classQueue.splice(index, 1);\n                    client.queueservice.subscriptions.forEach(subscription => {\n                        if (subscription.queues.includes('class')) {\n                            subscription.subscriber('class', 'remove', { index, command: commands[0] });\n                        }\n                    });\n                }\n                break;\n            case 'ship':\n                {\n                    const commands = client.queueservice.shipQueue.splice(index, 1);\n                    client.queueservice.subscriptions.forEach(subscription => {\n                        if (subscription.queues.includes('ship')) {\n                            subscription.subscriber('ship', 'remove', { index, command: commands[0] });\n                        }\n                    });\n                }\n                break;\n            default:\n                client.queueservice.error(`Unknown queue type '${queue}'.`);\n                client.queueservice.error(`Original line '${args[0]}'.`);\n                return;\n        }\n    })(args);"
+                        }
+                    ],
+                    "name": "Removed",
+                    "enabled": true,
+                    "id": 8,
+                    "matching": "regexp",
+                    "whole_words": false,
+                    "case_sensitive": false,
+                    "text": "^\\[System\\]: Removed the command at position (\\d+) in your (\\w+) queue\\.$"
+                },
+                {
+                    "type": "trigger",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        if (client.queueservice.gag) {\n            gag_current_line();\n        }\n        const index = Number(args[1]) - 1;\n        const queue = args[2];\n        const command = args[3];\n        switch (queue) {\n            case 'bal':\n            case 'balance':\n                client.queueservice.balanceQueue.splice(index, 1, command);\n                client.queueservice.subscriptions.forEach(subscription => {\n                    if (subscription.queues.includes('bal')) {\n                        subscription.subscriber('bal', 'replace', { index, command });\n                    }\n                });\n                break;\n            case 'eq':\n            case 'equilibrium':\n                client.queueservice.equilibriumQueue.splice(index, 1, command);\n                client.queueservice.subscriptions.forEach(subscription => {\n                    if (subscription.queues.includes('eq')) {\n                        subscription.subscriber('eq', 'replace', { index, command });\n                    }\n                });\n                break;\n            case 'eqbal':\n            case 'equilibriumbalance':\n                client.queueservice.equilibriumBalanceQueue.splice(index, 1, command);\n                client.queueservice.subscriptions.forEach(subscription => {\n                    if (subscription.queues.includes('eqbal')) {\n                        subscription.subscriber('eqbal', 'replace', { index, command });\n                    }\n                });\n                break;\n            case 'class':\n                client.queueservice.classQueue.splice(index, 1, command);\n                client.queueservice.subscriptions.forEach(subscription => {\n                    if (subscription.queues.includes('class')) {\n                        subscription.subscriber('class', 'replace', { index, command });\n                    }\n                });\n                break;\n            case 'ship':\n                client.queueservice.shipQueue.splice(index, 1, command);\n                client.queueservice.subscriptions.forEach(subscription => {\n                    if (subscription.queues.includes('ship')) {\n                        subscription.subscriber('ship', 'replace', { index, command });\n                    }\n                });\n                break;\n            default:\n                client.queueservice.error(`Unknown queue type '${queue}'.`);\n                client.queueservice.error(`Original line '${args[0]}'.`);\n                return;\n        }\n    })(args);"
+                        }
+                    ],
+                    "name": "Replaced",
+                    "enabled": true,
+                    "id": 9,
+                    "matching": "regexp",
+                    "whole_words": false,
+                    "case_sensitive": false,
+                    "text": "^\\[System\\]: replaced command #(\\d+) in the (\\w+) queue with ([\\w\\W]+)\\.$"
+                },
+                {
+                    "type": "trigger",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        if (client.queueservice.gag) {\n            gag_current_line();\n        }\n        const queue = args[1];\n        // const command = args[2];\n        switch (queue) {\n            case 'bal':\n            case 'balance':\n                {\n                    const command = client.queueservice.balanceQueue.shift();\n                    client.queueservice.subscriptions.forEach(subscription => {\n                        if (subscription.queues.includes('bal')) {\n                            subscription.subscriber('bal', 'run', { index: 0, command: command });\n                        }\n                    });\n                }\n                break;\n            case 'eq':\n            case 'equilibrium':\n                {\n                    const command = client.queueservice.equilibriumQueue.shift();\n                    client.queueservice.subscriptions.forEach(subscription => {\n                        if (subscription.queues.includes('eq')) {\n                            subscription.subscriber('eq', 'run', { index: 0, command: command });\n                        }\n                    });\n                }\n                break;\n            case 'eqbal':\n            case 'equilibriumbalance':\n                {\n                    const command = client.queueservice.equilibriumBalanceQueue.shift();\n                    client.queueservice.subscriptions.forEach(subscription => {\n                        if (subscription.queues.includes('eqbal')) {\n                            subscription.subscriber('eqbal', 'run', { index: 0, command: command });\n                        }\n                    });\n                }\n                break;\n            case 'class':\n                {\n                    const command = client.queueservice.classQueue.shift();\n                    client.queueservice.subscriptions.forEach(subscription => {\n                        if (subscription.queues.includes('class')) {\n                            subscription.subscriber('class', 'run', { index: 0, command: command });\n                        }\n                    });\n                }\n                break;\n            case 'ship':\n                {\n                    const command = client.queueservice.shipQueue.shift();\n                    client.queueservice.subscriptions.forEach(subscription => {\n                        if (subscription.queues.includes('ship')) {\n                            subscription.subscriber('ship', 'run', { index: 0, command: command });\n                        }\n                    });\n                }\n                break;\n            default:\n                client.queueservice.error(`Unknown queue type '${queue}'.`);\n                client.queueservice.error(`Original line '${args[0]}'.`);\n                return;\n        }\n    })(args);"
+                        }
+                    ],
+                    "name": "Running",
+                    "enabled": true,
+                    "id": 10,
+                    "matching": "regexp",
+                    "whole_words": false,
+                    "case_sensitive": false,
+                    "text": "^\\[System\\]: Running queued (\\w+) command: ([\\w\\W]+)$"
+                }
+            ],
+            "actions": [],
+            "name": "Triggers",
+            "enabled": true,
+            "id": 12
+        }
+    ],
+    "actions": [],
+    "name": "Queue Service",
+    "enabled": true,
+    "id": 1,
+    "description": "A Queue Service"
+}

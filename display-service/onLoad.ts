@@ -102,33 +102,28 @@ export const onLoad = new FunctionItem(
                 let result = message;
 
                 const pattern = /%([a-zA-Z0-9#]+)%/;
-                let first = true;
+                let depth = 0;
                 let match;
 
                 while (match = pattern.exec(result)) {
                     let replacement = '';
 
-                    if (first && match[1] == 'reset') {
-                        //skip a reset as the first tag...
-                    }
-                    else if (match[1] == 'reset') {
-                        replacement = '</span>';
-                        first = true;
-                    }
-                    else if (first) {
-                        replacement = `<span style="color: ${match[1]};">`;
-                        first = false;
+                    if (match[1] == 'end') {
+                        //skip a end at depth 0
+                        if (depth > 0) {
+                            replacement = '</span>';
+                            depth--;
+                        }
                     }
                     else {
-                        replacement = `</span><span style="color: ${match[1]};">`;
+                        replacement = `<span style="color: ${match[1]};">`;
+                        depth++;
                     }
 
                     result = result.replace(pattern, replacement);
                 }
 
-                if (!first) {
-                    result += '</span>';
-                }
+                result += '</span>'.repeat(depth);
 
                 return result;
             },
@@ -157,6 +152,6 @@ export const onLoad = new FunctionItem(
             return text.repeat(Math.max(count, 0));
         }
 
-        client.displayservice.echo('%white%[%reset%%deepskyblue%Display Service%reset%%white%]:%reset% Loaded.');
+        client.displayservice.echo('%white%[%deepskyblue%Display Service%end%]:%end% Loaded.');
     }
 );

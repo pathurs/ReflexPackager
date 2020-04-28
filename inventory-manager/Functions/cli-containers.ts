@@ -67,10 +67,10 @@ export const cliContainers = new FunctionItem(
                         send_command(`close ${containerId}`, 1);
                         send_GMCP('Char.Items.Contents', Number(containerId));
 
-                        client.inventorymanager.echo(`Now tracking container '%white%${container.name}%reset% (%white%${container.id}%reset%)'.`);
+                        client.inventorymanager.echo(`Now tracking container '%white%${container.name}%end% (%white%${container.id}%end%)'.`);
                     }
                     else {
-                        client.inventorymanager.echo(`Already tracking container '%white%${container.name}%reset% (%white%${container.id}%reset%)'.`);
+                        client.inventorymanager.echo(`Already tracking container '%white%${container.name}%end% (%white%${container.id}%end%)'.`);
                     }
                 }
                 break;
@@ -91,10 +91,10 @@ export const cliContainers = new FunctionItem(
                     if (index !== -1) {
                         client.inventorymanager.containers.tracked.splice(index, 1);
 
-                        client.inventorymanager.echo(`No longer tracking container '%white%${container.name}%reset% (%white%${container.id})%reset%'.`);
+                        client.inventorymanager.echo(`No longer tracking container '%white%${container.name}%end% (%white%${container.id})%end%'.`);
                     }
                     else {
-                        client.inventorymanager.echo(`Already not tracking container '%white%${container.name}%reset% (%white%${container.id})%reset%'.`);
+                        client.inventorymanager.echo(`Already not tracking container '%white%${container.name}%end% (%white%${container.id})%end%'.`);
                     }
                 }
                 break;
@@ -104,6 +104,6 @@ export const cliContainers = new FunctionItem(
                 break;
         }
 
-        run_function('inventory-manager:save', undefined, 'Inventory Manager');
+        client.inventorymanager.save();
     }
 );

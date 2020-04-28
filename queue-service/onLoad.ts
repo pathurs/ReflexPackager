@@ -41,7 +41,7 @@ export const onLoad = new FunctionItem(
                 return subscription;
             },
             echo(text) {
-                client.displayservice.echo(`%white%[%reset%%deepskyblue%Queue Service%reset%%white%]:%reset% ${text}`);
+                client.displayservice.echo(`%white%[%deepskyblue%Queue Service%end%]:%end% ${text}`);
             },
             error(text) {
                 client.queueservice.echo(`%red%${text}`);
