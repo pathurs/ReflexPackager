@@ -8,7 +8,7 @@
             "name": "onLoad",
             "enabled": true,
             "id": 2,
-            "code": "(function () {\n    client.huntingmanager = {\n        running: false,\n        settings: get_variable('hunting-manager:settings') || {\n            enabled: true,\n            warnAtPercent: 25,\n            fleeAtPercent: 10,\n            autoFlee: false,\n            attackCommand: 'kill'\n        },\n        room: {},\n        areas: get_variable('hunting-manager:areas') || {},\n        roomMonsters: [],\n        echo(text) {\n            client.displayservice.echo(`%white%[%deepskyblue%Hunting Manager%end%]:%end% ${text}`);\n        },\n        error(text) {\n            client.huntingmanager.echo(`%red%${text}`);\n        },\n        save() {\n            client.systemservice.save('hunting-manager', () => {\n                set_variable('hunting-manager:areas', client.huntingmanager.areas);\n                set_variable('hunting-manager:settings', client.huntingmanager.settings);\n                client.huntingmanager.echo('Settings saved.');\n            });\n        },\n        addArea(area) {\n            if (client.huntingmanager.areas[area]) {\n                return;\n            }\n            client.huntingmanager.areas[area] = {\n                name: area,\n                monsters: []\n            };\n            client.huntingmanager.echo(`Add new area: '%white%${area}%end%'.`);\n            client.huntingmanager.save();\n        },\n        addMonster(area, monster) {\n            if (!client.huntingmanager.areas[area]) {\n                client.huntingmanager.addArea(area);\n            }\n            if (client.huntingmanager.areas[area].monsters.includes(monster)) {\n                return;\n            }\n            client.huntingmanager.areas[area].monsters.push(monster);\n            client.huntingmanager.echo(`Add new monster '%white%${monster}%end%' to area '%white%${area}%end%'.`);\n            client.huntingmanager.save();\n        },\n        onRoomChange(args) {\n            switch (args.gmcp_method) {\n                case 'Char.Items.List':\n                    const monsters = new Set([\n                        ...client.huntingmanager.roomMonsters.map(monster => monster.id),\n                        ...args.gmcp_args.items.filter(item => { var _a; return (_a = item.attrib) === null || _a === void 0 ? void 0 : _a.includes('m'); }).map(monster => monster.id)\n                    ]);\n                    monsters.forEach(monsterId => {\n                        const oldMonster = client.huntingmanager.roomMonsters.find(monster => monster.id === monsterId);\n                        const newMonster = args.gmcp_args.items.find(monster => monster.id === monsterId);\n                        if (oldMonster && newMonster) {\n                            updateMonster(oldMonster, newMonster);\n                        }\n                        else if (oldMonster) {\n                            removeMonster(oldMonster);\n                        }\n                        else if (newMonster) {\n                            addMonster(newMonster);\n                        }\n                        else {\n                            throw new Error(`Hunting Manager(onRoomChange): Unknown item: '${monsterId}'`);\n                        }\n                    });\n                    break;\n                case 'Char.Items.Add':\n                    {\n                        const monster = args.gmcp_args.item;\n                        const oldMonster = client.huntingmanager.roomMonsters.find(value => value.id === monster.id);\n                        if (oldMonster) {\n                            updateMonster(oldMonster, monster);\n                        }\n                        else {\n                            addMonster(monster);\n                        }\n                    }\n                    break;\n                case 'Char.Items.Remove':\n                    {\n                        const monster = args.gmcp_args.item;\n                        const oldMonster = client.huntingmanager.roomMonsters.find(value => value.id === monster.id);\n                        if (oldMonster) {\n                            removeMonster(monster);\n                        }\n                    }\n                    break;\n                case 'Char.Items.Update':\n                    {\n                        const monster = args.gmcp_args.item;\n                        const oldMonster = client.huntingmanager.roomMonsters.find(value => value.id === monster.id);\n                        if (oldMonster) {\n                            updateMonster(oldMonster, monster);\n                        }\n                        else {\n                            addMonster(monster);\n                        }\n                    }\n                    break;\n            }\n            function addMonster(monster) {\n                client.huntingmanager.roomMonsters.push(monster);\n            }\n            function removeMonster(monster) {\n                const index = client.huntingmanager.roomMonsters.findIndex(value => value.id === monster.id);\n                client.huntingmanager.roomMonsters.splice(index, 1);\n                if (client.huntingmanager.currentTarget && client.huntingmanager.currentTarget.id === monster.id) {\n                    client.huntingmanager.tryTargetNext();\n                }\n            }\n            function updateMonster(_oldMonster, newMonster) {\n                var _a;\n                const index = client.huntingmanager.roomMonsters.findIndex(value => value.id === newMonster.id);\n                client.huntingmanager.roomMonsters[index] = newMonster;\n                if (client.huntingmanager.currentTarget && client.huntingmanager.currentTarget.id === newMonster.id) {\n                    if ((_a = newMonster.attrib) === null || _a === void 0 ? void 0 : _a.includes('d')) {\n                        client.huntingmanager.tryTargetNext();\n                    }\n                    else {\n                        client.huntingmanager.currentTarget = newMonster;\n                    }\n                }\n            }\n        },\n        start() {\n            if (client.huntingmanager.running) {\n                return;\n            }\n            client.huntingmanager.tryTargetNext();\n            if (client.huntingmanager.currentTarget) {\n                client.huntingmanager.running = true;\n                client.huntingmanager.queueSubscription = client.queueservice.subscribe(['bal', 'eq', 'eqbal'], (_queue, method, args) => {\n                    if (method === 'run' && args.command.toLowerCase().startsWith(client.huntingmanager.settings.attackCommand.toLowerCase())) {\n                        client.huntingmanager.tryAttack();\n                    }\n                });\n                client.huntingmanager.tryAttack();\n                client.huntingmanager.echo('Started hunting.');\n            }\n            else {\n                client.huntingmanager.error('Cannot start hunting. No targets found.');\n            }\n        },\n        stop() {\n            if (!client.huntingmanager.running) {\n                return;\n            }\n            client.huntingmanager.running = false;\n            client.huntingmanager.echo('Stopped hunting.');\n            if (client.huntingmanager.queueSubscription) {\n                client.queueservice.unsubscribe(client.huntingmanager.queueSubscription);\n            }\n        },\n        findTarget() {\n            if (!client.huntingmanager.areas[client.huntingmanager.room.area]) {\n                return;\n            }\n            for (const areaMonsterName of client.huntingmanager.areas[client.huntingmanager.room.area].monsters) {\n                for (const roomMonster of client.huntingmanager.roomMonsters) {\n                    if (roomMonster.name === areaMonsterName) {\n                        return roomMonster;\n                    }\n                }\n            }\n            return undefined;\n        },\n        target(target) {\n            client.huntingmanager.currentTarget = target;\n            if (!client.huntingmanager.currentTarget) {\n                client.huntingmanager.stop();\n                return;\n            }\n            GMCP.Target = client.huntingmanager.currentTarget.id;\n            set_variable('tar', client.huntingmanager.currentTarget.id);\n            set_current_target_info(client.huntingmanager.currentTarget.name, '100%', undefined);\n            send_GMCP('IRE.Target.Set', client.huntingmanager.currentTarget.id);\n            client.huntingmanager.echo(`Targetting %white%${client.huntingmanager.currentTarget.name}%end% (%white%${client.huntingmanager.currentTarget.id}%end%)`);\n        },\n        tryTargetNext() {\n            client.huntingmanager.target(client.huntingmanager.findTarget());\n        },\n        attack() {\n            if (!client.huntingmanager.currentTarget) {\n                client.huntingmanager.error('Cannot attack. No target set.');\n                client.huntingmanager.stop();\n                return;\n            }\n            send_command(`queue add eqbal ${client.huntingmanager.settings.attackCommand} ${client.huntingmanager.currentTarget.id}`, 1);\n            client.huntingmanager.echo(`Attacking %white%${client.huntingmanager.currentTarget.name}%end% (%white%${client.huntingmanager.currentTarget.id}%end%)`);\n        },\n        tryAttack() {\n            if (client.huntingmanager.currentTarget) {\n                client.huntingmanager.attack();\n            }\n        },\n        raze() {\n            if (!client.huntingmanager.settings.razeCommand) {\n                client.huntingmanager.error('Cannot raze. No raze command set.');\n                return;\n            }\n            if (!client.huntingmanager.currentTarget) {\n                client.huntingmanager.error('Cannot raze. No target set.');\n                client.huntingmanager.stop();\n                return;\n            }\n            send_command(`queue prepend eqbal ${client.huntingmanager.settings.razeCommand}`, 1);\n            client.huntingmanager.echo(`Razing %white%${client.huntingmanager.currentTarget.name}%end% (%white%${client.huntingmanager.currentTarget.id}%end%)`);\n        },\n        tryRaze() {\n            if (client.huntingmanager.settings.razeCommand && client.huntingmanager.currentTarget) {\n                client.huntingmanager.raze();\n            }\n        },\n        shield() {\n            if (!client.huntingmanager.settings.shieldCommand) {\n                client.huntingmanager.error('Cannot shield. No shield command set.');\n                return;\n            }\n            send_command(`queue addclear eqbal ${client.huntingmanager.settings.shieldCommand}`, 1);\n            client.huntingmanager.echo(`Shielding.`);\n        },\n        tryShield() {\n            if (client.huntingmanager.settings.shieldCommand) {\n                client.huntingmanager.shield();\n            }\n        }\n    };\n    client.gmcpservice.subscribe(['Char.Items.List', 'Char.Items.Add', 'Char.Items.Remove', 'Char.Items.Update'], args => {\n        if (args.gmcp_args.location === 'room') {\n            client.huntingmanager.onRoomChange(args);\n        }\n    });\n    client.gmcpservice.subscribe(['Room.Info'], args => {\n        client.huntingmanager.room = args.gmcp_args;\n    });\n    client.gmcpservice.subscribe(['IRE.Target.Set'], args => {\n        if (!args.gmcp_args && !client.huntingmanager.currentTarget) {\n            client.huntingmanager.tryTargetNext();\n            return;\n        }\n        // const target = client.huntingmanager.roomMonsters.find(monster => monster.id === args.gmcp_args);\n        // if (target) {\n        //     client.huntingmanager.target(target);\n        // }\n        // else {\n        //     client.huntingmanager.error(`IRE.Target.Set sent invalid target '${args.gmcp_args}'.`);\n        // }\n    });\n    // client.gmcpservice.subscribe(['IRE.Target.Info'], args => {\n    //     const target = client.huntingmanager.roomMonsters.find(monster => monster.id === args.gmcp_args.id);\n    //     if (target) {\n    //         client.huntingmanager.currentTarget = target;\n    //     }\n    //     else {\n    //         client.huntingmanager.error(`IRE.Target.Info sent invalid target '${JSON.stringify(args.gmcp_args)}'.`);\n    //     }\n    // });\n    send_GMCP('Char.Items.Room');\n    send_command('quicklook', 1);\n    client.huntingmanager.echo('Loaded.');\n})(args);"
+            "code": "(function () {\n    client.huntingmanager = {\n        active: false,\n        settings: get_variable('hunting-manager:settings') || {\n            enabled: true,\n            areas: {},\n            attackCommand: 'kill',\n            warnAtPercent: 30,\n            shieldAtPercent: 20,\n            autoShield: false,\n            fleeAtPercent: 10,\n            autoFlee: false\n        },\n        target: {\n            findPriorityTarget() {\n                if (!client.huntingmanager.settings.areas[client.gmcpservice.room.area]) {\n                    return;\n                }\n                const roomMobs = client.gmcpservice.items.room.filter(item => { var _a; return (_a = item.attrib) === null || _a === void 0 ? void 0 : _a.includes('m'); });\n                for (const areaMobName of client.huntingmanager.settings.areas[client.gmcpservice.room.area].mobs) {\n                    for (const roomMob of roomMobs) {\n                        if (roomMob.name === areaMobName) {\n                            return roomMob;\n                        }\n                    }\n                }\n                return undefined;\n            },\n            setTarget(target) {\n                if (client.huntingmanager.target.currentTarget && target && client.huntingmanager.target.currentTarget.id === target.id) {\n                    client.huntingmanager.target.currentTarget = target;\n                    return;\n                }\n                client.huntingmanager.target.currentTarget = target;\n                if (!client.huntingmanager.target.currentTarget) {\n                    client.huntingmanager.stop();\n                    return;\n                }\n                GMCP.Target = client.huntingmanager.target.currentTarget.id;\n                set_variable('tar', client.huntingmanager.target.currentTarget.id);\n                set_current_target_info(client.huntingmanager.target.currentTarget.name, '100%', undefined);\n                send_GMCP('IRE.Target.Set', client.huntingmanager.target.currentTarget.id);\n                client.huntingmanager.echo(`Targetting %lightgray%${client.huntingmanager.target.currentTarget.name}%end% (%lightgray%${client.huntingmanager.target.currentTarget.id}%end%)`);\n            },\n            tryTargetPriority() {\n                client.huntingmanager.target.setTarget(client.huntingmanager.target.findPriorityTarget());\n            }\n        },\n        attack: {\n            setAttackCommand(command) {\n                client.huntingmanager.settings.attackCommand = command;\n                client.systemservice.sendCommand(`alias set huntingmanagerattack stand/${client.huntingmanager.settings.attackCommand}`);\n                client.huntingmanager.save();\n                client.huntingmanager.echo(`Will now attack using '%lightgray%${client.huntingmanager.settings.attackCommand}%end%'.`);\n            },\n            attackTarget() {\n                if (!client.huntingmanager.target.currentTarget) {\n                    client.huntingmanager.error('Cannot attack. No target set.');\n                    client.huntingmanager.stop();\n                    return;\n                }\n                client.systemservice.sendCommand(`queue add eqbal huntingmanagerattack {${client.huntingmanager.target.currentTarget.id}}`);\n                client.huntingmanager.echo(`Attacking %lightgray%${client.huntingmanager.target.currentTarget.name}%end% (%lightgray%${client.huntingmanager.target.currentTarget.id}%end%)`);\n            },\n            tryAttackTarget() {\n                if (client.huntingmanager.target.currentTarget) {\n                    client.huntingmanager.attack.attackTarget();\n                }\n            }\n        },\n        raze: {\n            setRazeCommand(command) {\n                client.huntingmanager.settings.razeCommand = command;\n                client.systemservice.sendCommand(`alias set huntingmanagerraze stand/${client.huntingmanager.settings.razeCommand}`);\n                client.huntingmanager.save();\n                client.huntingmanager.echo(`Will now raze using '%lightgray%${client.huntingmanager.settings.razeCommand}%end%'.`);\n            },\n            razeTarget() {\n                if (!client.huntingmanager.settings.razeCommand) {\n                    client.huntingmanager.error('Cannot raze. No raze command set.');\n                    return;\n                }\n                if (!client.huntingmanager.target.currentTarget) {\n                    client.huntingmanager.error('Cannot raze. No target set.');\n                    client.huntingmanager.stop();\n                    return;\n                }\n                client.systemservice.sendCommand(`queue prepend eqbal huntingmanagerraze {${client.huntingmanager.target.currentTarget.id}}`);\n                client.huntingmanager.echo(`Razing %lightgray%${client.huntingmanager.target.currentTarget.name}%end% (%lightgray%${client.huntingmanager.target.currentTarget.id}%end%)`);\n            },\n            tryRazeTarget() {\n                if (client.huntingmanager.settings.razeCommand && client.huntingmanager.target.currentTarget) {\n                    client.huntingmanager.raze.razeTarget();\n                }\n            }\n        },\n        warn: {\n            setWarnAtPercent(percent) {\n                client.huntingmanager.settings.warnAtPercent = percent;\n                client.huntingmanager.save();\n                client.huntingmanager.echo(`Will now warn below '%lightgray%${client.huntingmanager.settings.warnAtPercent}%%end%'.`);\n            }\n        },\n        shield: {\n            setShieldCommand(command) {\n                client.huntingmanager.settings.shieldCommand = command;\n                client.systemservice.sendCommand(`alias set huntingmanagershield stand/${client.huntingmanager.settings.shieldCommand}`);\n                client.huntingmanager.save();\n                client.huntingmanager.echo(`Will now shield using '%lightgray%${client.huntingmanager.settings.shieldCommand}%end%'.`);\n            },\n            setShieldAtPercent(percent) {\n                client.huntingmanager.settings.shieldAtPercent = percent;\n                client.huntingmanager.save();\n                client.huntingmanager.echo(`Will now attempt to shield below '%lightgray%${client.huntingmanager.settings.shieldAtPercent}%%end%'.`);\n            },\n            shield() {\n                if (!client.huntingmanager.settings.shieldCommand) {\n                    client.huntingmanager.error('Cannot shield. No shield command set.');\n                    return;\n                }\n                client.systemservice.sendCommand(`queue addclear eqbal huntingmanagershield`);\n                client.huntingmanager.echo(`Shielding.`);\n            },\n            tryShield() {\n                if (client.huntingmanager.settings.shieldCommand) {\n                    client.huntingmanager.shield.shield();\n                }\n            }\n        },\n        flee: {\n            setFleeAtPercent(percent) {\n                client.huntingmanager.settings.fleeAtPercent = percent;\n                client.huntingmanager.save();\n                client.huntingmanager.echo(`Will now attempt to flee below '%lightgray%${client.huntingmanager.settings.fleeAtPercent}%%end%'.`);\n            },\n            flee() {\n            },\n            tryFlee() {\n            }\n        },\n        echo(text) {\n            client.displayservice.echo(`%lightgray%[%deepskyblue%Hunting Manager%end%]:%end% ${text}`);\n        },\n        error(text) {\n            client.huntingmanager.echo(`%red%${text}`);\n        },\n        save() {\n            client.systemservice.save('hunting-manager', () => {\n                set_variable('hunting-manager:settings', client.huntingmanager.settings);\n                client.huntingmanager.echo('Settings saved.');\n            });\n        },\n        addArea(area) {\n            if (client.huntingmanager.settings.areas[area]) {\n                return;\n            }\n            client.huntingmanager.settings.areas[area] = {\n                name: area,\n                mobs: []\n            };\n            client.huntingmanager.echo(`Add new area: '%lightgray%${area}%end%'.`);\n            client.huntingmanager.save();\n        },\n        addMob(area, mob) {\n            if (!client.huntingmanager.settings.areas[area]) {\n                client.huntingmanager.addArea(area);\n            }\n            if (client.huntingmanager.settings.areas[area].mobs.includes(mob)) {\n                return;\n            }\n            client.huntingmanager.settings.areas[area].mobs.push(mob);\n            client.huntingmanager.echo(`Add new mob '%lightgray%${mob}%end%' to area '%lightgray%${area}%end%'.`);\n            client.huntingmanager.save();\n        },\n        start() {\n            if (client.huntingmanager.active) {\n                return;\n            }\n            client.huntingmanager.target.tryTargetPriority();\n            if (client.huntingmanager.target.currentTarget) {\n                client.huntingmanager.active = true;\n                client.huntingmanager.attack.tryAttackTarget();\n                client.huntingmanager.echo('Started hunting.');\n            }\n            else {\n                client.huntingmanager.error('Cannot start hunting. No targets found.');\n            }\n        },\n        stop() {\n            if (!client.huntingmanager.active) {\n                return;\n            }\n            client.huntingmanager.active = false;\n            // client.queueservice.balanceQueue.forEach((value, index) => {\n            //     if (value.toLowerCase().startsWith('huntingmanager')) {\n            //         client.systemservice.sendCommand(`queue remove bal ${index + 1}`);\n            //     }\n            // });\n            // client.queueservice.equilibriumQueue.forEach((value, index) => {\n            //     if (value.toLowerCase().startsWith('huntingmanager')) {\n            //         client.systemservice.sendCommand(`queue remove eq ${index + 1}`);\n            //     }\n            // });\n            // client.queueservice.equilibriumBalanceQueue.forEach((value, index) => {\n            //     if (value.toLowerCase().startsWith('huntingmanager')) {\n            //         client.systemservice.sendCommand(`queue remove eqbal ${index + 1}`);\n            //     }\n            // });\n            client.huntingmanager.echo('Stopped hunting.');\n        }\n    };\n    client.gmcpservice.subscribe(['Char.Items.List', 'Char.Items.Remove'], args => {\n        if (client.huntingmanager.settings.enabled && client.huntingmanager.active) {\n            if (args.gmcp_args.location === 'room') {\n                if (args.gmcp_method === 'Char.Items.List') {\n                    const currentTarget = client.huntingmanager.target.currentTarget;\n                    if (currentTarget) {\n                        const mob = args.gmcp_args.items.find(value => value.id === currentTarget.id);\n                        if (!mob) {\n                            client.huntingmanager.target.tryTargetPriority();\n                        }\n                    }\n                }\n                else {\n                    if (client.huntingmanager.target.currentTarget) {\n                        const mob = args.gmcp_args.item;\n                        if (client.huntingmanager.target.currentTarget.id === mob.id) {\n                            client.huntingmanager.target.tryTargetPriority();\n                        }\n                    }\n                }\n            }\n        }\n    });\n    // client.gmcpservice.subscribe(['IRE.Target.Set'], args => {\n    //     if (client.huntingmanager.settings.enabled && client.huntingmanager.active) {\n    //         if (!args.gmcp_args) {\n    //             client.huntingmanager.target.tryTargetPriority();\n    //             return;\n    //         }\n    //     }\n    // });\n    client.gmcpservice.subscribe(['Room.Info'], () => {\n        if (client.huntingmanager.settings.enabled && client.huntingmanager.active) {\n            if (client.gmcpservice.previousRoom.num !== client.gmcpservice.room.num) {\n                client.huntingmanager.stop();\n            }\n        }\n    });\n    client.gmcpservice.subscribe(['Char.Vitals'], args => {\n        if (client.huntingmanager.active) {\n            const hp = Number(args.gmcp_args.hp);\n            const maxhp = Number(args.gmcp_args.maxhp);\n            const percent = hp / maxhp * 100;\n            const percentText = Math.ceil(percent);\n            if (client.huntingmanager.settings.fleeAtPercent && percent <= client.huntingmanager.settings.fleeAtPercent) {\n                if (client.huntingmanager.settings.autoFlee) {\n                    client.huntingmanager.flee.tryFlee();\n                    client.huntingmanager.echo(`%red% ! FLEEING ! %end% You are below %red%${percentText}%%end% health! %red% ! FLEEING ! %end%`);\n                }\n                else {\n                    client.huntingmanager.echo(`%red% ! FLEE ! %end% You are below %red%${percentText}%%end% health! %red% ! FLEE ! %end%`);\n                }\n            }\n            else if (client.huntingmanager.settings.shieldAtPercent && percent <= client.huntingmanager.settings.shieldAtPercent) {\n                if (client.huntingmanager.settings.autoShield) {\n                    client.huntingmanager.shield.tryShield();\n                    client.huntingmanager.echo(`%orange% ! SHIELDING ! %end% You are below %orange%${percentText}%%end% health! %orange% ! SHIELDING ! %end%`);\n                }\n                else {\n                    client.huntingmanager.echo(`%orange% ! SHIELD ! %end% You are below %orange%${percentText}%%end% health! %orange% ! SHIELD ! %end%`);\n                }\n            }\n            else if (client.huntingmanager.settings.warnAtPercent && percent <= client.huntingmanager.settings.warnAtPercent) {\n                client.huntingmanager.echo(`%yellow% ! WARNING ! %end% You are below %yellow%${percentText}%%end% health! %yellow% ! WARNING ! %end%`);\n            }\n        }\n    });\n    client.queueservice.subscribe(['bal', 'eq', 'eqbal'], (_queue, method, args) => {\n        if (client.huntingmanager.active) {\n            if (method === 'run' && args.command.toLowerCase().startsWith('huntingmanagerattack')) {\n                client.huntingmanager.attack.tryAttackTarget();\n            }\n        }\n    });\n    client.systemservice.sendCommand(`alias set huntingmanagerattack stand/${client.huntingmanager.settings.attackCommand}`);\n    client.systemservice.sendCommand(`alias set huntingmanagerraze stand/${client.huntingmanager.settings.razeCommand}`);\n    client.systemservice.sendCommand(`alias set huntingmanagershield stand/${client.huntingmanager.settings.shieldCommand}`);\n    client.huntingmanager.echo('Loaded.');\n})(args);"
         },
         {
             "type": "group",
@@ -19,17 +19,17 @@
                     "actions": [
                         {
                             "action": "script",
-                            "script": "(function (args) {\n        var _a;\n        const parts = ((_a = args[1]) === null || _a === void 0 ? void 0 : _a.trim().split(' ')) || [];\n        switch (`${parts[0]}`.toLowerCase()) {\n            case 'start':\n                client.huntingmanager.start();\n                break;\n            case 'stop':\n                client.huntingmanager.stop();\n                break;\n            case 'attack':\n            case 'attackcommand':\n                {\n                    const command = parts.slice(1).join(' ');\n                    if (!command) {\n                        client.huntingmanager.error(`Invalid attack command '${command}'.`);\n                        break;\n                    }\n                    client.huntingmanager.settings.attackCommand = command;\n                    client.huntingmanager.save();\n                    client.huntingmanager.echo(`Shield attack is now '${client.huntingmanager.settings.attackCommand}'.`);\n                }\n                break;\n            case 'raze':\n            case 'razecommand':\n                {\n                    const command = parts.slice(1).join(' ');\n                    if (!command) {\n                        client.huntingmanager.error(`Invalid raze command '${command}'.`);\n                        break;\n                    }\n                    client.huntingmanager.settings.razeCommand = command;\n                    client.huntingmanager.save();\n                    client.huntingmanager.echo(`Raze command is now '${client.huntingmanager.settings.razeCommand}'.`);\n                }\n                break;\n            case 'shield':\n            case 'shieldcommand':\n                {\n                    const command = parts.slice(1).join(' ');\n                    if (!command) {\n                        client.huntingmanager.error(`Invalid shield command '${command}'.`);\n                        break;\n                    }\n                    client.huntingmanager.settings.shieldCommand = command;\n                    client.huntingmanager.save();\n                    client.huntingmanager.echo(`Shield command is now '${client.huntingmanager.settings.shieldCommand}'.`);\n                }\n                break;\n        }\n    })(args);"
+                            "script": "(function (args) {\n        if (client.huntingmanager.settings.enabled) {\n            const mob = args[1];\n            client.huntingmanager.addMob(client.gmcpservice.room.area, mob);\n        }\n    })(args);"
                         }
                     ],
-                    "name": "Hunting Manager",
+                    "name": "Hunting Manager Add Mob",
                     "enabled": true,
                     "id": 3,
                     "matching": "regexp",
                     "whole_words": true,
                     "case_sensitive": true,
                     "prefix_suffix": true,
-                    "text": "^(?:hm|hunting\\-manager|hunting manager) ([\\w\\W]*)"
+                    "text": "^(?:hm|hunting\\-manager|hunting manager) add(?: ?mod)? ([\\w\\W]+)$"
                 },
                 {
                     "type": "alias",
@@ -37,12 +37,156 @@
                     "actions": [
                         {
                             "action": "script",
-                            "script": "(function (args) {\n        const levelExperiences = [\n            0, 5000, 10500, 20550, 35205,\n            50525, 70577, 95043, 122000, 152000,\n            185000, 225000, 267000, 312000, 359000,\n            407000, 456000, 506000, 561000, 621000,\n            691000, 761000, 836000, 916000, 1001000,\n            1091000, 1186000, 1286000, 1391000, 1501000,\n            1616000, 1736000, 1861000, 1986000, 2116000,\n            2251000, 2391000, 2536000, 2686000, 2941000,\n            3096000, 3256000, 3416000, 3581000, 3746000,\n            3916000, 4150000, 4353395, 4794382, 5279468,\n            5813062, 6400016, 7045665, 7755879, 8537115,\n            9396474, 10341769, 11381594, 12525401, 13783589,\n            15167596, 16690004, 18364653, 20206766, 22233091,\n            24462048, 26913901, 29610939, 32576939, 35840356,\n            39430114, 43378848, 47722456, 52500425, 60000000,\n            70000000, 83000000, 100000000, 120000000, 150000000,\n            185000000, 225000000, 270000000, 320000000, 375000000,\n            435000000, 500000000, 570000000, 645000000, 725000000,\n            810000000, 900000000, 995000000, 1095000000, 1200000000,\n            1310000000, 1425000000, 1545000000, 1670000000, 2000000000,\n            2346500000, 2710325000, 3092341200, 3493458200, 3914631000,\n            4356862400, 4821205300, 5308765300, 5820703300, 6358238200,\n            6922649800, 7515281900, 8137545600, 8790922400, 9476968000,\n            10197315800, 10953680900, 11747864200, 12581756600, 13457343600,\n            14376709900, 15342044500, 16355645800, 17419927100, 18537422400,\n            19710792400, 20942830900, 22236471300, 23594793700, 25021032200,\n            26518582600, 28091010500, 29742059700, 31475661300, 33295942900,\n            35207238500, 37214098800, 39321302100, 41533865500, 43857057000,\n            46296408000, 48857726500, 51547110900, 54370964500, 57336010700,\n            60449309200, 63718272600, 67150684100, 70754716100, 74538949700,\n            78512394900, 82684512300, 87065235500, 91664994800, 96494742000,\n            101565976500, 106890772700, 112481808700, 118352396500, 124516513600,\n            130988836500, 137784775500, 144920511400, 152413034000, 160280182700,\n            168540688800, 177214220200, 186321428100, 195883996300, 205924692900,\n            216467424000, 227537292000, 239160653000, 251365182000, 264179938000,\n            277635431000, 291763699000, 306598380000, 322174795000, 338530031000,\n            355703029000, 373734676000, 392667906000, 412547797000, 433421683000,\n            455339262000, 478352721000, 502516853000, 527889191000, 554530146000,\n            582503149000, 611874801000, 642715037000, 675097284000, 709098643000,\n            744800071000, 782286569000, 821647393000, 862976257000, 906371565000,\n        ];\n        const from = Number(args[1]);\n        const to = Number(args[2]);\n        const percent = percentageTo(from, to);\n        client.huntingmanager.echo(`Percent from level '%white%${from}%end%' to level '%white%${to}%end%' is '%white%${percent}%%end%'.`);\n        function getExperience(level) {\n            const levelInteger = Math.floor(level);\n            const percent = level % 1;\n            let toNextLevel = (levelExperiences[levelInteger + 1] - levelExperiences[levelInteger]);\n            return levelExperiences[levelInteger] + (toNextLevel * percent / 100);\n        }\n        function percentageTo(from, to) {\n            let x = getExperience(from) / getExperience(to) * 100;\n            x = Math.floor(x * 100 + 0.5) / 100;\n            return x;\n        }\n    })(args);"
+                            "script": "(function (args) {\n        if (client.huntingmanager.settings.enabled) {\n            const command = args[1];\n            if (!command.includes('%1')) {\n                client.huntingmanager.error(`Attack command must include '%lightgray%%1%end%' to properly attack.`);\n                client.huntingmanager.echo(`For example: '%lightgray%kick %1%end%'.`);\n                return;\n            }\n            client.huntingmanager.attack.setAttackCommand(command);\n        }\n    })(args);"
+                        }
+                    ],
+                    "name": "Hunting Manager Set Attack Command",
+                    "enabled": true,
+                    "id": 4,
+                    "matching": "regexp",
+                    "whole_words": true,
+                    "case_sensitive": true,
+                    "prefix_suffix": true,
+                    "text": "^(?:hm|hunting\\-manager|hunting manager)(?: set)? attack ?command ([\\w\\W]+)$"
+                },
+                {
+                    "type": "alias",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        if (client.huntingmanager.settings.enabled) {\n            const percent = Number(args[1]);\n            client.huntingmanager.flee.setFleeAtPercent(percent);\n        }\n    })(args);"
+                        }
+                    ],
+                    "name": "Hunting Manager Set Flee At Percent",
+                    "enabled": true,
+                    "id": 5,
+                    "matching": "regexp",
+                    "whole_words": true,
+                    "case_sensitive": true,
+                    "prefix_suffix": true,
+                    "text": "^(?:hm|hunting\\-manager|hunting manager)(?: set)? flee ?at(?: ?percent)? (\\d+)$"
+                },
+                {
+                    "type": "alias",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        if (client.huntingmanager.settings.enabled) {\n            const command = args[1];\n            if (!command.includes('%1')) {\n                client.huntingmanager.error(`Raze command must include '%lightgray%%1%end%' to properly raze.`);\n                client.huntingmanager.echo(`For example: '%lightgray%touch hammer %1%end%'.`);\n                return;\n            }\n            client.huntingmanager.raze.setRazeCommand(command);\n        }\n    })(args);"
+                        }
+                    ],
+                    "name": "Hunting Manager Set Raze Command",
+                    "enabled": true,
+                    "id": 6,
+                    "matching": "regexp",
+                    "whole_words": true,
+                    "case_sensitive": true,
+                    "prefix_suffix": true,
+                    "text": "^(?:hm|hunting\\-manager|hunting manager)(?: set)? raze ?command ([\\w\\W]+)$"
+                },
+                {
+                    "type": "alias",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        if (client.huntingmanager.settings.enabled) {\n            const percent = Number(args[1]);\n            client.huntingmanager.shield.setShieldAtPercent(percent);\n        }\n    })(args);"
+                        }
+                    ],
+                    "name": "Hunting Manager Set Shield At Percent",
+                    "enabled": true,
+                    "id": 7,
+                    "matching": "regexp",
+                    "whole_words": true,
+                    "case_sensitive": true,
+                    "prefix_suffix": true,
+                    "text": "^(?:hm|hunting\\-manager|hunting manager)(?: set)? shield ?at(?: ?percent)? (\\d+)$"
+                },
+                {
+                    "type": "alias",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        if (client.huntingmanager.settings.enabled) {\n            const command = args[1];\n            client.huntingmanager.shield.setShieldCommand(command);\n        }\n    })(args);"
+                        }
+                    ],
+                    "name": "Hunting Manager Set Shield Command",
+                    "enabled": true,
+                    "id": 8,
+                    "matching": "regexp",
+                    "whole_words": true,
+                    "case_sensitive": true,
+                    "prefix_suffix": true,
+                    "text": "^(?:hm|hunting\\-manager|hunting manager)(?: set)? shield ?command ([\\w\\W]+)$"
+                },
+                {
+                    "type": "alias",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        if (client.huntingmanager.settings.enabled) {\n            const percent = Number(args[1]);\n            client.huntingmanager.warn.setWarnAtPercent(percent);\n        }\n    })(args);"
+                        }
+                    ],
+                    "name": "Hunting Manager Set Warn At Percent",
+                    "enabled": true,
+                    "id": 9,
+                    "matching": "regexp",
+                    "whole_words": true,
+                    "case_sensitive": true,
+                    "prefix_suffix": true,
+                    "text": "^(?:hm|hunting\\-manager|hunting manager)(?: set)? warn ?at(?: ?percent)? (\\d+)$"
+                },
+                {
+                    "type": "alias",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function () {\n        if (client.huntingmanager.settings.enabled) {\n            client.huntingmanager.start();\n        }\n    })(args);"
+                        }
+                    ],
+                    "name": "Hunting Manager Start",
+                    "enabled": true,
+                    "id": 10,
+                    "matching": "regexp",
+                    "whole_words": true,
+                    "case_sensitive": true,
+                    "prefix_suffix": true,
+                    "text": "^(?:hm|hunting\\-manager|hunting manager) start$"
+                },
+                {
+                    "type": "alias",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function () {\n        if (client.huntingmanager.settings.enabled) {\n            client.huntingmanager.stop();\n        }\n    })(args);"
+                        }
+                    ],
+                    "name": "Hunting Manager Stop",
+                    "enabled": true,
+                    "id": 11,
+                    "matching": "regexp",
+                    "whole_words": true,
+                    "case_sensitive": true,
+                    "prefix_suffix": true,
+                    "text": "^(?:hm|hunting\\-manager|hunting manager) stop$"
+                },
+                {
+                    "type": "alias",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        if (client.huntingmanager.settings.enabled) {\n            const levelExperiences = [\n                0, 5000, 10500, 20550, 35205,\n                50525, 70577, 95043, 122000, 152000,\n                185000, 225000, 267000, 312000, 359000,\n                407000, 456000, 506000, 561000, 621000,\n                691000, 761000, 836000, 916000, 1001000,\n                1091000, 1186000, 1286000, 1391000, 1501000,\n                1616000, 1736000, 1861000, 1986000, 2116000,\n                2251000, 2391000, 2536000, 2686000, 2941000,\n                3096000, 3256000, 3416000, 3581000, 3746000,\n                3916000, 4150000, 4353395, 4794382, 5279468,\n                5813062, 6400016, 7045665, 7755879, 8537115,\n                9396474, 10341769, 11381594, 12525401, 13783589,\n                15167596, 16690004, 18364653, 20206766, 22233091,\n                24462048, 26913901, 29610939, 32576939, 35840356,\n                39430114, 43378848, 47722456, 52500425, 60000000,\n                70000000, 83000000, 100000000, 120000000, 150000000,\n                185000000, 225000000, 270000000, 320000000, 375000000,\n                435000000, 500000000, 570000000, 645000000, 725000000,\n                810000000, 900000000, 995000000, 1095000000, 1200000000,\n                1310000000, 1425000000, 1545000000, 1670000000, 2000000000,\n                2346500000, 2710325000, 3092341200, 3493458200, 3914631000,\n                4356862400, 4821205300, 5308765300, 5820703300, 6358238200,\n                6922649800, 7515281900, 8137545600, 8790922400, 9476968000,\n                10197315800, 10953680900, 11747864200, 12581756600, 13457343600,\n                14376709900, 15342044500, 16355645800, 17419927100, 18537422400,\n                19710792400, 20942830900, 22236471300, 23594793700, 25021032200,\n                26518582600, 28091010500, 29742059700, 31475661300, 33295942900,\n                35207238500, 37214098800, 39321302100, 41533865500, 43857057000,\n                46296408000, 48857726500, 51547110900, 54370964500, 57336010700,\n                60449309200, 63718272600, 67150684100, 70754716100, 74538949700,\n                78512394900, 82684512300, 87065235500, 91664994800, 96494742000,\n                101565976500, 106890772700, 112481808700, 118352396500, 124516513600,\n                130988836500, 137784775500, 144920511400, 152413034000, 160280182700,\n                168540688800, 177214220200, 186321428100, 195883996300, 205924692900,\n                216467424000, 227537292000, 239160653000, 251365182000, 264179938000,\n                277635431000, 291763699000, 306598380000, 322174795000, 338530031000,\n                355703029000, 373734676000, 392667906000, 412547797000, 433421683000,\n                455339262000, 478352721000, 502516853000, 527889191000, 554530146000,\n                582503149000, 611874801000, 642715037000, 675097284000, 709098643000,\n                744800071000, 782286569000, 821647393000, 862976257000, 906371565000,\n            ];\n            const from = Number(args[1]);\n            const to = Number(args[2]);\n            const percent = percentageTo(from, to);\n            client.huntingmanager.echo(`Percent from level '%lightgray%${from}%end%' to level '%lightgray%${to}%end%' is '%lightgray%${percent}%%end%'.`);\n            function getExperience(level) {\n                const levelInteger = Math.floor(level);\n                const percent = level % 1;\n                let toNextLevel = (levelExperiences[levelInteger + 1] - levelExperiences[levelInteger]);\n                return levelExperiences[levelInteger] + (toNextLevel * percent);\n            }\n            function percentageTo(from, to) {\n                let x = getExperience(from) / getExperience(to) * 100;\n                x = Math.floor(x * 100 + 0.5) / 100;\n                return x;\n            }\n        }\n    })(args);"
                         }
                     ],
                     "name": "Percent to Level",
                     "enabled": true,
-                    "id": 4,
+                    "id": 12,
                     "matching": "regexp",
                     "whole_words": true,
                     "case_sensitive": true,
@@ -53,7 +197,7 @@
             "actions": [],
             "name": "Aliases",
             "enabled": true,
-            "id": 5
+            "id": 13
         },
         {
             "type": "group",
@@ -64,12 +208,29 @@
                     "actions": [
                         {
                             "action": "script",
-                            "script": "(function (args) {\n        if (client.huntingmanager.running && client.huntingmanager.currentTarget && client.huntingmanager.currentTarget.name === args[1]) {\n            client.huntingmanager.tryRaze();\n        }\n    })(args);"
+                            "script": "(function () {\n        if (client.huntingmanager.settings.enabled && client.huntingmanager.active) {\n            client.huntingmanager.error(`Cannot hunt while graced.`);\n            client.huntingmanager.stop();\n        }\n    })(args);"
                         }
                     ],
-                    "name": "Hit Monster Shield",
+                    "name": "Grace",
                     "enabled": true,
-                    "id": 7,
+                    "id": 18,
+                    "matching": "regexp",
+                    "whole_words": false,
+                    "case_sensitive": false,
+                    "text": "^You currently walk in Divine Grace and may neither be harmed nor harm another\\. To leave this state of protection, you must RENOUNCE GRACE\\.$"
+                },
+                {
+                    "type": "trigger",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        if (client.huntingmanager.settings.enabled && client.huntingmanager.active) {\n            if (client.huntingmanager.target.currentTarget && client.huntingmanager.target.currentTarget.name === args[1]) {\n                client.huntingmanager.raze.tryRazeTarget();\n            }\n        }\n    })(args);"
+                        }
+                    ],
+                    "name": "Hit Mob Shield",
+                    "enabled": true,
+                    "id": 15,
                     "matching": "regexp",
                     "whole_words": false,
                     "case_sensitive": false,
@@ -81,12 +242,12 @@
                     "actions": [
                         {
                             "action": "script",
-                            "script": "(function (args) {\n        client.huntingmanager.addMonster(client.huntingmanager.room.area, args[1]);\n    })(args);"
+                            "script": "(function (args) {\n        if (client.huntingmanager.settings.enabled) {\n            client.huntingmanager.addMob(client.gmcpservice.room.area, args[1]);\n        }\n    })(args);"
                         }
                     ],
-                    "name": "Killed Monster",
+                    "name": "Killed Mob",
                     "enabled": true,
-                    "id": 6,
+                    "id": 14,
                     "matching": "regexp",
                     "whole_words": false,
                     "case_sensitive": false,
@@ -98,22 +259,39 @@
                     "actions": [
                         {
                             "action": "script",
-                            "script": "(function (args) {\n        if (client.huntingmanager.running && client.huntingmanager.currentTarget && client.huntingmanager.currentTarget.name === args[1]) {\n            client.huntingmanager.tryRaze();\n        }\n    })(args);"
+                            "script": "(function (args) {\n        if (client.huntingmanager.settings.enabled && client.huntingmanager.active) {\n            if (client.huntingmanager.target.currentTarget && client.huntingmanager.target.currentTarget.name === args[1]) {\n                client.huntingmanager.raze.tryRazeTarget();\n            }\n        }\n    })(args);"
                         }
                     ],
-                    "name": "Monster Shielded",
+                    "name": "Mob Shielded",
                     "enabled": true,
-                    "id": 8,
+                    "id": 16,
                     "matching": "regexp",
                     "whole_words": false,
                     "case_sensitive": false,
                     "text": "^A nearly invisible magical shield forms around ([\\w\\W]+)\\.$"
+                },
+                {
+                    "type": "trigger",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function () {\n        if (client.huntingmanager.settings.enabled && client.huntingmanager.active) {\n            gag_current_line();\n        }\n    })(args);"
+                        }
+                    ],
+                    "name": "Not Prone",
+                    "enabled": true,
+                    "id": 17,
+                    "matching": "regexp",
+                    "whole_words": false,
+                    "case_sensitive": false,
+                    "text": "^You are not fallen or kneeling\\.$"
                 }
             ],
             "actions": [],
             "name": "Triggers",
             "enabled": true,
-            "id": 9
+            "id": 19
         }
     ],
     "actions": [],

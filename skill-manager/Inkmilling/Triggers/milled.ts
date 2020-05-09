@@ -1,21 +1,20 @@
 import { TriggerItem, TriggerType, ExecuteScriptAction } from '../../../source';
-import { SkillManagerClient } from '../../skill-manager';
+import { SystemServiceClient } from 'system-service/system-service';
+import { SkillManagerClient } from 'skill-manager/skill-manager';
 
-declare const client: SkillManagerClient;
+declare const client: SkillManagerClient & SystemServiceClient;
 
 export const milled = new TriggerItem(
     'Milled',
-    [
-        /^With a satisfying rattle, you note that the milling is complete as the fruit of your labours drops into the opening at the base of the mill\.$/
-    ],
+    /^With a satisfying rattle, you note that the milling is complete as the fruit of your labours drops into the opening at the base of the mill\.$/,
     TriggerType.RegularExpression,
     [
         new ExecuteScriptAction(
             function () {
-                if (client.skillmanager.inkmilling.running) {
-                    send_command(`get group ink from mill|get ink from mill|inrift 50 ink`, 1);
+                if (client.skillmanager.inkmilling.active) {
+                    client.systemservice.sendCommand(`get group ink from mill|get ink from mill|inrift all ink`);
 
-                    client.skillmanager.runQueue();
+                    client.skillmanager.inkmilling.runQueue();
                 }
             }
         )

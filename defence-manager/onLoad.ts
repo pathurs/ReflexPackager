@@ -1,9 +1,10 @@
 import { FunctionItem } from '../source';
+import { DisplayServiceClient } from 'display-service/display-service';
+import { SystemServiceClient } from 'system-service/system-service';
+import { GMCPServiceClient } from 'gmcp-service/gmcp-service';
 import { DefenceManagerClient } from './defence-manager';
-import { GMCPServiceClient } from '../gmcp-service/gmcp-service';
-import { DisplayServiceClient } from '../display-service/display-service';
 
-declare const client: DefenceManagerClient & GMCPServiceClient & DisplayServiceClient;
+declare const client: DefenceManagerClient & DisplayServiceClient & SystemServiceClient & GMCPServiceClient;
 
 export const onLoad = new FunctionItem(
     'onLoad',
@@ -646,15 +647,15 @@ export const onLoad = new FunctionItem(
             currentDefenceIds: [],
             expectedDefenceIds: [],
             echo(text) {
-                client.displayservice.echo(`%white%[%deepskyblue%Defence Manager%end%]:%end% ${text}`);
+                client.displayservice.echo(`%lightgray%[%deepskyblue%Defence Manager%end%]:%end% ${text}`);
             },
             error(text) {
                 client.defencemanager.echo(`%red%${text}`);
             },
             save() {
-                gmcp_save_system();
-
-                client.defencemanager.echo('Settings saved.');
+                client.systemservice.save('defence-manager', () => {
+                    client.defencemanager.echo('Settings saved.');
+                });
             }
         };
 

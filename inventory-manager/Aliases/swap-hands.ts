@@ -1,7 +1,8 @@
 import { AliasItem, AliasType, ExecuteScriptAction } from '../../source';
+import { SystemServiceClient } from 'system-service/system-service';
 import { InventoryManagerClient } from '../inventory-manager';
 
-declare const client: InventoryManagerClient;
+declare const client: InventoryManagerClient & SystemServiceClient;
 
 export const swapHands = new AliasItem(
     'Swap Hands',
@@ -10,15 +11,15 @@ export const swapHands = new AliasItem(
     [
         new ExecuteScriptAction(
             function () {
-                send_command('swap hands', 1);
+                client.systemservice.sendCommand('swap hands');
 
-                const expectdLeft = client.inventorymanager.wielding.expectedLeftId;
-                const expectdRight = client.inventorymanager.wielding.expectdRightId;
+                const expectdLeft = client.inventorymanager.settings.wielding.expectedLeftId;
+                const expectdRight = client.inventorymanager.settings.wielding.expectedRightId;
 
-                client.inventorymanager.wielding.expectedLeftId = expectdRight;
-                client.inventorymanager.wielding.expectdRightId = expectdLeft;
+                client.inventorymanager.settings.wielding.expectedLeftId = expectdRight;
+                client.inventorymanager.settings.wielding.expectedRightId = expectdLeft;
 
-                client.inventorymanager.wielding.expectdSwapHands = true;
+                client.inventorymanager.expectdSwapHands = true;
 
                 client.inventorymanager.save();
             }

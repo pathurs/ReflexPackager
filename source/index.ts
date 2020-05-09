@@ -4,6 +4,7 @@ export * from './event';
 export * from './function';
 export * from './group';
 export * from './keybind';
+export * from './multi-trigger';
 export * from './package';
 export * from './trigger';
 export * from './config';

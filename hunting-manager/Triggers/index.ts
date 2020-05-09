@@ -1,13 +1,17 @@
 import { GroupItem } from '../../source';
-import { killedMonster } from './killed-monster';
-import { hitMonsterShield } from './hit-monster-shield';
-import { monsterShielded } from './monster-shielded';
+import { killedMob } from './killed-mob';
+import { hitMobShield } from './hit-mob-shield';
+import { mobShielded } from './mob-shielded';
+import { notProne } from './not-prone';
+import { grace } from './grace';
 
 export const Triggers = new GroupItem(
     'Triggers',
     [
-        hitMonsterShield,
-        killedMonster,
-        monsterShielded
+        grace,
+        hitMobShield,
+        killedMob,
+        mobShielded,
+        notProne
     ]
 );

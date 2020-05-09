@@ -1,7 +1,9 @@
 import { TriggerItem, TriggerType, ExecuteScriptAction } from '../../source';
+import { SystemServiceClient } from 'system-service/system-service';
+import { GMCPServiceClient } from 'gmcp-service/gmcp-service';
 import { InventoryManagerClient } from '../inventory-manager';
 
-declare const client: InventoryManagerClient;
+declare const client: InventoryManagerClient & SystemServiceClient & GMCPServiceClient;
 
 export const containerOpened = new TriggerItem(
     `Container Opened`,
@@ -16,10 +18,10 @@ export const containerOpened = new TriggerItem(
                     return;
                 }
 
-                const containers = client.inventorymanager.items
+                const containers = client.gmcpservice.items.inv
                     .filter(value => value.attrib?.includes('c') && value.name === containerDescription);
 
-                const trackedContainers = client.inventorymanager.containers.tracked
+                const trackedContainers = client.inventorymanager.settings.containers.tracked
                     .filter(value => containers.map(value => value.id).includes(value.id));
 
                 if (trackedContainers.length === 0) {
@@ -32,12 +34,12 @@ export const containerOpened = new TriggerItem(
 
                     send_GMCP('Char.Items.Contents', Number(trackedContainer.id));
 
-                    if (client.inventorymanager.containers.expectedOpen !== trackedContainer.id) {
-                        send_command(`close ${trackedContainer.id}`, 1);
+                    if (client.inventorymanager.expectedOpen !== trackedContainer.id) {
+                        client.systemservice.sendCommand(`close ${trackedContainer.id}`);
                     }
                 });
 
-                client.inventorymanager.containers.expectedOpen = undefined;
+                client.inventorymanager.expectedOpen = undefined;
 
                 client.inventorymanager.save();
             }

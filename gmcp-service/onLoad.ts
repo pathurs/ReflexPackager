@@ -1,8 +1,9 @@
 import { FunctionItem } from '../source';
-import { GMCPServiceClient, GMCPSubscription, GMCPSubscriber } from './gmcp-service';
-import { DisplayServiceClient } from '../display-service/display-service';
+import { DisplayServiceClient } from 'display-service/display-service';
+import { SystemServiceClient } from 'system-service/system-service';
+import { GMCPServiceClient, GMCPSubscription, GMCPSubscriber, GMCPServiceRoom } from './gmcp-service';
 
-declare const client: GMCPServiceClient & DisplayServiceClient;
+declare const client: GMCPServiceClient & DisplayServiceClient & SystemServiceClient;
 
 export const onLoad = new FunctionItem(
     'onLoad',
@@ -11,6 +12,24 @@ export const onLoad = new FunctionItem(
         client.gmcpservice = {
             latest: {},
             subscriptions: [],
+            vitals: <GMCPCharVitals>{},
+            previousVitals: <GMCPCharVitals>{},
+            room: <GMCPServiceRoom>{},
+            previousRoom: <GMCPServiceRoom>{},
+            items: {
+                inv: [],
+                room: []
+            },
+            previousItems: {
+                inv: [],
+                room: []
+            },
+            defences: [],
+            previousDefences: [],
+            afflictions: [],
+            previousAfflictions: [],
+            rift: {},
+            previousRift: {},
             subscribe<TMethod extends GMCPServerMethod>(methods: TMethod[], subscriber: GMCPSubscriber<TMethod>) {
                 const subscription = {
                     methods,
@@ -36,14 +55,18 @@ export const onLoad = new FunctionItem(
                 return subscription;
             },
             echo(text) {
-                client.displayservice.echo(`%white%[%deepskyblue%GMCP Service%end%]:%end% ${text}`);
+                client.displayservice.echo(`%lightgray%[%deepskyblue%GMCP Service%end%]:%end% ${text}`);
             },
             error(text) {
                 client.gmcpservice.echo(`%red%${text}`);
             }
         };
 
+        send_GMCP('Char.Items.Inv');
         send_GMCP('Char.Items.Room');
+        send_GMCP('IRE.Rift.Request');
+
+        client.systemservice.sendCommand('quicklook');
 
         client.gmcpservice.echo('Loaded.');
     }

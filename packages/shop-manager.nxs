@@ -8,7 +8,7 @@
             "name": "onLoad",
             "enabled": true,
             "id": 2,
-            "code": "(function () {\n    client.shopmanager = {\n        enabled: true,\n        shops: get_variable('shop-manager:shops') || [],\n        echo(text) {\n            client.displayservice.echo(`%white%[%deepskyblue%Shop Manager%end%]:%end% ${text}`);\n        },\n        error(text) {\n            client.shopmanager.echo(`%red%${text}`);\n        },\n        save() {\n            client.systemservice.save('shop-manager', () => {\n                set_variable('shop-manager:shops', client.shopmanager.shops);\n                client.shopmanager.echo('Settings saved.');\n            });\n        }\n    };\n    client.shopmanager.echo('Loaded.');\n})(args);"
+            "code": "(function () {\n    client.shopmanager = {\n        settings: get_variable('shop-manager:settings') || {\n            enabled: true,\n            shops: []\n        },\n        echo(text) {\n            client.displayservice.echo(`%lightgray%[%deepskyblue%Shop Manager%end%]:%end% ${text}`);\n        },\n        error(text) {\n            client.shopmanager.echo(`%red%${text}`);\n        },\n        save() {\n            client.systemservice.save('shop-manager', () => {\n                set_variable('shop-manager:settings', client.shopmanager.settings);\n                client.shopmanager.echo('Settings saved.');\n            });\n        },\n        getCurrentShop() {\n            const currentShop = client.shopmanager.settings.shops.find(value => value.room.num === client.gmcpservice.room.num);\n            return currentShop;\n        },\n        registerShop() {\n            let currentShop = client.shopmanager.getCurrentShop();\n            if (currentShop) {\n                client.shopmanager.error(`Shop '%lightgray%${client.gmcpservice.room.name}%end%' (%lightgray%${client.gmcpservice.room.num}%end%) is already registered.`);\n                return;\n            }\n            currentShop = {\n                room: client.gmcpservice.room,\n                storefront: {\n                    roomId: client.gmcpservice.room.num,\n                    expectedItemIds: []\n                },\n                stockroom: {\n                    roomId: client.gmcpservice.room.exits.d,\n                    expectedItemIds: []\n                },\n                currentBins: {\n                    0: {\n                        id: 0\n                    },\n                    1: {\n                        id: 1\n                    },\n                    2: {\n                        id: 2\n                    },\n                    3: {\n                        id: 3\n                    },\n                    4: {\n                        id: 4\n                    },\n                    5: {\n                        id: 5\n                    },\n                    6: {\n                        id: 6\n                    },\n                    7: {\n                        id: 7\n                    }\n                },\n                expectedBins: {\n                    0: {\n                        id: 0\n                    },\n                    1: {\n                        id: 1\n                    },\n                    2: {\n                        id: 2\n                    },\n                    3: {\n                        id: 3\n                    },\n                    4: {\n                        id: 4\n                    },\n                    5: {\n                        id: 5\n                    },\n                    6: {\n                        id: 6\n                    },\n                    7: {\n                        id: 7\n                    }\n                },\n                currentPolicies: [],\n                expectedPolicies: []\n            };\n            client.shopmanager.settings.shops.push(currentShop);\n            client.shopmanager.save();\n            client.shopmanager.echo(`Registered shop '%lightgray%${client.gmcpservice.room.name}%end%' (%lightgray%${client.gmcpservice.room.num}%end%).`);\n            return currentShop;\n        },\n        unregisterShop() {\n            const currentShop = client.shopmanager.getCurrentShop();\n            if (!currentShop) {\n                client.shopmanager.error(`Shop '%lightgray%${client.gmcpservice.room.name}%end%' (%lightgray%${client.gmcpservice.room.num}%end%) is not registered.`);\n                return;\n            }\n            client.shopmanager.save();\n            client.shopmanager.echo(`Unregistered shop '%lightgray%${client.gmcpservice.room.name}%end%' (%lightgray%${client.gmcpservice.room.num}%end%).`);\n        },\n        checkStorefront(shop, items) {\n            if (shop.storefront.expectedTotemId) {\n                const expectedTotem = items.find(value => value.id === shop.storefront.expectedTotemId);\n                if (!expectedTotem) {\n                    client.shopmanager.error(`Storefront totem '%lightgray%${shop.storefront.expectedTotemId}%end%' is missing!`);\n                }\n            }\n            if (shop.storefront.expectedEyeSigilId) {\n                const expectedEyeSigil = items.find(value => value.id === shop.storefront.expectedEyeSigilId);\n                if (!expectedEyeSigil) {\n                    client.shopmanager.error(`Storefront eye sigil '%lightgray%${shop.storefront.expectedEyeSigilId}%end%' is missing!`);\n                }\n            }\n            if (shop.storefront.expectedKeySigilId) {\n                const expectedKeySigil = items.find(value => value.id === shop.storefront.expectedKeySigilId);\n                if (!expectedKeySigil) {\n                    client.shopmanager.error(`Storefront key sigil '%lightgray%${shop.storefront.expectedKeySigilId}%end%' is missing!`);\n                }\n            }\n            if (shop.storefront.expectedMonolithSigilId) {\n                const expectedMonolithSigil = items.find(value => value.id === shop.storefront.expectedMonolithSigilId);\n                if (!expectedMonolithSigil) {\n                    client.shopmanager.error(`Storefront monolith sigil '%lightgray%${shop.storefront.expectedMonolithSigilId}%end%' is missing!`);\n                }\n            }\n            if (shop.storefront.expectedItemIds.length > 0) {\n                shop.storefront.expectedItemIds.forEach(expectedId => {\n                    const expected = items.find(value => value.id === expectedId);\n                    if (!expected) {\n                        client.shopmanager.error(`Storefront item '%lightgray%${expectedId}%end%' is missing!`);\n                    }\n                });\n            }\n        },\n        checkStockroom(shop, items) {\n            if (shop.stockroom.expectedTotemId) {\n                const expectedTotem = items.find(value => value.id === shop.stockroom.expectedTotemId);\n                if (!expectedTotem) {\n                    client.shopmanager.error(`Stockroom totem '%lightgray%${shop.stockroom.expectedTotemId}%end%' is missing!`);\n                }\n            }\n            if (shop.stockroom.expectedEyeSigilId) {\n                const expectedEyeSigil = items.find(value => value.id === shop.stockroom.expectedEyeSigilId);\n                if (!expectedEyeSigil) {\n                    client.shopmanager.error(`Stockroom eye sigil '%lightgray%${shop.stockroom.expectedEyeSigilId}%end%' is missing!`);\n                }\n            }\n            if (shop.stockroom.expectedKeySigilId) {\n                const expectedKeySigil = items.find(value => value.id === shop.stockroom.expectedKeySigilId);\n                if (!expectedKeySigil) {\n                    client.shopmanager.error(`Stockroom key sigil '%lightgray%${shop.stockroom.expectedKeySigilId}%end%' is missing!`);\n                }\n            }\n            if (shop.stockroom.expectedMonolithSigilId) {\n                const expectedMonolithSigil = items.find(value => value.id === shop.stockroom.expectedMonolithSigilId);\n                if (!expectedMonolithSigil) {\n                    client.shopmanager.error(`Stockroom monolith sigil '%lightgray%${shop.stockroom.expectedMonolithSigilId}%end%' is missing!`);\n                }\n            }\n            if (shop.stockroom.expectedShimmeringOrbId) {\n                const expectedShimmeringOrb = items.find(value => value.id === shop.stockroom.expectedShimmeringOrbId);\n                if (!expectedShimmeringOrb) {\n                    client.shopmanager.error(`Stockroom shimmering orb '%lightgray%${shop.stockroom.expectedShimmeringOrbId}%end%' is missing!`);\n                }\n            }\n            if (shop.stockroom.expectedItemIds.length > 0) {\n                shop.stockroom.expectedItemIds.forEach(expectedId => {\n                    const expected = items.find(value => value.id === expectedId);\n                    if (!expected) {\n                        client.shopmanager.error(`Stockroom item '%lightgray%${expectedId}%end%' is missing!`);\n                    }\n                });\n            }\n        },\n        parseRawBinVisibility(visibility) {\n            const [, type, exception] = visibility.toLowerCase().trim().match(/^(all|none)(?: except ((?:group|person|code) \\w+))?^/) || [];\n            if (!type) {\n                client.shopmanager.error(`Could not parse bin visibility '${visibility}'.`);\n                client.shopmanager.echo(`Syntax: %lightgray%ALL|NONE%end%.`);\n                client.shopmanager.echo(`Syntax: %lightgray%ALL|NONE EXCEPT GROUP|PERSON|CODE value%end%.`);\n                return undefined;\n            }\n            return {\n                type,\n                exception\n            };\n        },\n        setBinName(id, name) {\n            if (id < 0 || id > 7 || !Number.isInteger(id)) {\n                client.shopmanager.error(`Bin ID '${id}' is invalid. The bin ID must be a whole number between 0 and 7.`);\n                return;\n            }\n            const currentShop = client.shopmanager.getCurrentShop();\n            if (!currentShop) {\n                client.shopmanager.error(`You are not currently standing in an active shop.`);\n                return;\n            }\n            if (id === 0 && name !== undefined) {\n                client.shopmanager.error(`Cannot name bin 0.`);\n                return;\n            }\n            currentShop.expectedBins[id] = {\n                id,\n                name\n            };\n            client.shopmanager.save();\n            client.shopmanager.echo(`Set bin '%lightgray%${id}%end%' name to '%lightgray%${name}%end%'.`);\n        },\n        setBinVisibility(id, visibility) {\n            if (id < 0 || id > 7 || !Number.isInteger(id)) {\n                client.shopmanager.error(`Bin ID '${id}' is invalid. The bin ID must be a whole number between 0 and 7.`);\n                return;\n            }\n            const currentShop = client.shopmanager.getCurrentShop();\n            if (!currentShop) {\n                client.shopmanager.error(`You are not currently standing in an active shop.`);\n                return;\n            }\n            currentShop.expectedBins[id] = {\n                id,\n                visibility\n            };\n            client.shopmanager.save();\n            client.shopmanager.echo(`Set bin '%lightgray%${id}%end%' visibility to '%lightgray%${JSON.stringify(visibility)}%end%'.`);\n        },\n        parseRawPolicy(rawPolicy) {\n            const [, type, who, modifier] = rawPolicy\n                .toLowerCase()\n                .trim()\n                .match(/^(group|person) (\\w+) (\\w+)$/) || [];\n            if (!type || !who || !modifier) {\n                client.shopmanager.error(`Could not parse policy '%lightgray%${rawPolicy}%end%'.`);\n                client.shopmanager.echo(`Syntax: %lightgray%GROUP|PERSON who modifier%end%.`);\n                client.shopmanager.echo(`Syntax: %lightgray%GROUP|PERSON <who REFUSE%end%.`);\n                return undefined;\n            }\n            const parsedModifier = modifier === 'refuse' ? 'refuse' : Number(modifier);\n            if (parsedModifier !== 'refuse' && isNaN(parsedModifier)) {\n                client.shopmanager.error(`Could not parse modifier '%lightgray%${modifier}%end%' in policy '%lightgray%${rawPolicy}%end%'.`);\n                client.shopmanager.echo(`Syntax: %lightgray%GROUP|PERSON who modifier%end%.`);\n                client.shopmanager.echo(`Syntax: %lightgray%GROUP|PERSON who REFUSE%end%.`);\n                return undefined;\n            }\n            return {\n                type,\n                who,\n                modifier: parsedModifier\n            };\n        },\n        addPolicy(policy) {\n            const currentShop = client.shopmanager.getCurrentShop();\n            if (!currentShop) {\n                client.shopmanager.error(`You are not currently standing in an active shop.`);\n                return;\n            }\n            currentShop.expectedPolicies.push(policy);\n            client.shopmanager.save();\n            client.shopmanager.echo(`Added policy '%lightgray%${JSON.stringify(policy)}%end%'.`);\n        },\n        removePolicy(id) {\n            const currentShop = client.shopmanager.getCurrentShop();\n            if (!currentShop) {\n                client.shopmanager.error(`You are not currently standing in an active shop.`);\n                return;\n            }\n            const policy = currentShop.expectedPolicies[id];\n            if (!policy) {\n                client.shopmanager.error(`Could not find policy '${id}'.`);\n                return;\n            }\n            currentShop.expectedPolicies.splice(id, 1);\n            client.shopmanager.echo(`Removed policy '%lightgray%${id}%end%'.`);\n            client.shopmanager.save();\n        }\n    };\n    // Keep Storefront Items and Stockroom Items up to date\n    client.gmcpservice.subscribe(['Room.Info'], args => {\n        const roomId = args.gmcp_args.num;\n        const shop = client.shopmanager.settings.shops.find(value => value.room.num === roomId);\n        if (shop) {\n            const items = client.gmcpservice.items.room;\n            if (shop.storefront.roomId === roomId) {\n                client.shopmanager.checkStorefront(shop, items);\n            }\n            else if (shop.stockroom.roomId === roomId) {\n                client.shopmanager.checkStockroom(shop, items);\n            }\n        }\n    });\n    client.shopmanager.echo('Loaded.');\n})(args);"
         },
         {
             "type": "group",
@@ -19,17 +19,17 @@
                     "actions": [
                         {
                             "action": "script",
-                            "script": "(function (args) {\n        var _a;\n        const parts = ((_a = args[1]) === null || _a === void 0 ? void 0 : _a.trim().toLowerCase().split(' ')) || [];\n        const command = parts.join(' ');\n        client.shopmanager.echo(`test ${parts} ${command}`);\n    })(args);"
+                            "script": "(function (args) {\n        const id = Number(args[1]);\n        const name = args[2];\n        client.shopmanager.setBinName(id, name);\n    })(args);"
                         }
                     ],
-                    "name": "Shop Manager Create",
+                    "name": "Shop Manager Bin Name",
                     "enabled": true,
                     "id": 3,
                     "matching": "regexp",
                     "whole_words": true,
                     "case_sensitive": true,
                     "prefix_suffix": true,
-                    "text": "^(?:sm|shop\\-manager|shop manager) create"
+                    "text": "^(?:sm|shop\\-manager|shop manager) bin (\\d+) name ([\\w\\W]+)$"
                 },
                 {
                     "type": "alias",
@@ -37,12 +37,30 @@
                     "actions": [
                         {
                             "action": "script",
-                            "script": "(function (args) {\n        var _a;\n        const parts = ((_a = args[1]) === null || _a === void 0 ? void 0 : _a.trim().toLowerCase().split(' ')) || [];\n        const command = parts.join(' ');\n        if (!command) {\n            client.shopmanager.error(`You need to specify a command.`);\n            return;\n        }\n        client.shopmanager.echo(`Doing: '%white%${command}%end%'.`);\n        send_command(`unlock door down|open door down|down|close door up|lock door up`, 1);\n        send_command(command, 1);\n        send_command(`unlock door up|open door up|up|close door down|lock door down`, 1);\n    })(args);"
+                            "script": "(function (args) {\n        const id = Number(args[1]);\n        const visibility = client.shopmanager.parseRawBinVisibility(args[2]);\n        if (!visibility) {\n            return;\n        }\n        client.shopmanager.setBinVisibility(id, visibility);\n    })(args);"
+                        }
+                    ],
+                    "name": "Shop Manager Edit Bin Visibility",
+                    "enabled": true,
+                    "id": 4,
+                    "matching": "regexp",
+                    "whole_words": true,
+                    "case_sensitive": true,
+                    "prefix_suffix": true,
+                    "text": "^(?:sm|shop\\-manager|shop manager)(?: edit)? bin (\\d+)(?: visibility)? ([\\w\\W]+)?$"
+                },
+                {
+                    "type": "alias",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        var _a;\n        const parts = ((_a = args[1]) === null || _a === void 0 ? void 0 : _a.trim().toLowerCase().split(' ')) || [];\n        const command = parts.join(' ');\n        if (!command) {\n            client.shopmanager.error(`You need to specify a command.`);\n            return;\n        }\n        client.shopmanager.echo(`Doing: '%lightgray%${command}%end%'.`);\n        client.systemservice.sendCommand(`unlock door down|open door down|down|close door up|lock door up`);\n        client.systemservice.sendCommand(command);\n        client.systemservice.sendCommand(`unlock door up|open door up|up|close door down|lock door down`);\n    })(args);"
                         }
                     ],
                     "name": "Shop Manager Do",
                     "enabled": true,
-                    "id": 4,
+                    "id": 5,
                     "matching": "regexp",
                     "whole_words": true,
                     "case_sensitive": true,
@@ -55,17 +73,17 @@
                     "actions": [
                         {
                             "action": "script",
-                            "script": "(function () {\n        const room = client.gmcpservice.latest['Room.Info'];\n        if (!room) {\n            client.shopmanager.error(`Cannot find room, please %white%look%end% then try again.`);\n            return;\n        }\n        const currentShop = client.shopmanager.shops.find(value => value.room.num === room.num);\n        if (currentShop) {\n            client.shopmanager.error(`Already registered room '%white%${room === null || room === void 0 ? void 0 : room.name}%end%' (%white%${room === null || room === void 0 ? void 0 : room.num}%end%) as our shop.`);\n            return;\n        }\n        client.shopmanager.shops.push({\n            room,\n            storefront: {\n                items: [],\n                expectedOther: []\n            },\n            stockroom: {\n                items: [],\n                expectedOther: []\n            }\n        });\n        client.shopmanager.echo(`Registered room '%white%${room === null || room === void 0 ? void 0 : room.name}%end%' (%white%${room === null || room === void 0 ? void 0 : room.num}%end%) as our shop.`);\n    })(args);"
+                            "script": "(function (args) {\n        const policy = client.shopmanager.parseRawPolicy(args[1]);\n        if (!policy) {\n            return;\n        }\n        client.shopmanager.addPolicy(policy);\n    })(args);"
                         }
                     ],
-                    "name": "Shop Manager Register Shop",
+                    "name": "Shop Manager Policy Add",
                     "enabled": true,
-                    "id": 5,
+                    "id": 6,
                     "matching": "regexp",
                     "whole_words": true,
                     "case_sensitive": true,
                     "prefix_suffix": true,
-                    "text": "^(?:sm|shop\\-manager|shop manager) register(?: ?shop)?$"
+                    "text": "^(?:sm|shop\\-manager|shop manager) policy add ([\\w\\W]+)$"
                 },
                 {
                     "type": "alias",
@@ -73,23 +91,95 @@
                     "actions": [
                         {
                             "action": "script",
-                            "script": "(function () {\n        const room = client.gmcpservice.latest['Room.Info'];\n        if (!room) {\n            client.shopmanager.error(`Cannot find room, please %white%look%end% then try again.`);\n            return;\n        }\n        const index = client.shopmanager.shops.findIndex(value => value.room.num === room.num);\n        if (index === -1) {\n            client.shopmanager.error(`Room '%white%${room === null || room === void 0 ? void 0 : room.name}%end%' (%white%${room === null || room === void 0 ? void 0 : room.num}%end%) is not registered as our shop.`);\n            return;\n        }\n        client.shopmanager.shops.splice(index, 1);\n        client.shopmanager.echo(`Unregistered room '%white%${room === null || room === void 0 ? void 0 : room.name}%end%' (%white%${room === null || room === void 0 ? void 0 : room.num}%end%) as our shop.`);\n    })(args);"
+                            "script": "(function (args) {\n        const id = Number(args[1]);\n        client.shopmanager.removePolicy(id);\n    })(args);"
                         }
                     ],
-                    "name": "Shop Manager Unregister Shop",
+                    "name": "Shop Manager Policy Remove",
                     "enabled": true,
-                    "id": 6,
+                    "id": 7,
                     "matching": "regexp",
                     "whole_words": true,
                     "case_sensitive": true,
                     "prefix_suffix": true,
-                    "text": "^(?:sm|shop\\-manager|shop manager) unregister(?: ?shop)?$"
+                    "text": "^(?:sm|shop\\-manager|shop manager) policy remove (\\d+)$"
+                },
+                {
+                    "type": "alias",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function () {\n        client.shopmanager.registerShop();\n    })(args);"
+                        }
+                    ],
+                    "name": "Shop Manager Shop Register",
+                    "enabled": true,
+                    "id": 8,
+                    "matching": "regexp",
+                    "whole_words": true,
+                    "case_sensitive": true,
+                    "prefix_suffix": true,
+                    "text": "^(?:sm|shop\\-manager|shop manager) shop register$"
+                },
+                {
+                    "type": "alias",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function () {\n        client.shopmanager.unregisterShop();\n    })(args);"
+                        }
+                    ],
+                    "name": "Shop Manager Shop Unregister",
+                    "enabled": true,
+                    "id": 9,
+                    "matching": "regexp",
+                    "whole_words": true,
+                    "case_sensitive": true,
+                    "prefix_suffix": true,
+                    "text": "^(?:sm|shop\\-manager|shop manager) shop unregister$"
+                },
+                {
+                    "type": "alias",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        const currentShop = client.shopmanager.getCurrentShop();\n        if (!currentShop) {\n            client.shopmanager.error(`You are not currently standing in an active shop.`);\n            return;\n        }\n        const id = args[2];\n        switch (args[1]) {\n            case 'totem':\n                currentShop.stockroom.expectedTotemId = id;\n                client.shopmanager.echo(`Set shop '%lightgray%${currentShop.room.name}%end%' stockroom expected totem to '%lightgray%${id}%end%'.`);\n                break;\n            case 'eye':\n            case 'eyesigil':\n            case 'eye sigil':\n                currentShop.stockroom.expectedEyeSigilId = id;\n                client.shopmanager.echo(`Set shop '%lightgray%${currentShop.room.name}%end%' stockroom expected eye sigil to '%lightgray%${id}%end%'.`);\n                break;\n            case 'key':\n            case 'keysigil':\n            case 'key sigil':\n                currentShop.stockroom.expectedKeySigilId = id;\n                client.shopmanager.echo(`Set shop '%lightgray%${currentShop.room.name}%end%' stockroom expected key sigil to '%lightgray%${id}%end%'.`);\n                break;\n            case 'mono':\n            case 'monolith':\n            case 'monolithsigil':\n            case 'monolith sigil':\n                currentShop.stockroom.expectedMonolithSigilId = id;\n                client.shopmanager.echo(`Set shop '%lightgray%${currentShop.room.name}%end%' stockroom expected monolith sigil to '%lightgray%${id}%end%'.`);\n                break;\n            case 'orb':\n            case 'shimmeringorb':\n            case 'shimmering orb':\n                currentShop.stockroom.expectedShimmeringOrbId = id;\n                client.shopmanager.echo(`Set shop '%lightgray%${currentShop.room.name}%end%' stockroom expected shimmering orb to '%lightgray%${id}%end%'.`);\n                break;\n            case undefined:\n                if (currentShop.stockroom.expectedItemIds.includes(id)) {\n                    client.shopmanager.error(`Shop '%lightgray%${currentShop.room.name}%end%' stockroom is already expecting item '%lightgray%${id}%end%'.`);\n                    return;\n                }\n                currentShop.stockroom.expectedItemIds.push(id);\n                client.shopmanager.echo(`Added Shop '%lightgray%${currentShop.room.name}%end%' stockroom expected item '%lightgray%${id}%end%'.`);\n                break;\n            default:\n                client.shopmanager.error(`Invalid expected item '%lightgray%${args[1]}%end%'.`);\n                return;\n        }\n        client.shopmanager.save();\n    })(args);"
+                        }
+                    ],
+                    "name": "Shop Manager Stockroom Expect",
+                    "enabled": true,
+                    "id": 10,
+                    "matching": "regexp",
+                    "whole_words": true,
+                    "case_sensitive": true,
+                    "prefix_suffix": true,
+                    "text": "^(?:sm|shop\\-manager|shop manager) stockroom expect(?: (totem|eye|eye ?sigil|key|key ?sigil|mono|monolith|monolith ?sigil|orb|shimmering ?orb)) ([\\w\\W]+)$"
+                },
+                {
+                    "type": "alias",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        const currentShop = client.shopmanager.getCurrentShop();\n        if (!currentShop) {\n            client.shopmanager.error(`You are not currently standing in an active shop.`);\n            return;\n        }\n        const id = args[2];\n        switch (args[1]) {\n            case 'totem':\n                currentShop.storefront.expectedTotemId = id;\n                client.shopmanager.echo(`Set shop '%lightgray%${currentShop.room.name}%end%' storefront expected totem to '%lightgray%${id}%end%'.`);\n                break;\n            case 'eye':\n            case 'eyesigil':\n            case 'eye sigil':\n                currentShop.storefront.expectedEyeSigilId = id;\n                client.shopmanager.echo(`Set shop '%lightgray%${currentShop.room.name}%end%' storefront expected eye sigil to '%lightgray%${id}%end%'.`);\n                break;\n            case 'key':\n            case 'keysigil':\n            case 'key sigil':\n                currentShop.storefront.expectedKeySigilId = id;\n                client.shopmanager.echo(`Set shop '%lightgray%${currentShop.room.name}%end%' storefront expected key sigil to '%lightgray%${id}%end%'.`);\n                break;\n            case 'mono':\n            case 'monolith':\n            case 'monolithsigil':\n            case 'monolith sigil':\n                currentShop.storefront.expectedMonolithSigilId = id;\n                client.shopmanager.echo(`Set shop '%lightgray%${currentShop.room.name}%end%' storefront expected monolith sigil to '%lightgray%${id}%end%'.`);\n                break;\n            case undefined:\n                if (currentShop.storefront.expectedItemIds.includes(id)) {\n                    client.shopmanager.error(`Shop '%lightgray%${currentShop.room.name}%end%' storefront is already expecting item '%lightgray%${id}%end%'.`);\n                    return;\n                }\n                currentShop.storefront.expectedItemIds.push(id);\n                client.shopmanager.echo(`Added Shop '%lightgray%${currentShop.room.name}%end%' storefront expected item '%lightgray%${id}%end%'.`);\n                break;\n            default:\n                client.shopmanager.error(`Invalid expected item '%lightgray%${args[1]}%end%'.`);\n                return;\n        }\n        client.shopmanager.save();\n    })(args);"
+                        }
+                    ],
+                    "name": "Shop Manager Storefront Expect",
+                    "enabled": true,
+                    "id": 11,
+                    "matching": "regexp",
+                    "whole_words": true,
+                    "case_sensitive": true,
+                    "prefix_suffix": true,
+                    "text": "^(?:sm|shop\\-manager|shop manager) storefront expect(?: (totem|eye|eye ?sigil|key|key ?sigil|mono|monolith|monolith ?sigil)) ([\\w\\W]+)$"
                 }
             ],
             "actions": [],
             "name": "Aliases",
             "enabled": true,
-            "id": 7
+            "id": 12
         },
         {
             "type": "group",
@@ -105,7 +195,7 @@
                     ],
                     "name": "Report Profits",
                     "enabled": true,
-                    "id": 8,
+                    "id": 13,
                     "matching": "regexp",
                     "whole_words": false,
                     "case_sensitive": false,
@@ -122,7 +212,7 @@
                     ],
                     "name": "Report Purchase",
                     "enabled": true,
-                    "id": 9,
+                    "id": 14,
                     "matching": "regexp",
                     "whole_words": false,
                     "case_sensitive": false,
@@ -139,7 +229,7 @@
                     ],
                     "name": "Report Read",
                     "enabled": true,
-                    "id": 10,
+                    "id": 15,
                     "matching": "regexp",
                     "whole_words": false,
                     "case_sensitive": false,
@@ -149,7 +239,7 @@
             "actions": [],
             "name": "Triggers",
             "enabled": true,
-            "id": 11
+            "id": 16
         }
     ],
     "actions": [],

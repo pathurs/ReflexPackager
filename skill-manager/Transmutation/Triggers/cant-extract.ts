@@ -1,9 +1,9 @@
-import { TriggerItem, TriggerType, ExecuteScriptAction } from '../../../source';
-import { SkillManagerClient } from '../../skill-manager';
+import { ExecuteScriptAction, MultiTriggerItem } from '../../../source';
+import { SkillManagerClient } from 'skill-manager/skill-manager';
 
 declare const client: SkillManagerClient;
 
-export const cantExtract = new TriggerItem(
+export const cantExtract = new MultiTriggerItem(
     'Can\'t Extract',
     [
         /^You carefully search the cracks and crevices of the surrounding rock, but find nothing\.$/,
@@ -13,15 +13,12 @@ export const cantExtract = new TriggerItem(
         /^You have already extracted minerals from this location\.$/,
         /^The environment here will not yield any minerals\.$/
     ],
-    TriggerType.RegularExpression,
     [
         new ExecuteScriptAction(
             function () {
-                if (client.skillmanager.transmutation.running) {
+                if (client.skillmanager.collecting.active) {
                     gag_current_line();
                 }
-
-                client.skillmanager.runQueue();
             }
         )
     ]

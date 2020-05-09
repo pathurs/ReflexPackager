@@ -1,22 +1,21 @@
 import { TriggerItem, TriggerType, ExecuteScriptAction } from '../../../source';
-import { SkillManagerClient, TarotCard, TarotCardPhraseToNameMap, } from '../../skill-manager';
+import { SystemServiceClient } from 'system-service/system-service';
+import { SkillManagerClient, SkillManagerTarotInscribingQueue, } from 'skill-manager/skill-manager';
 
-declare const client: SkillManagerClient;
+declare const client: SkillManagerClient & SystemServiceClient;
 
 export const inscribed = new TriggerItem(
     'Inscribed',
-    [
-        /^You have successfully inscribed the image of (?:the )?([\w\W]+) on your Tarot card\.$/
-    ],
+    /^You have successfully inscribed the image of (?:the )?([\w\W]+) on your Tarot card\.$/,
     TriggerType.RegularExpression,
     [
         new ExecuteScriptAction(
             function (args: TriggerFunctionArgs & { 1: string }) {
-                let card = <Exclude<TarotCard, 'blank'>>client.skillmanager.tarot.phraseToNameMap[<keyof TarotCardPhraseToNameMap>args[1]];
+                let card = <keyof SkillManagerTarotInscribingQueue>client.skillmanager.tarot.descriptionDictionary[args[1]];
 
-                send_command(`ind ${card}`, 1);
+                client.systemservice.sendCommand(`ind ${card}`);
 
-                if (client.skillmanager.tarot.inscribing.running) {
+                if (client.skillmanager.tarot.inscribing.active) {
                     gag_current_line();
 
                     client.skillmanager.echo('%lime%Inscribing Successful!');

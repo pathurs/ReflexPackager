@@ -1,4 +1,8 @@
 import { AliasItem, AliasType } from '../../source';
+import { SystemServiceClient } from 'system-service/system-service';
+import { InventoryManagerClient } from 'inventory-manager/inventory-manager';
+
+declare const client: InventoryManagerClient & SystemServiceClient;
 
 export const getFrom = new AliasItem(
     'Get From',
@@ -7,7 +11,7 @@ export const getFrom = new AliasItem(
     [
         // new ExecuteScriptAction(
         //     function (args: TriggerFunctionArgs) {
-        //         send_command(args[0], 1);
+        //         client.systemservice.sendCommand(args[0], 1);
         //     }
         // )
     ]

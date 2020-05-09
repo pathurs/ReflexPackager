@@ -1,15 +1,25 @@
 import { GroupItem } from '../../source';
-import { shopManagerCreate } from './sm-create';
+import { shopManagerBinName } from './sm-bin-name';
+import { shopManagerEditBinVisibility } from './sm-bin-visibility';
 import { shopManagerDo } from './sm-do';
-import { shopManagerRegisterShop } from './sm-register-shop';
-import { shopManagerUnregisterShop } from './sm-unregister-shop';
+import { shopManagerPolicyAdd } from './sm-policy-add';
+import { shopManagerPolicyRemove } from './sm-policy-remove';
+import { shopManagerShopRegister } from './sm-shop-register';
+import { shopManagerShopUnregister } from './sm-shop-unregister';
+import { shopManagerStockroomExpect } from './sm-stockroom-expect';
+import { shopManagerStorefrontExpect } from './sm-storefront-expect';
 
 export const Aliases = new GroupItem(
     'Aliases',
     [
-        shopManagerCreate,
+        shopManagerBinName,
+        shopManagerEditBinVisibility,
         shopManagerDo,
-        shopManagerRegisterShop,
-        shopManagerUnregisterShop
+        shopManagerPolicyAdd,
+        shopManagerPolicyRemove,
+        shopManagerShopRegister,
+        shopManagerShopUnregister,
+        shopManagerStockroomExpect,
+        shopManagerStorefrontExpect
     ]
 );

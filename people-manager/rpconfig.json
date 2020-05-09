@@ -1,0 +1,5 @@
+{
+    "name": "People Manager",
+    "description": "A People Manager",
+    "outFile": "./packages/people-manager.nxs"
+}

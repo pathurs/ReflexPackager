@@ -1,4 +1,8 @@
 import { AliasItem, AliasType, ExecuteScriptAction } from '../../source';
+import { SystemServiceClient } from 'system-service/system-service';
+import { InventoryManagerClient } from 'inventory-manager/inventory-manager';
+
+declare const client: InventoryManagerClient & SystemServiceClient;
 
 export const infoInventory = new AliasItem(
     'Info Inventory (ii)',
@@ -7,7 +11,8 @@ export const infoInventory = new AliasItem(
     [
         new ExecuteScriptAction(
             function () {
-                send_command('ii', 1);
+                client.systemservice.sendCommand('ii');
+
                 send_GMCP('Char.Items.Inv');
             }
         )

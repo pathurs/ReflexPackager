@@ -1,5 +1,5 @@
 import { AliasItem, AliasType, ExecuteScriptAction } from '../../../source';
-import { SkillManagerClient } from '../../skill-manager';
+import { SkillManagerClient } from 'skill-manager/skill-manager';
 
 declare const client: SkillManagerClient;
 
@@ -10,7 +10,7 @@ export const inscribeClear = new AliasItem(
     [
         new ExecuteScriptAction(
             function () {
-                client.skillmanager.tarot.inscribing.running = false;
+                client.skillmanager.tarot.inscribing.runningQueue = false;
 
                 client.skillmanager.tarot.inscribing.queue = {
                     sun: 0,
@@ -37,7 +37,7 @@ export const inscribeClear = new AliasItem(
                     death: 0
                 };
 
-                client.skillmanager.echo('Inscribing stopped.');
+                client.skillmanager.echo('Stopped inscribing.');
                 client.skillmanager.echo('Inscribing queue cleared.');
             }
         )

@@ -23,7 +23,7 @@ export const cli = new FunctionItem(
                                 case 'true':
                                 case 'yes':
                                 case '1':
-                                    client.inventorymanager.enabled = true;
+                                    client.inventorymanager.settings.enabled = true;
 
                                     client.inventorymanager.echo(`%lime%Enabled%end%.`);
                                     break;
@@ -31,7 +31,7 @@ export const cli = new FunctionItem(
                                 case 'false':
                                 case 'no':
                                 case '0':
-                                    client.inventorymanager.enabled = false;
+                                    client.inventorymanager.settings.enabled = false;
 
                                     client.inventorymanager.echo(`%red%Disabled%end%.`);
                                     break;

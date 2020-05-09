@@ -101,7 +101,7 @@ export const onLoad = new FunctionItem(
             colorify(message: string) {
                 let result = message;
 
-                const pattern = /%([a-zA-Z0-9#]+)%/;
+                const pattern = /%([a-zA-Z]+|#[0-9a-fA-F]{6,6})%/;
                 let depth = 0;
                 let match;
 
@@ -152,6 +152,6 @@ export const onLoad = new FunctionItem(
             return text.repeat(Math.max(count, 0));
         }
 
-        client.displayservice.echo('%white%[%deepskyblue%Display Service%end%]:%end% Loaded.');
+        client.displayservice.echo('%lightgray%[%deepskyblue%Display Service%end%]:%end% Loaded.');
     }
 );

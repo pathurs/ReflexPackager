@@ -1,50 +1,51 @@
-interface Wearables {
+interface InventoryManagerWearables {
     enabled: boolean;
     expectedIds: string[];
 }
 
-interface Wielding {
+interface InventoryManagerWielding {
     enabled: boolean;
     expectedLeftId?: string;
-    expectdRightId?: string;
-    expectedWield?: 'left' | 'right' | 'both';
-    expectdUnwield?: 'any' | 'left' | 'right' | 'both';
-    expectdSwapHands?: boolean;
+    expectedRightId?: string;
 }
 
-interface Groupables {
+interface InventoryManagerGroupables {
     enabled: boolean;
 }
 
-interface TrackedContainer {
+interface InventoryManagerTrackedContainer {
     id: string;
     closeable?: boolean;
     possiblyOpen?: boolean;
     items: GMCPCharItemsItem[];
 }
 
-interface Containers {
+interface InventoryManagerContainers {
     enabled: boolean;
-    tracked: TrackedContainer[];
-    expectedOpen?: string;
-    expectedClose?: string;
+    tracked: InventoryManagerTrackedContainer[];
 }
 
-interface Corpses {
+interface InventoryManagerSettings {
     enabled: boolean;
+    wearables: InventoryManagerWearables;
+    wielding: InventoryManagerWielding;
+    groupables: InventoryManagerGroupables;
+    containers: InventoryManagerContainers;
 }
 
 export interface InventoryManager {
-    enabled: boolean;
-    items: GMCPCharItemsItem[];
-    wearables: Wearables;
-    wielding: Wielding;
-    groupables: Groupables;
-    containers: Containers;
-    corpses: Corpses;
+    settings: InventoryManagerSettings;
+    expectedWield?: 'left' | 'right' | 'both';
+    expectdUnwield?: 'any' | 'left' | 'right' | 'both';
+    expectdSwapHands?: boolean;
+    expectedOpen?: string;
+    expectedClose?: string;
     echo(message: string): void;
     error(text: string): void;
     save(): void;
+    wield(item: string, hand?: 'left' | 'right' | 'both'): void;
+    unwield(hand: 'left' | 'right'): void;
+    unwield(item: string): void;
 }
 
 export type InventoryManagerClient = typeof client & {

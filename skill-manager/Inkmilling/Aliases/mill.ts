@@ -1,5 +1,5 @@
 import { AliasItem, AliasType, ExecuteScriptAction } from '../../../source';
-import { SkillManagerClient, InkmillingInks } from '../../skill-manager';
+import { SkillManagerClient, SkillManagerInkmillingInks } from 'skill-manager/skill-manager';
 
 declare const client: SkillManagerClient;
 
@@ -13,7 +13,7 @@ export const mill = new AliasItem(
                 const amount = Number(args[1]);
                 const colour = args[2];
 
-                const inkReagents: InkmillingInks[keyof InkmillingInks] | undefined = client.skillmanager.inkmilling.inks[<keyof InkmillingInks>colour];
+                const inkReagents: SkillManagerInkmillingInks[keyof SkillManagerInkmillingInks] | undefined = client.skillmanager.inkmilling.inks[<keyof SkillManagerInkmillingInks>colour];
 
                 if (!inkReagents) {
                     client.skillmanager.error(`Unknown ink colour '${colour}'.`);
@@ -33,9 +33,11 @@ export const mill = new AliasItem(
                     client.skillmanager.inkmilling.queue.push(`${groupAmount} ${colour}`);
                 }
 
-                client.skillmanager.inkmilling.running = true;
+                client.skillmanager.inkmilling.runningQueue = true;
 
-                client.skillmanager.runQueue();
+                client.skillmanager.inkmilling.runQueue();
+
+                client.skillmanager.echo(`Started milling.`);
             }
         )
     ]

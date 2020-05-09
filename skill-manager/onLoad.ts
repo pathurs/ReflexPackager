@@ -1,32 +1,71 @@
 
 import { FunctionItem } from '../source';
+import { DisplayServiceClient } from 'display-service/display-service';
+import { SystemServiceClient } from 'system-service/system-service';
+import { GMCPServiceClient } from 'gmcp-service/gmcp-service';
+import { QueueServiceClient } from 'queue-service/queue-service';
+import { InventoryManagerClient } from 'inventory-manager/inventory-manager';
 import {
     SkillManagerClient,
-    HarvestingPhraseToNameMap,
-    TransmutationPhraseToNameMap,
-    GatheringPhraseToNameMap,
-    ButcheringPhraseToNameMap,
-    InkmillingPhraseToNameMap,
-    InkmillingInks,
-    InkmillingReagents,
-    TarotCard
+    SkillManagerInkmillingInks,
+    SkillManagerTarotInscribingQueue,
+    SkillManagerInkmillingInkReagents
 } from './skill-manager';
-import { InventoryManagerClient } from '../inventory-manager/inventory-manager';
-import { DisplayServiceClient } from '../display-service/display-service';
 
-declare const client: SkillManagerClient & InventoryManagerClient & DisplayServiceClient;
+declare const client: SkillManagerClient & DisplayServiceClient & SystemServiceClient & GMCPServiceClient & QueueServiceClient & InventoryManagerClient;
 
 export const onLoad = new FunctionItem(
     'onLoad',
     function () {
         client.skillmanager = {
-            enabled: true,
-            running: false,
-            harvesting: {
+            settings: get_variable('skill-manager:settings') || {
                 enabled: true,
-                queue: [],
-                running: false,
-                phraseToNameMap: {
+                harvesting: {
+                    enabled: true
+                },
+                transmutation: {
+                    enabled: true
+                },
+                gathering: {
+                    enabled: true
+                },
+                inkmilling: {
+                    enabled: true
+                },
+                tarot: {
+                    enabled: true
+                }
+            },
+            harvesting: {
+                harvestables: [
+                    'bayberry',
+                    'bellwort',
+                    'burdock',
+                    'cohosh',
+                    'bloodroot',
+                    'echinacea',
+                    'ginger',
+                    'ginseng',
+                    'goldenseal',
+                    'hawthorn',
+                    'moss',
+                    'kelp',
+                    'kola',
+                    'kuzu',
+                    'slipper',
+                    'myrrh',
+                    'lobelia',
+                    'ash',
+                    'sac',
+                    'sileris',
+                    'skin',
+                    'skullcap',
+                    'elm',
+                    'valerian',
+                    'weed',
+                    'pear'
+                ],
+                descriptionDictionary: {
                     'bayberry bark': 'bayberry',
                     'pieces of bayberry bark': 'bayberry',
                     'bellwort flower': 'bellwort',
@@ -63,8 +102,12 @@ export const onLoad = new FunctionItem(
                     'lobelia seeds': 'lobelia',
                     'prickly ash bark': 'ash',
                     'pieces of prickly ash bark': 'ash',
+                    'venom sac': 'sac',
+                    'venom sacs': 'sac',
                     'sileris berry': 'sileris',
                     'sileris berries': 'sileris',
+                    'sidewinder skin': 'skin',
+                    'sidewinder skins': 'skin',
                     'skullcap flower': 'skullcap',
                     'skullcap flowers': 'skullcap',
                     'slippery elm': 'elm',
@@ -78,10 +121,30 @@ export const onLoad = new FunctionItem(
                 }
             },
             transmutation: {
-                enabled: true,
-                queue: [],
-                running: false,
-                phraseToNameMap: {
+                extractables: [
+                    'antimony',
+                    'argentum',
+                    'arsenic',
+                    'aurum',
+                    'azurite',
+                    'bisemutum',
+                    'calamine',
+                    'calcite',
+                    'cinnabar',
+                    'cuprum',
+                    'dolomite',
+                    'ferrum',
+                    'gypsum',
+                    'magnesium',
+                    'malachite',
+                    'plumbum',
+                    'potash',
+                    'quartz',
+                    'quicksilver',
+                    'realgar',
+                    'stannum'
+                ],
+                descriptionDictionary: {
                     'antimony flake': 'antimony',
                     'antimony flakes': 'antimony',
                     'argentum flake': 'argentum',
@@ -127,10 +190,112 @@ export const onLoad = new FunctionItem(
                 }
             },
             gathering: {
-                enabled: true,
-                queue: [],
-                running: false,
-                environments: {
+                butchering: {
+                    active: false,
+                    descriptionDictionary: {
+                        'piece of buffalo horn': 'buffalohorn',
+                        'pieces of buffalo horn': 'buffalohorn',
+                        'pile of fish scales': 'scales',
+                        'piles of fish scales': 'scales',
+                        'pile of gold flakes': 'flakes',
+                        'piles of gold flakes': 'flakes',
+                        'an ink bladder': 'bladder',
+                        'ink bladders': 'bladder',
+                        'sliver of red scorpion chitin': 'redchitin',
+                        'slivers of red chitin': 'redchitin',
+                        'sliver of yellow scorpion chitin': 'yellowchitin',
+                        'slivers of yellow chitin': 'yellowchitin',
+                        'lump of red clay': 'clay',
+                        'lumps of red clay': 'clay',
+                        'shark tooth': 'tooth',
+                        'shark teeth': 'tooth',
+                        'wyrm tongue': 'tongue',
+                        'wyrm tongues': 'tongue',
+                        'chunk of animal fat': 'fat',
+                        'chunks of animal fat': 'fat',
+                        'fillet of fish': 'fish',
+                        'pieces of fish': 'fish',
+                        'tender cut of meat': 'meat',
+                        'pieces of meat': 'meat',
+                        'poultry breast': 'poultry',
+                        'pieces of poultry': 'poultry',
+                        'unprocessed animal skin': 'skin',
+                        'skins': 'skin'
+                    },
+                    start() {
+                        if (client.skillmanager.gathering.butchering.active) {
+                            client.skillmanager.error('Already butchering.');
+
+                            return;
+                        }
+
+                        const corpses = client.gmcpservice.items.inv.filter(value => value.name.startsWith('the corpse of'));
+
+                        if (corpses.length === 0) {
+                            client.skillmanager.error(`You have no corpses.`);
+
+                            return;
+                        }
+
+                        if (client.inventorymanager.settings.wielding.expectedLeftId) {
+                            client.skillmanager.gathering.butchering.itemToRewield = client.inventorymanager.settings.wielding.expectedLeftId;
+                        }
+
+                        client.inventorymanager.wield('cleaver', 'left');
+
+                        client.skillmanager.gathering.butchering.active = true;
+
+                        client.systemservice.sendCommand(`alias set skillmanagerbutcher butcher corpse for reagent`);
+
+                        client.skillmanager.gathering.butchering.butcher();
+
+                        client.skillmanager.echo('Started butchering.');
+                    },
+                    stop() {
+                        if (!client.skillmanager.gathering.butchering.active) {
+                            client.skillmanager.error('Already not butchering.');
+
+                            return;
+                        }
+
+                        client.skillmanager.gathering.butchering.active = false;
+
+                        client.systemservice.sendCommand(`alias clear skillmanagerbutcher`);
+
+                        if (client.skillmanager.gathering.butchering.itemToRewield) {
+                            client.inventorymanager.wield(client.skillmanager.gathering.butchering.itemToRewield, 'left');
+                        }
+                        else {
+                            client.inventorymanager.unwield('cleaver');
+                        }
+
+                        client.skillmanager.echo('Stopped butchering.');
+                    },
+                    butcher() {
+                        if (client.skillmanager.gathering.butchering.active) {
+                            client.systemservice.sendCommand(`queue add eqbal skillmanagerbutcher`);
+                        }
+                    }
+                },
+                gatherables: [
+                    'vegetable',
+                    'clay',
+                    'fruit',
+                    'grain',
+                    'egg',
+                    'nut',
+                    'olive',
+                    'sugarcane',
+                    'lumic',
+                    'cacao',
+                    'dust',
+                    'goldbar',
+                    'seed',
+                    'goldflakes',
+                    'milk',
+                    'saltwater'
+                ],
+                environmentDictionary: {
                     'Forest': ['nut'],
                     'Garden': ['fruit', 'vegetable'],
                     'Grasslands': ['sugarcane', 'grain', 'from farm'],
@@ -140,7 +305,7 @@ export const onLoad = new FunctionItem(
                     'River': ['clay'],
                     'Ocean': ['saltwater']
                 },
-                phraseToNameMap: {
+                descriptionDictionary: {
                     'assortment of vegetables': 'vegetable',
                     'vegetables': 'vegetable',
                     'lump of red clay': 'clay',
@@ -169,68 +334,100 @@ export const onLoad = new FunctionItem(
                     'handful of seeds': 'seed',
                     'piles of gold flakes': 'goldflakes',
                     'pile of gold flakes': 'goldflakes',
-                    'venom sac': 'sac',
-                    'venom sacs': 'sac',
-                    'sidewinder skin': 'skin',
-                    'sidewinder skins': 'skin',
                     'sip of milk': 'milk',
                     'sips of milk': 'milk',
                     'sip of saltwater': 'saltwater',
                     'sips of saltwater': 'saltwater'
+                },
+                getGatherables() {
+                    return client.skillmanager.gathering.environmentDictionary[client.gmcpservice.room.environment] || [];
                 }
             },
-            butchering: {
-                enabled: true,
-                queue: [],
-                running: false,
-                phraseToNameMap: {
-                    'piece of buffalo horn': 'buffalohorn',
-                    'pieces of buffalo horn': 'buffalohorn',
-                    'pile of fish scales': 'scales',
-                    'piles of fish scales': 'scales',
-                    'pile of gold flakes': 'flakes',
-                    'piles of gold flakes': 'flakes',
-                    'an ink bladder': 'bladder',
-                    'ink bladders': 'bladder',
-                    'sliver of red scorpion chitin': 'redchitin',
-                    'slivers of red chitin': 'redchitin',
-                    'sliver of yellow scorpion chitin': 'yellowchitin',
-                    'slivers of yellow chitin': 'yellowchitin',
-                    'lump of red clay': 'clay',
-                    'lumps of red clay': 'clay',
-                    'shark tooth': 'tooth',
-                    'shark teeth': 'tooth',
-                    'wyrm tongue': 'tongue',
-                    'wyrm tongues': 'tongue',
-                    'chunk of animal fat': 'fat',
-                    'chunks of animal fat': 'fat',
-                    'fillet of fish': 'fish',
-                    'pieces of fish': 'fish',
-                    'tender cut of meat': 'meat',
-                    'pieces of meat': 'meat',
-                    'poultry breast': 'poultry',
-                    'pieces of poultry': 'poultry',
-                    'unprocessed animal skin': 'skin',
-                    'skins': 'skin'
+            collecting: {
+                active: false,
+                waitingForPlants: false,
+                waitingForMinerals: false,
+                queue: new Set(),
+                start() {
+                    if (client.skillmanager.collecting.active) {
+                        client.skillmanager.error('Already collecting.');
+
+                        return;
+                    }
+
+                    client.skillmanager.collecting.active = true;
+                    client.skillmanager.collecting.waitingForPlants = true;
+                    client.skillmanager.collecting.waitingForMinerals = true;
+
+                    client.skillmanager.gathering.getGatherables().forEach(value => {
+                        client.skillmanager.collecting.queue.add(`gather ${value}`);
+                    });
+
+                    client.systemservice.sendCommand('plants|minerals');
+
+                    client.skillmanager.echo('Started collecting.');
+                },
+                stop() {
+                    if (!client.skillmanager.collecting.active) {
+                        client.skillmanager.error('Already not collecting.');
+
+                        return;
+                    }
+
+                    client.skillmanager.collecting.active = false;
+
+                    client.systemservice.sendCommand(`alias clear skillmanagercollect`);
+
+                    client.skillmanager.echo('Stopped collecting.');
+                },
+                clear() {
+                    client.skillmanager.collecting.queue.clear();
+
+                    client.skillmanager.echo('Reset collecting queue.');
+                },
+                collect() {
+                    if (!client.skillmanager.collecting.active) {
+                        return;
+                    }
+
+                    if (client.skillmanager.collecting.queue.size === 0) {
+                        // Delay so last command an call inrift
+                        setTimeout(() => {
+                            client.skillmanager.collecting.stop();
+                        });
+
+                        return;
+                    }
+
+                    const command = <string | undefined>client.skillmanager.collecting.queue.values().next().value;
+
+                    if (command) {
+                        client.skillmanager.collecting.queue.delete(command);
+                        client.systemservice.sendCommand(`alias set skillmanagercollect ${command}`);
+                        client.systemservice.sendCommand(`queue add eqbal skillmanagercollect`);
+
+                        return;
+                    }
+                },
+                tryCollect() {
+                    if (client.skillmanager.collecting.active && !client.skillmanager.collecting.waitingForPlants && !client.skillmanager.collecting.waitingForMinerals) {
+                        client.skillmanager.collecting.collect();
+                    }
                 }
             },
             inkmilling: {
-                enabled: true,
+                active: false,
+                runningQueue: false,
                 queue: [],
-                running: false,
-                mill: {
-                    // TODO: Let user set id
-                    id: client.inventorymanager.items.find(item => item.name.includes('mill'))?.id
-                },
                 reagents: {
-                    red: ['clay', 'redchitin'],
-                    blue: ['bladder', 'lumic'],
+                    red: ['redclay', 'redchitin'],
+                    blue: ['inkbladder', 'lumic'],
                     yellow: ['yellowchitin'],
                     gold: ['goldflakes'],
-                    common: ['scales'],
+                    common: ['fishscales'],
                     uncommon: ['buffalohorn'],
-                    scarce: ['tooth'],
-                    rare: ['tongue']
+                    scarce: ['sharktooth'],
+                    rare: ['wyrmtongue']
                 },
                 inks: {
                     red: {
@@ -276,7 +473,7 @@ export const onLoad = new FunctionItem(
                         rare: 3
                     }
                 },
-                phraseToNameMap: {
+                descriptionDictionary: {
                     'red ink': 'redink',
                     'red inks': 'redink',
                     'blue ink': 'blueink',
@@ -291,10 +488,104 @@ export const onLoad = new FunctionItem(
                     'gold inks': 'goldink',
                     'black ink': 'blackink',
                     'black inks': 'blackink'
+                },
+                start() {
+                    if (client.skillmanager.inkmilling.active) {
+                        client.skillmanager.error('Already milling.');
+
+                        return;
+                    }
+
+                    client.skillmanager.inkmilling.active = true;
+
+                    client.skillmanager.inkmilling.runQueue();
+
+                    client.skillmanager.echo('Started milling.');
+                },
+                stop() {
+                    if (!client.skillmanager.inkmilling.active) {
+                        client.skillmanager.error('Already not milling.');
+
+                        return;
+                    }
+
+                    client.skillmanager.inkmilling.active = false;
+                    client.skillmanager.inkmilling.runningQueue = false;
+
+                    client.skillmanager.echo('Stopped milling.');
+                },
+                reset() {
+                    client.skillmanager.inkmilling.queue = [];
+
+                    client.skillmanager.echo('Reset milling queue.');
+                },
+                runQueue() {
+                    if (!client.skillmanager.inkmilling.active) {
+                        return;
+                    }
+
+                    if (client.skillmanager.inkmilling.runningQueue) {
+                        return;
+                    }
+
+                    if (client.skillmanager.inkmilling.queue.length === 0) {
+                        client.skillmanager.inkmilling.stop();
+
+                        return;
+                    }
+
+                    client.skillmanager.inkmilling.runningQueue = true;
+
+                    // client.skillmanager.echo(`Inkmilling Queue: ${client.skillmanager.inkmilling.queue.join(', ')}`);
+
+                    const next = client.skillmanager.inkmilling.queue.pop();
+                    const match = next?.match(/(\d+) (\w+)/) || [];
+                    const amount = Number(match[1]);
+                    const colour = match[2];
+
+                    if (!amount || !colour) {
+                        return;
+                    }
+
+                    const inkReagents: SkillManagerInkmillingInkReagents | undefined = client.skillmanager.inkmilling.inks[<keyof SkillManagerInkmillingInks>colour];
+
+                    const outriftCommands: string[] = [];
+                    const putInMillCommands: string[] = [];
+
+                    for (let inkReagent in inkReagents) {
+                        const reagentAmount = amount * <number>inkReagents[<keyof SkillManagerInkmillingInkReagents>inkReagent];
+                        const reagents = client.skillmanager.inkmilling.reagents[inkReagent];
+                        const reagent = reagents.find(value => {
+                            return Number(client.gmcpservice.rift[value]?.amount) >= reagentAmount;
+                        });
+
+                        if (reagent === undefined) {
+                            client.skillmanager.inkmilling.queue = [];
+                            client.skillmanager.inkmilling.runningQueue = false;
+
+                            client.systemservice.sendCommand('get 50 reagent from mill|inr 50 reagent|inr 50 reagent|inr 50 reagent|inr 50 reagent|inr 50 reagent|inr 50 reagent|inr 50 reagent|inr 50 reagent|inr 50 reagent');
+
+                            client.skillmanager.error(`Ran out of ${reagents.join(' and ')}. Queue has been cleared.`);
+
+                            return;
+                        }
+
+                        if (reagentAmount === 1) {
+                            outriftCommands.push(`outrift ${reagent}`);
+                            putInMillCommands.push(`put ${reagent} in mill`);
+                        }
+                        else {
+                            outriftCommands.push(`outrift ${reagentAmount} ${reagent}`);
+                            putInMillCommands.push(`put group ${reagent} in mill`);
+                        }
+                    }
+
+                    client.systemservice.sendCommand(outriftCommands.join('|'));
+                    client.systemservice.sendCommand(putInMillCommands.join('|'));
+                    client.systemservice.sendCommand(`mill for ${amount} ${colour}`);
                 }
             },
             tarot: {
-                enabled: true,
                 cards: [
                     'blank',
                     'sun',
@@ -320,7 +611,7 @@ export const onLoad = new FunctionItem(
                     'moon',
                     'death'
                 ],
-                phraseToNameMap: {
+                descriptionDictionary: {
                     'nothing': 'blank',
                     'Sun': 'sun',
                     'Emperor': 'emperor',
@@ -346,7 +637,8 @@ export const onLoad = new FunctionItem(
                     'Death': 'death'
                 },
                 inscribing: {
-                    running: false,
+                    active: false,
+                    runningQueue: false,
                     queue: {
                         sun: 0,
                         emperor: 0,
@@ -371,228 +663,116 @@ export const onLoad = new FunctionItem(
                         moon: 0,
                         death: 0
                     },
+                    start() {
+                        if (client.skillmanager.tarot.inscribing.active) {
+                            client.skillmanager.error('Already inscribing.');
+
+                            return;
+                        }
+
+                        client.skillmanager.tarot.inscribing.active = true;
+
+                        client.skillmanager.tarot.inscribing.runQueue();
+
+                        client.skillmanager.echo('Started inscribing.');
+                    },
+                    stop() {
+                        if (!client.skillmanager.tarot.inscribing.active) {
+                            client.skillmanager.error('Already not inscribing.');
+
+                            return;
+                        }
+
+                        client.skillmanager.tarot.inscribing.active = false;
+                        client.skillmanager.tarot.inscribing.runningQueue = false;
+
+                        client.skillmanager.echo('Stopped inscribing.');
+                    },
+                    reset() {
+                        client.skillmanager.tarot.inscribing.queue = {
+                            sun: 0,
+                            emperor: 0,
+                            magician: 0,
+                            priestess: 0,
+                            fool: 0,
+                            chariot: 0,
+                            hermit: 0,
+                            empress: 0,
+                            lovers: 0,
+                            hierophant: 0,
+                            hangedman: 0,
+                            tower: 0,
+                            wheel: 0,
+                            creator: 0,
+                            justice: 0,
+                            star: 0,
+                            aeon: 0,
+                            lust: 0,
+                            universe: 0,
+                            devil: 0,
+                            moon: 0,
+                            death: 0
+                        };
+
+                        client.skillmanager.echo('Reset inscribing queue.');
+                    },
                     runQueue() {
-                        if (client.skillmanager.tarot.inscribing.running) {
-                            for (const card in client.skillmanager.tarot.inscribing.queue) {
-                                if (client.skillmanager.tarot.inscribing.queue[<Exclude<TarotCard, 'blank'>>card] > 0) {
-                                    send_command(`outd blank|inscribe blank with ${card}`, 1);
+                        if (!client.skillmanager.inkmilling.active) {
+                            return;
+                        }
 
-                                    return;
-                                }
+                        if (client.skillmanager.inkmilling.runningQueue) {
+                            return;
+                        }
+
+                        if (client.skillmanager.inkmilling.queue.length === 0) {
+                            client.skillmanager.inkmilling.stop();
+
+                            return;
+                        }
+
+                        client.skillmanager.inkmilling.runningQueue = true;
+
+                        for (const card in client.skillmanager.tarot.inscribing.queue) {
+                            if (client.skillmanager.tarot.inscribing.queue[<keyof SkillManagerTarotInscribingQueue>card] > 0) {
+                                client.systemservice.sendCommand(`outd blank|inscribe blank with ${card}`);
+
+                                return;
                             }
-
-                            client.skillmanager.tarot.inscribing.running = false;
-
-                            client.skillmanager.echo('Inscribing stopped.');
                         }
                     }
                 }
             },
             echo(text) {
-                client.displayservice.echo(`%white%[%deepskyblue%Skill Manager%end%]:%end% ${client.displayservice.colorify(text)}`);
+                client.displayservice.echo(`%lightgray%[%deepskyblue%Skill Manager%end%]:%end% ${client.displayservice.colorify(text)}`);
             },
             error(text) {
                 client.skillmanager.echo(`%red%${text}`);
             },
             save() {
-                gmcp_save_system();
+                client.systemservice.save('skill-manager', () => {
+                    set_variable('skil-manager:settings', client.skillmanager.settings);
 
-                client.skillmanager.echo('Settings saved.');
-            },
-            runQueue() {
-                if (client.skillmanager.running) {
-                    return;
-                }
-                else {
-                    client.skillmanager.running = true;
-
-                    // Ensure runQueue() is only called once
-                    setTimeout(function () {
-                        client.skillmanager.running = false;
-                    });
-                }
-
-                if (client.skillmanager.harvesting.running) {
-                    if (client.skillmanager.harvesting.queue.length > 0) {
-                        // client.skillmanager.echo(`Harvesting Queue: ${client.skillmanager.harvesting.queue.join(', ')}`);
-
-                        const command = client.skillmanager.harvesting.queue.pop();
-
-                        if (command) {
-                            send_command(`queue add eqbal ${command}`);
-
-                            return;
-                        }
-                    }
-                    else {
-                        client.skillmanager.echo(`Harvesting Complete!`);
-
-                        client.skillmanager.harvesting.running = false;
-                    }
-                }
-
-                if (client.skillmanager.transmutation.running) {
-                    if (client.skillmanager.transmutation.queue.length > 0) {
-                        // client.inventoskillmanagerrymanager.echo(`${client.skillmanager.transmutation.queue.join(', ')}`);
-
-                        const command = client.skillmanager.transmutation.queue.pop();
-
-                        if (command) {
-                            send_command(`queue add eqbal ${command}`);
-
-                            return;
-                        }
-                    }
-                    else {
-                        client.skillmanager.echo(`Transmutation Complete!`);
-
-                        client.skillmanager.transmutation.running = false;
-                    }
-                }
-
-
-                if (client.skillmanager.gathering.running) {
-                    if (client.skillmanager.gathering.queue.length > 0) {
-                        // client.skillmanager.echo(`Gathering Queue: ${client.skillmanager.gathering.queue.join(', ')}`);
-
-                        const command = client.skillmanager.gathering.queue.pop();
-
-                        if (command) {
-                            send_command(`queue add eqbal ${command}`);
-
-                            return;
-                        }
-                    }
-                    else {
-                        client.skillmanager.echo(`Gathering Complete!`);
-
-                        client.skillmanager.gathering.running = false;
-                    }
-                }
-
-                if (client.skillmanager.butchering.running) {
-                    if (client.skillmanager.butchering.queue.length > 0) {
-                        // client.skillmanager.echo(`Butchering Queue: ${client.skillmanager.butchering.queue.join(', ')}`);
-
-                        const command = client.skillmanager.butchering.queue.pop();
-
-                        if (command) {
-                            send_command(`queue add eqbal ${command}`);
-
-                            return;
-                        }
-                    }
-                    else {
-                        if (client.skillmanager.butchering.itemToRewield) {
-                            send_command(`wield left ${client.skillmanager.butchering.itemToRewield}`);
-                        }
-                        else {
-                            send_command('unwield cleaver');
-                        }
-
-                        client.skillmanager.echo(`Butchering Complete!`);
-
-                        client.skillmanager.butchering.running = false;
-                    }
-                }
-
-                if (client.skillmanager.inkmilling.running) {
-                    if (client.skillmanager.inkmilling.queue.length > 0) {
-                        // client.skillmanager.echo(`Inkmilling Queue: ${client.skillmanager.inkmilling.queue.join(', ')}`);
-
-                        const next = client.skillmanager.inkmilling.queue.pop();
-                        const match = next?.match(/(\d+) (\w+)/) || [];
-                        const amount = Number(match[1]);
-                        const colour = match[2];
-
-                        if (!amount || !colour) {
-                            return;
-                        }
-
-                        const inkReagents: InkmillingInks[keyof InkmillingInks] | undefined = client.skillmanager.inkmilling.inks[<keyof InkmillingInks>colour];
-
-                        const outriftCommands: string[] = [];
-                        const putInMillCommands: string[] = [];
-
-                        for (let inkReagent in inkReagents) {
-                            const reagentAmount = amount * inkReagents[<keyof typeof inkReagents>inkReagent];
-                            const reagents = client.skillmanager.inkmilling.reagents[<keyof InkmillingReagents>inkReagent];
-                            // Actually check rift
-                            const reagent = reagents[0];
-
-
-                            if (reagentAmount === 1) {
-                                outriftCommands.push(`outrift ${reagent}`);
-                                putInMillCommands.push(`put ${reagent} in mill`);
-                            }
-                            else {
-                                outriftCommands.push(`outrift ${reagentAmount} ${reagent}`);
-                                putInMillCommands.push(`put group ${reagent} in mill`);
-                            }
-                        }
-
-                        send_command(outriftCommands.join('|'), 1);
-                        send_command(putInMillCommands.join('|'), 1);
-                        send_command(`mill for ${amount} ${colour}`, 1);
-                    }
-                    else {
-                        client.skillmanager.echo(`Inkmilling Complete!`);
-
-                        client.skillmanager.inkmilling.running = false;
-                    }
-                }
-            },
-            inrift(args: TriggerFunctionArgs): void {
-                const amountMatch = args[1] || args[3] || args[5] || args[7] || args[9] || args[11] || '';
-                const itemNameMatch = args[2] || args[4] || args[6] || args[8] || args[10] || args[12] || '';
-
-                const amount = amountMatch.match(/(\d+)/)?.[1] || '1';
-
-                if (itemNameMatch in client.skillmanager.harvesting.phraseToNameMap) {
-                    const item: HarvestingPhraseToNameMap[keyof HarvestingPhraseToNameMap] | undefined = client.skillmanager.harvesting.phraseToNameMap[<keyof HarvestingPhraseToNameMap>itemNameMatch];
-
-                    if (item) {
-                        send_command(`inrift ${amount} ${item}`);
-                    }
-                }
-                else if (itemNameMatch in client.skillmanager.transmutation.phraseToNameMap) {
-                    const item: TransmutationPhraseToNameMap[keyof TransmutationPhraseToNameMap] | undefined = client.skillmanager.transmutation.phraseToNameMap[<keyof TransmutationPhraseToNameMap>itemNameMatch];
-
-                    if (item) {
-                        send_command(`inrift ${amount} ${item}`);
-                    }
-                }
-                else if (itemNameMatch in client.skillmanager.gathering.phraseToNameMap) {
-                    const item: GatheringPhraseToNameMap[keyof GatheringPhraseToNameMap] | undefined = client.skillmanager.gathering.phraseToNameMap[<keyof GatheringPhraseToNameMap>itemNameMatch];
-
-                    if (item) {
-                        if (item === 'milk' || item === 'saltwater') {
-                            send_command(`pour ${item} into rift`);
-                        }
-                        else {
-                            send_command(`inrift ${amount} ${item}`);
-                        }
-                    }
-                }
-                else if (itemNameMatch in client.skillmanager.butchering.phraseToNameMap) {
-                    const item: ButcheringPhraseToNameMap[keyof ButcheringPhraseToNameMap] | undefined = client.skillmanager.butchering.phraseToNameMap[<keyof ButcheringPhraseToNameMap>itemNameMatch];
-
-                    if (item) {
-                        send_command(`inrift ${amount} ${item}`);
-                    }
-                }
-                else if (itemNameMatch in client.skillmanager.inkmilling.phraseToNameMap) {
-                    const item: InkmillingPhraseToNameMap[keyof InkmillingPhraseToNameMap] | undefined = client.skillmanager.inkmilling.phraseToNameMap[<keyof InkmillingPhraseToNameMap>itemNameMatch];
-
-                    if (item) {
-                        send_command(`inrift ${amount} ${item}`);
-                    }
-                }
-                else if (itemNameMatch) {
-                    client.skillmanager.echo(`Unknown item '${itemNameMatch}'.`);
-                }
+                    client.skillmanager.echo('Settings saved.');
+                });
             }
         };
+
+        client.queueservice.subscribe(['bal', 'eq', 'eqbal'], (_queue, method, args) => {
+            if (client.skillmanager.gathering.butchering.active) {
+                if (method === 'run' && args.command.toLowerCase() === 'skillmanagerbutcher') {
+                    client.skillmanager.gathering.butchering.butcher();
+                }
+            }
+            else if (client.skillmanager.collecting.active) {
+                if (method === 'run' && args.command.toLowerCase() === 'skillmanagercollect') {
+                    client.skillmanager.collecting.tryCollect();
+                }
+            }
+        });
+
+        client.systemservice.sendCommand(`alias clear skillmanagerbutcher`);
+        client.systemservice.sendCommand(`alias clear skillmanagercollect`);
 
         client.skillmanager.echo('Loaded.');
     }

@@ -138,6 +138,24 @@ type GMCPClientMethod =
     | GMCPClientMethodIRE
     ;
 
+// Char.Vitals
+
+interface GMCPCharVitals {
+    bal: '1' | '0';
+    eq: '1' | '0';
+    hp: string;
+    maxhp: string;
+    mp: string;
+    maxmp: string;
+    ep: string;
+    maxep: string;
+    wp: string;
+    maxwp: string;
+    nl: string;
+    string: string;
+    charstats: string[];
+}
+
 // Char.Skills
 
 interface GMCPCharSkillsGet {
@@ -174,7 +192,7 @@ interface GMCPCharAfflictionsAffliction {
 
 type GMCPCharAfflictionsList = GMCPCharAfflictionsAffliction[];
 
-type GMCPCharAfflictionsAdd = GMCPCharAfflictionsAffliction[];
+type GMCPCharAfflictionsAdd = GMCPCharAfflictionsAffliction;
 
 type GMCPCharAfflictionsRemove = string[];
 
@@ -187,10 +205,7 @@ interface GMCPCharDefencesDefence {
 
 type GMCPCharDefencesList = GMCPCharDefencesDefence[];
 
-interface GMCPCharDefencesAdd {
-    name: string;
-    desc: string;
-}
+type GMCPCharDefencesAdd = GMCPCharDefencesDefence;
 
 type GMCPCharDefencesRemove = string[];
 
@@ -213,8 +228,8 @@ type GMCPCharItemsItemAttribute =
     | 'f' // Fluid
     | 'e' // Edible
     | 't' // Takeable
-    | 'm' // Monster
-    | 'd' // Dead monster
+    | 'm' // Mob
+    | 'd' // Dead Mob
     | 'x' // Should not be targeted, e.g. guards
     ;
 type WearSlot =
@@ -263,15 +278,9 @@ type GMCPCharItems =
 
 // Room
 
-type RoomArea =
-    | 'Hashan'
-    | 'the sewers of Hashan'
-    ;
+type RoomArea = string;
 
-type RoomEnvironment =
-    | 'Urban'
-    | 'Sewer'
-    ;
+type RoomEnvironment = string;
 
 type RoomDetail =
     | 'indoors'
@@ -304,6 +313,17 @@ interface GMCPRoomInfo {
     exits: RoomExits;
 }
 
+// IRE.Rift
+
+interface GMCPRiftItem {
+    name: string;
+    amount: string;
+    desc: string;
+}
+
+type GMCPIRERiftList = GMCPRiftItem[];
+type GMCPIRERiftChange = GMCPRiftItem;
+
 // IRE.Target
 
 type GMCPIRETargetSet = string;
@@ -321,7 +341,7 @@ interface GMCPServerMethodToArgsMap {
     'Core.Goodbye': unknown;
 
     'Char.Name': unknown;
-    'Char.Vitals': unknown;
+    'Char.Vitals': GMCPCharVitals;
     'Char.StatusVars': unknown;
     'Char.Status': unknown;
     'Char.Afflictions.List': GMCPCharAfflictionsList;
@@ -360,8 +380,8 @@ interface GMCPServerMethodToArgsMap {
     'IRE.Misc.Achievement': unknown;
     'IRE.Misc.URL': unknown;
     'IRE.Misc.Tip': unknown;
-    'IRE.Rift.List': unknown;
-    'IRE.Rift.Change': unknown;
+    'IRE.Rift.List': GMCPIRERiftList;
+    'IRE.Rift.Change': GMCPIRERiftChange;
     'IRE.Sound.Play': unknown;
     'IRE.Sound.Stop': unknown;
     'IRE.Sound.Stopall': unknown;
@@ -398,13 +418,12 @@ interface AliasFunctionArgs {
     [key: number]: string | undefined;
 }
 
-interface GMCPFunctionArgs<
-    TMethod extends GMCPServerMethod = GMCPServerMethod,
-    TArgs extends GMCPServerMethodToArgsMap[GMCPServerMethod] = GMCPServerMethodToArgsMap[TMethod]
-    > {
+type GMCPFunctionArgs<TMethod extends GMCPServerMethod = GMCPServerMethod> = TMethod extends GMCPServerMethod ? {
     gmcp_method: TMethod;
-    gmcp_args: TArgs;
-}
+    gmcp_args: GMCPServerMethodToArgsMap[TMethod];
+} : never;
+
+type foo = GMCPFunctionArgs<'Char.Items.List' | 'Char.Items.Remove'>;
 
 interface GMCPAliasRegexArgs {
     0: string;
@@ -615,6 +634,7 @@ declare function send_GMCP(message: 'Char.Items.Inv'): void;
 declare function send_GMCP(message: 'Char.Items.Contents', args: number): void;
 declare function send_GMCP(message: 'Char.Items.Room'): void;
 declare function send_GMCP(message: 'IRE.Target.Set', args: string): void;
+declare function send_GMCP(message: 'IRE.Rift.Request'): void;
 // declare function send_GMCP(message: GMCPClientMethod, args?: unknown): void;
 
 /**
@@ -624,3 +644,5 @@ declare function send_GMCP(message: 'IRE.Target.Set', args: string): void;
 declare function gmcp_save_system(report?: boolean): void;
 
 declare function set_current_target_info(desc: string, hp: string, isPlayer?: boolean): void;
+
+declare function ws_send(message: string): void;

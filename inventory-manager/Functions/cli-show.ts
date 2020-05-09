@@ -17,7 +17,7 @@ export const cliShow = new FunctionItem(
                         {
                             label: 'Enabled',
                             value: makeBooleanValue(
-                                client.inventorymanager.enabled,
+                                client.inventorymanager.settings.enabled,
                                 'inventory-manager config enabled false',
                                 'Disable Inventory Manager.',
                                 'inventory-manager config enabled true',

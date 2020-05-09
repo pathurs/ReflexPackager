@@ -1,8 +1,9 @@
 import { AliasItem, AliasType, ExecuteScriptAction } from '../../source';
-import { ShopManagerClient } from 'shop-manager/shop-manager';
+import { SystemServiceClient } from 'system-service/system-service';
 import { GMCPServiceClient } from 'gmcp-service/gmcp-service';
+import { ShopManagerClient } from 'shop-manager/shop-manager';
 
-declare const client: ShopManagerClient & GMCPServiceClient;
+declare const client: ShopManagerClient & SystemServiceClient & GMCPServiceClient;
 
 export const shopManagerDo = new AliasItem(
     'Shop Manager Do',
@@ -21,11 +22,11 @@ export const shopManagerDo = new AliasItem(
                     return;
                 }
 
-                client.shopmanager.echo(`Doing: '%white%${command}%end%'.`)
+                client.shopmanager.echo(`Doing: '%lightgray%${command}%end%'.`)
 
-                send_command(`unlock door down|open door down|down|close door up|lock door up`, 1);
-                send_command(command, 1);
-                send_command(`unlock door up|open door up|up|close door down|lock door down`, 1);
+                client.systemservice.sendCommand(`unlock door down|open door down|down|close door up|lock door up`);
+                client.systemservice.sendCommand(command);
+                client.systemservice.sendCommand(`unlock door up|open door up|up|close door down|lock door down`);
             }
         )
     ]

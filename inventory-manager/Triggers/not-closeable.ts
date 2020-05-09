@@ -1,7 +1,8 @@
 import { TriggerItem, TriggerType, ExecuteScriptAction } from '../../source';
+import { GMCPServiceClient } from 'gmcp-service/gmcp-service';
 import { InventoryManagerClient } from '../inventory-manager';
 
-declare const client: InventoryManagerClient;
+declare const client: InventoryManagerClient & GMCPServiceClient;
 
 export const notCloseable = new TriggerItem(
     `Not Closeable`,
@@ -16,10 +17,10 @@ export const notCloseable = new TriggerItem(
                     return;
                 }
 
-                const containers = client.inventorymanager.items
+                const containers = client.gmcpservice.items.inv
                     .filter(value => value.attrib?.includes('c') && value.name === containerDescription);
 
-                const trackedContainers = client.inventorymanager.containers.tracked
+                const trackedContainers = client.inventorymanager.settings.containers.tracked
                     .filter(value => containers.map(value => value.id).includes(value.id));
 
                 if (trackedContainers.length === 0) {
@@ -27,7 +28,7 @@ export const notCloseable = new TriggerItem(
                 }
 
                 trackedContainers.forEach(trackedContainer => {
-                    if (client.inventorymanager.containers.expectedOpen === trackedContainer.id || client.inventorymanager.containers.expectedClose === trackedContainer.id) {
+                    if (client.inventorymanager.expectedOpen === trackedContainer.id || client.inventorymanager.expectedClose === trackedContainer.id) {
                         trackedContainer.closeable = false;
                         trackedContainer.possiblyOpen = undefined;
                     }

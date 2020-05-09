@@ -1,9 +1,9 @@
-import { TriggerItem, TriggerType, ExecuteScriptAction } from '../../../source';
-import { SkillManagerClient } from '../../skill-manager';
+import { ExecuteScriptAction, MultiTriggerItem } from '../../../source';
+import { SkillManagerClient } from 'skill-manager/skill-manager';
 
 declare const client: SkillManagerClient;
 
-export const inscribing = new TriggerItem(
+export const inscribing = new MultiTriggerItem(
     'Inscribing',
     [
         /^Wisely preparing yourself beforehand, you lay out the quill and various inks you will need to inscribe the sign of (?:the )?([\w\W]+) into your card\.$/,
@@ -11,11 +11,10 @@ export const inscribing = new TriggerItem(
         /^You take up the quill and begin to trace the outline of (?:the )?([\w\W]+) with careful precision\. The slightest mistake will render the card useless\.$/,
         /^Finishing the outline, you begin to colour (?:the )?([\w\W]+) properly, utilising just the right amount of hue here, the perfect amount of saturation there\.$/
     ],
-    TriggerType.RegularExpression,
     [
         new ExecuteScriptAction(
             function () {
-                if (client.skillmanager.tarot.inscribing.running) {
+                if (client.skillmanager.tarot.inscribing.active) {
                     gag_current_line();
                 }
             }

@@ -1,6 +1,6 @@
 import { FunctionItem } from '../source';
 import { SystemServiceClient } from './system-service';
-import { DisplayServiceClient } from '../display-service/display-service';
+import { DisplayServiceClient } from 'display-service/display-service';
 
 declare const client: SystemServiceClient & DisplayServiceClient;
 
@@ -14,7 +14,7 @@ export const onLoad = new FunctionItem(
             enabled: true,
             lastSavedAt: 0,
             echo(text) {
-                client.displayservice.echo(`%white%[%deepskyblue%System Service%end%]:%end% ${text}`);
+                client.displayservice.echo(`%lightgray%[%deepskyblue%System Service%end%]:%end% ${text}`);
             },
             error(text) {
                 client.systemservice.echo(`%red%${text}`);
@@ -47,8 +47,8 @@ export const onLoad = new FunctionItem(
                     timeoutId = undefined;
                 }, timeoutMilliseconds);
             },
-            sendCommand(command, echo) {
-                ws_send(command + '/r/n');
+            sendCommand(command, echo = false) {
+                ws_send(command + '\r\n');
 
                 if (echo) {
                     display_notice(command);

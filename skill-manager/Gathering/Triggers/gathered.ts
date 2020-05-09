@@ -1,9 +1,10 @@
-import { TriggerItem, TriggerType, ExecuteScriptAction } from '../../../source';
-import { SkillManagerClient } from '../../skill-manager';
+import { ExecuteScriptAction, MultiTriggerItem } from '../../../source';
+import { SystemServiceClient } from 'system-service/system-service';
+import { SkillManagerClient } from 'skill-manager/skill-manager';
 
-declare const client: SkillManagerClient;
+declare const client: SkillManagerClient & SystemServiceClient;
 
-export const gathered = new TriggerItem(
+export const gathered = new MultiTriggerItem(
     'Gathered',
     [
         /^You reach out and carefully harvest (a group of \d+ |an |a |some |\d+ )?([\w\W]+)\.$/,
@@ -12,13 +13,22 @@ export const gathered = new TriggerItem(
         /^You scour the farmland and find a rudimentary nest, from which you gather (a group of \d+ |an |a |some |\d+ )?([\w\W]+)\.$/,
         /^Using your acute sight, you examine the surrounding sea\. You spot a sparkling patch of pure saltwater, free of impurities, and catch it in a tourmaline vial\.$/
     ],
-    TriggerType.RegularExpression,
     [
         new ExecuteScriptAction(
-            function (args: TriggerFunctionArgs) {
-                if (client.skillmanager.gathering.running) {
-                    client.skillmanager.inrift(args);
-                    client.skillmanager.runQueue();
+            function (args: TriggerFunctionArgs & { 1?: string; 2: string }) {
+                if (client.skillmanager.collecting.active) {
+                    const amountMatch = args[1] || '';
+                    const itemNameMatch = args[2];
+
+                    const amount = amountMatch.match(/(\d+)/)?.[1] || '1';
+
+                    if (itemNameMatch in client.skillmanager.gathering.descriptionDictionary) {
+                        const item: string | undefined = client.skillmanager.gathering.descriptionDictionary[itemNameMatch];
+
+                        if (item) {
+                            client.systemservice.sendCommand(`inrift ${amount} ${item}`);
+                        }
+                    }
                 }
             }
         )

@@ -1,11 +1,11 @@
 import { GroupItem } from '../../source';
-import { Aliases } from './Aliases';
 import { Triggers } from './Triggers';
+import { Butchering } from './Butchering';
 
 export const Gathering = new GroupItem(
     'Gathering',
     [
-        Aliases,
+        Butchering,
         Triggers
     ]
 );

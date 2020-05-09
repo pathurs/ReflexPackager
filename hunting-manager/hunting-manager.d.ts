@@ -1,8 +1,8 @@
-import { QueueSubscription } from '../queue-service/queue-service';
+import { QueueSubscription } from 'queue-service/queue-service';
 
 interface Area {
     name: string;
-    monsters: string[];
+    mobs: string[];
 }
 
 interface Areas {
@@ -11,39 +11,74 @@ interface Areas {
 
 interface Settings {
     enabled: boolean;
+    areas: Areas;
+
+    attackCommand: string;
+
+    razeCommand?: string;
+
     warnAtPercent: number;
+
+    shieldCommand?: string;
+    shieldAtPercent: number;
+    autoShield: boolean;
+
     fleeAtPercent: number;
     autoFlee: boolean;
-    attackCommand: string;
-    razeCommand?: string;
-    shieldCommand?: string;
+}
+
+interface HuntingManagerTarget {
+    currentTarget?: GMCPCharItemsItem;
+    setTarget(target: GMCPCharItemsItem | undefined): void;
+    findPriorityTarget(): GMCPCharItemsItem | undefined;
+    tryTargetPriority(): void;
+}
+
+interface HuntingManagerAttack {
+    setAttackCommand(command: string): void;
+    attackTarget(): void;
+    tryAttackTarget(): void;
+}
+
+interface HuntingManagerRaze {
+    setRazeCommand(command: string): void;
+    razeTarget(): void;
+    tryRazeTarget(): void;
+}
+
+interface HuntingManagerWarn {
+    setWarnAtPercent(percent: number): void;
+}
+
+interface HuntingManagerShield {
+    setShieldCommand(command: string): void;
+    setShieldAtPercent(percent: number): void;
+    shield(): void;
+    tryShield(): void;
+}
+
+interface HuntingManagerFlee {
+    setFleeAtPercent(percent: number): void;
+    flee(): void;
+    tryFlee(): void;
 }
 
 interface HuntingManager {
-    running: boolean;
+    active: boolean;
     settings: Settings;
-    room: GMCPRoomInfo;
-    areas: Areas;
-    roomMonsters: GMCPCharItemsItem[];
-    currentTarget?: GMCPCharItemsItem;
-    queueSubscription?: QueueSubscription<'bal' | 'eq' | 'eqbal'>;
+    target: HuntingManagerTarget;
+    attack: HuntingManagerAttack;
+    raze: HuntingManagerRaze;
+    warn: HuntingManagerWarn;
+    shield: HuntingManagerShield;
+    flee: HuntingManagerFlee;
     echo(message: string): void;
     error(text: string): void;
-    addArea(area: string): void;
     save(): void;
-    addMonster(area: string, monster: string): void;
-    onRoomChange(args: GMCPFunctionArgs<'Char.Items.List' | 'Char.Items.Add' | 'Char.Items.Remove' | 'Char.Items.Update'>): void;
+    addArea(area: string): void;
+    addMob(area: string, mob: string): void;
     start(): void;
     stop(): void;
-    findTarget(): GMCPCharItemsItem | undefined;
-    target(target: GMCPCharItemsItem | undefined): void;
-    tryTargetNext(): void;
-    attack(): void;
-    tryAttack(): void;
-    raze(): void;
-    tryRaze(): void;
-    shield(): void;
-    tryShield(): void;
 }
 
 export type HuntingManagerClient = typeof client & {
