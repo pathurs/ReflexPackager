@@ -1,5 +1,0 @@
-{
-    "name": "Queue Service",
-    "description": "A Queue Service",
-    "outFile": "./packages/queue-service.nxs"
-}

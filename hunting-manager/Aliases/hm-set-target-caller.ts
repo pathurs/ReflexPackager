@@ -5,17 +5,17 @@ import { HuntingManagerClient } from '../hunting-manager';
 
 declare const client: HuntingManagerClient & SystemServiceClient & GMCPServiceClient;
 
-export const huntingManagerAddMob = new AliasItem(
-    'Hunting Manager Add Mob',
-    /^(?:hm|hunting\-manager|hunting manager) add(?: ?mob)? ([\w\W]+)$/,
+export const huntingManagerSetTargetCaller = new AliasItem(
+    'Hunting Manager Set Target Caller',
+    /^(?:hm|hunting\-manager|hunting manager) set(?: ?target)? ?caller ([\w\W]+)$/,
     AliasType.RegularExpression,
     [
         new ExecuteScriptAction(
             function (args: GMCPAliasRegexArgs & { 1: string }) {
                 if (client.huntingmanager.settings.enabled) {
-                    const mob = args[1];
+                    const targetCallerName = args[1];
 
-                    client.huntingmanager.addMob(client.gmcpservice.room.area, mob);
+                    client.huntingmanager.target.setTargetCaller(targetCallerName);
                 }
             }
         )

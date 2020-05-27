@@ -14,6 +14,8 @@ export const milled = new TriggerItem(
                 if (client.skillmanager.inkmilling.active) {
                     client.systemservice.sendCommand(`get group ink from mill|get ink from mill|inrift all ink`);
 
+                    client.skillmanager.inkmilling.runningQueue = false;
+
                     client.skillmanager.inkmilling.runQueue();
                 }
             }

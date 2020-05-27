@@ -5,17 +5,15 @@ import { HuntingManagerClient } from '../hunting-manager';
 
 declare const client: HuntingManagerClient & SystemServiceClient & GMCPServiceClient;
 
-export const huntingManagerAddMob = new AliasItem(
-    'Hunting Manager Add Mob',
-    /^(?:hm|hunting\-manager|hunting manager) add(?: ?mob)? ([\w\W]+)$/,
+export const huntingManagerShowArea = new AliasItem(
+    'Hunting Manager Show Area',
+    /^(?:hm|hunting\-manager|hunting manager) show ?area$/,
     AliasType.RegularExpression,
     [
         new ExecuteScriptAction(
-            function (args: GMCPAliasRegexArgs & { 1: string }) {
+            function () {
                 if (client.huntingmanager.settings.enabled) {
-                    const mob = args[1];
-
-                    client.huntingmanager.addMob(client.gmcpservice.room.area, mob);
+                    client.huntingmanager.showArea(client.gmcpservice.room.area);
                 }
             }
         )

@@ -1,5 +1,5 @@
 import { AliasItem, AliasType, ExecuteScriptAction } from '../../../source';
-import { SkillManagerClient, SkillManagerInkmillingInks } from 'skill-manager/skill-manager';
+import { SkillManagerClient, SkillManagerInkmillingQueue } from 'skill-manager/skill-manager';
 
 declare const client: SkillManagerClient;
 
@@ -9,13 +9,11 @@ export const mill = new AliasItem(
     AliasType.RegularExpression,
     [
         new ExecuteScriptAction(
-            function (args: AliasFunctionArgs) {
+            function (args: AliasFunctionArgs & { 1: string; 2: string }) {
                 const amount = Number(args[1]);
                 const colour = args[2];
 
-                const inkReagents: SkillManagerInkmillingInks[keyof SkillManagerInkmillingInks] | undefined = client.skillmanager.inkmilling.inks[<keyof SkillManagerInkmillingInks>colour];
-
-                if (!inkReagents) {
+                if (!(colour in client.skillmanager.inkmilling.queue)) {
                     client.skillmanager.error(`Unknown ink colour '${colour}'.`);
 
                     return;
@@ -27,17 +25,17 @@ export const mill = new AliasItem(
                     return;
                 }
 
-                for (let i = 0; i < amount; i += 5) {
-                    const groupAmount = i + 5 > amount ? amount - i : 5;
+                client.skillmanager.inkmilling.queue[<keyof SkillManagerInkmillingQueue>colour] += amount;
 
-                    client.skillmanager.inkmilling.queue.push(`${groupAmount} ${colour}`);
+                const total = client.skillmanager.inkmilling.queue[<keyof SkillManagerInkmillingQueue>colour];
+
+                client.skillmanager.echo(
+                    `Added %lightgray%${amount} ${colour} ${amount > 1 ? 'inks' : 'ink'}%end% to inkmilling queue, to make a total of %lightgray%${total} ${colour} ${total > 1 ? 'inks' : 'ink'}%end%.`
+                );
+
+                if (!client.skillmanager.inkmilling.active) {
+                    client.skillmanager.inkmilling.start();
                 }
-
-                client.skillmanager.inkmilling.runningQueue = true;
-
-                client.skillmanager.inkmilling.runQueue();
-
-                client.skillmanager.echo(`Started milling.`);
             }
         )
     ]

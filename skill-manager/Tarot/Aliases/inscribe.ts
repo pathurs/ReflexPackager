@@ -33,9 +33,7 @@ export const inscribe = new AliasItem(
                     `Added %lightgray%${amount} ${card} ${amount > 1 ? 'cards' : 'card'}%end% to inscribing queue, to make a total of %lightgray%${total} ${card} ${total > 1 ? 'cards' : 'card'}%end%.`
                 );
 
-                const alreadyActive = client.skillmanager.tarot.inscribing.active;
-
-                if (!alreadyActive) {
+                if (!client.skillmanager.tarot.inscribing.active) {
                     client.skillmanager.tarot.inscribing.start();
                 }
             }

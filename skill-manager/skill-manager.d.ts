@@ -1,5 +1,3 @@
-import { QueueSubscription } from 'queue-service/queue-service';
-
 type DescriptionDictionary = { [key: string]: string | undefined };
 type EnvironmentDictionary = { [key: string]: string[] | undefined };
 
@@ -59,6 +57,7 @@ interface SkillManagerGatheringSettings {
 
 interface SkillManagerCollecting {
     active: boolean;
+    automatic: boolean;
     waitingForPlants: boolean;
     waitingForMinerals: boolean;
     queue: Set<string>;
@@ -69,9 +68,23 @@ interface SkillManagerCollecting {
     tryCollect(): void;
 }
 
+interface SkillManagerCollectingSettings {
+    enabled: boolean;
+}
+
 //#endregion
 
 //#region Inkmilling
+
+interface SkillManagerInkmillingQueue {
+    red: number;
+    blue: number;
+    yellow: number;
+    green: number;
+    purple: number;
+    gold: number;
+    black: number;
+}
 
 interface SkillManagerInkmillingInkReagents {
     red?: number;
@@ -99,7 +112,7 @@ type ReagentDictionary = { [key: string]: string[] };
 interface SkillManagerInkmilling {
     active: boolean;
     runningQueue: boolean;
-    queue: string[];
+    queue: SkillManagerInkmillingQueue;
     reagents: ReagentDictionary;
     inks: SkillManagerInkmillingInks;
     descriptionDictionary: DescriptionDictionary;
@@ -170,6 +183,7 @@ interface SkillManagerSettings {
     harvesting: SkillManagerHarvestingSettings;
     transmutation: SkillManagerTransmutationSettings;
     gathering: SkillManagerGatheringSettings;
+    collecting: SkillManagerCollectingSettings;
     inkmilling: SkillManagerInkmillingSettings;
     tarot: SkillManagerTarotSettings;
 }

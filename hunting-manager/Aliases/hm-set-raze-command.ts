@@ -14,13 +14,6 @@ export const huntingManagerSetRazeCommand = new AliasItem(
                 if (client.huntingmanager.settings.enabled) {
                     const command = args[1];
 
-                    if (!command.includes('%1')) {
-                        client.huntingmanager.error(`Raze command must include '%lightgray%%1%end%' to properly raze.`);
-                        client.huntingmanager.echo(`For example: '%lightgray%touch hammer %1%end%'.`);
-
-                        return;
-                    }
-
                     client.huntingmanager.raze.setRazeCommand(command);
                 }
             }

@@ -13,6 +13,8 @@ export const millFailed = new TriggerItem(
                 if (client.skillmanager.inkmilling.active) {
                     client.skillmanager.echo('Inkmilling failed!');
 
+                    client.skillmanager.inkmilling.runningQueue = false;
+
                     client.skillmanager.inkmilling.runQueue();
                 }
             }

@@ -1,4 +1,4 @@
-import { QueueSubscription } from 'queue-service/queue-service';
+import { QueueSubscription } from 'queue-manager/queue-manager';
 
 interface Area {
     name: string;
@@ -6,7 +6,7 @@ interface Area {
 }
 
 interface Areas {
-    [name: string]: Area;
+    [name: string]: Area | undefined;
 }
 
 interface Settings {
@@ -29,7 +29,11 @@ interface Settings {
 
 interface HuntingManagerTarget {
     currentTarget?: GMCPCharItemsItem;
-    setTarget(target: GMCPCharItemsItem | undefined): void;
+    targetCallerName?: string;
+    callTargets: boolean;
+    setTarget(target: GMCPCharItemsItem | number | undefined): void;
+    setTargetCaller(targetCallerName: string | undefined): void;
+    findTargetById(id: number): GMCPCharItemsItem | undefined;
     findPriorityTarget(): GMCPCharItemsItem | undefined;
     tryTargetPriority(): void;
 }
@@ -75,8 +79,11 @@ interface HuntingManager {
     echo(message: string): void;
     error(text: string): void;
     save(): void;
-    addArea(area: string): void;
-    addMob(area: string, mob: string): void;
+    addArea(areaName: string): Area;
+    showArea(areaName: string): void;
+    addMob(areaName: string, mobName: string): void;
+    removeMob(areaName: string, mobName: string): void;
+    moveMob(areaName: string, mobName: string, index: number): void;
     start(): void;
     stop(): void;
 }

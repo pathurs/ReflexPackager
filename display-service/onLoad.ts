@@ -55,7 +55,6 @@ export const onLoad = new FunctionItem(
 
                 function displayTableGroupItems(items: TableGroupItemDefinition[], columns: 1 | 2 | 3 | 4) {
                     let columnWidth: number;
-                    const labelValueSpacerWidth = 1;
                     const columnSpacerWidth = 3;
 
                     switch (columns) {
@@ -83,8 +82,7 @@ export const onLoad = new FunctionItem(
 
                     for (let i = 0; i < items.length; i++) {
                         const item = items[i];
-                        const label = item.label.substring(0, columnWidth - client.displayservice.getLength(item.value) - labelValueSpacerWidth);
-                        const parsed = `${item.label}${safeRepeat(' ', columnWidth - client.displayservice.getLength(label) - client.displayservice.getLength(item.value))}${item.value}`;
+                        const parsed = `${item.label}${safeRepeat(' ', columnWidth - client.displayservice.getLength(item.label) - client.displayservice.getLength(item.value))}${item.value}`;
 
                         if (i !== 0) {
                             line += safeRepeat(' ', columnSpacerWidth);

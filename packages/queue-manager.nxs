@@ -1,0 +1,242 @@
+{
+    "type": "group",
+    "items": [
+        {
+            "type": "function",
+            "items": [],
+            "actions": [],
+            "name": "onLoad",
+            "enabled": true,
+            "id": 2,
+            "code": "(function () {\n    client.queuemanager = {\n        settings: {\n            enabled: true,\n            gag: true\n        },\n        free: {\n            queue: []\n        },\n        balance: {\n            queue: []\n        },\n        equilibrium: {\n            queue: []\n        },\n        equilibriumBalance: {\n            queue: []\n        },\n        class: {\n            queue: []\n        },\n        ship: {\n            queue: []\n        },\n        sendingQueue: false,\n        subscriptions: [],\n        subscribe(queues, subscriber) {\n            const subscription = {\n                queues,\n                subscriber\n            };\n            client.queuemanager.subscriptions.push(subscription);\n            return subscription;\n        },\n        unsubscribe(subscription) {\n            const index = client.queuemanager.subscriptions.findIndex(value => value === subscription);\n            client.queuemanager.subscriptions.splice(index, 1);\n        },\n        once(queues, subscriber) {\n            const subscription = client.queuemanager.subscribe(queues, function (queue, method, commands) {\n                subscriber(queue, method, commands);\n                client.queuemanager.unsubscribe(subscription);\n            });\n            return subscription;\n        },\n        emit(queueType, method, args) {\n            client.queuemanager.subscriptions.forEach(subscription => {\n                if (subscription.queues.includes(queueType)) {\n                    subscription.subscriber(queueType, method, args);\n                }\n            });\n        },\n        parseCommand(queueType, command) {\n            const lowerCommand = command.trim().toLowerCase();\n            const queueManagerRegExp = /^queuemanager([1-9])/;\n            if (!queueManagerRegExp.test(lowerCommand)) {\n                return [];\n            }\n            const [, countText] = (lowerCommand.match(queueManagerRegExp) || []);\n            const count = Number(countText);\n            const argumentRegExp = /{([\\w\\W]*?)}/g;\n            const commands = [];\n            let matches = null;\n            while (matches = argumentRegExp.exec(lowerCommand)) {\n                commands.push(matches[1]);\n            }\n            if (commands.length !== count) {\n                throw new Error(`Unexpected amount of commands in queued commands. Expected: '${count}' Actual: '${commands.length}' Queue: '${queueType}' Full Command: '${command}'`);\n            }\n            const queue = client.queuemanager.getQueue(queueType);\n            const result = [];\n            for (let i = 0; i < commands.length; i++) {\n                if (queue[i].command.trim().toLowerCase() !== commands[i].trim().toLowerCase()) {\n                    throw new Error(`Unexpected command in queue. Expected: '${queue[i].command}' Actual: '${commands[i]}' Queue: '${queueType}' Full Command: '${command}'`);\n                }\n                result.push(queue[i]);\n            }\n            return result;\n        },\n        echo(text) {\n            client.displayservice.echo(`%lightgray%[%deepskyblue%Queue Manager%end%]:%end% ${text}`);\n        },\n        error(text) {\n            client.queuemanager.echo(`%red%${text}`);\n        },\n        noraliseQueueType(type) {\n            switch (type.toLowerCase()) {\n                case 'b':\n                case 'bal':\n                case 'balance':\n                    return 'balance';\n                case 'e':\n                case 'eq':\n                case 'equilibrium':\n                    return 'equilibrium';\n                case 'eb':\n                case 'eqbal':\n                case 'equilibriumBalance':\n                    return 'equilibriumBalance';\n                case 'c':\n                case 'class':\n                case 'class specific':\n                case 'class balance':\n                    return 'class';\n                case 's':\n                case 'ship':\n                    return 'ship';\n                default:\n                    return undefined;\n            }\n        },\n        // parseQueueTypeInteractions(interactions) {\n        //     if (!interactions) {\n        //         return 'free';\n        //     }\n        //     if ('class' in interactions && interactions.class) {\n        //         return 'class';\n        //     }\n        //     else if ('ship' in interactions && interactions.ship) {\n        //         return 'ship';\n        //     }\n        //     if ('bal' in interactions || 'eq' in interactions) {\n        //         if (interactions.bal && !interactions.eq) {\n        //             return 'balance';\n        //         }\n        //         else if (!interactions.bal && interactions.eq) {\n        //             return 'equilibrium';\n        //         }\n        //         else if (interactions.bal && interactions.eq) {\n        //             return 'equilibriumBalance';\n        //         }\n        //     }\n        //     return 'free';\n        // },\n        getQueue(type) {\n            switch (type) {\n                case 'free':\n                    return client.queuemanager.free.queue;\n                case 'balance':\n                    return client.queuemanager.balance.queue;\n                case 'equilibrium':\n                    return client.queuemanager.equilibrium.queue;\n                case 'equilibriumBalance':\n                    return client.queuemanager.equilibriumBalance.queue;\n                case 'class':\n                    return client.queuemanager.class.queue;\n                case 'ship':\n                    return client.queuemanager.ship.queue;\n            }\n        },\n        appendCommand(command, requires = 'free', consumes = 'free') {\n            const queueType = requires;\n            const queuedCommand = {\n                queue: queueType,\n                command,\n                requires,\n                consumes\n            };\n            const queue = client.queuemanager.getQueue(queueType);\n            queue.push(queuedCommand);\n            client.queuemanager.sendQueue(queueType);\n            return queuedCommand;\n        },\n        prependCommand(command, requires = 'free', consumes = 'free') {\n            const queueType = requires;\n            const queuedCommand = {\n                queue: queueType,\n                command,\n                requires,\n                consumes\n            };\n            const queue = client.queuemanager.getQueue(queueType);\n            queue.unshift(queuedCommand);\n            client.queuemanager.sendQueue(queueType);\n            return queuedCommand;\n        },\n        // replaceCommand(_queueType, index, command, requires, _consumes) {\n        //     const queueType = client.queuemanager.parseQueueTypeInteractions(requires);\n        //     const queuedCommand: QueueManagerQueuedCommand = {\n        //         queue: queueType,\n        //         command\n        //     };\n        //     const queue = client.queuemanager.getQueue(queueType);\n        //     let constrainedIndex = index;\n        //     if (constrainedIndex < 0) {\n        //         constrainedIndex = 0;\n        //     }\n        //     else if (constrainedIndex > queue.length) {\n        //         constrainedIndex = queue.length;\n        //     }\n        //     queue.splice(constrainedIndex, 1, queuedCommand);\n        //     return queuedCommand;\n        // },\n        // insertCommand(type, index, command, _requires, _consumes) {\n        //     const queuedCommand: QueueManagerQueuedCommand = {\n        //         queue: type,\n        //         command\n        //     };\n        //     const queue = client.queuemanager.getQueue(type);\n        //     let constrainedIndex = index;\n        //     if (constrainedIndex < 0) {\n        //         constrainedIndex = 0;\n        //     }\n        //     else if (constrainedIndex > queue.length) {\n        //         constrainedIndex = queue.length;\n        //     }\n        //     queue.splice(constrainedIndex, 0, queuedCommand);\n        //     return queuedCommand;\n        // },\n        removeCommand(type, index) {\n            const queue = client.queuemanager.getQueue(type);\n            let constrainedIndex = index;\n            if (constrainedIndex < 0) {\n                constrainedIndex = 0;\n            }\n            else if (constrainedIndex > queue.length) {\n                constrainedIndex = queue.length;\n            }\n            queue.splice(constrainedIndex, 1);\n            client.queuemanager.sendQueue(type);\n        },\n        clearQueue(type) {\n            const queue = client.queuemanager.getQueue(type);\n            queue.splice(0, queue.length);\n        },\n        sendQueue(type) {\n            if (client.queuemanager.sendingQueue) {\n                return;\n            }\n            client.queuemanager.sendingQueue = true;\n            setTimeout(() => {\n                client.queuemanager.sendingQueue = false;\n                let queueShortName;\n                switch (type) {\n                    case 'free':\n                        if (client.queuemanager.free.queue.length > 0) {\n                            client.systemservice.sendCommands(client.queuemanager.free.queue.map(value => value.command));\n                            client.queuemanager.clearQueue('free');\n                        }\n                        break;\n                    case 'balance':\n                        queueShortName = 'bal';\n                        break;\n                    case 'equilibrium':\n                        queueShortName = 'eq';\n                        break;\n                    case 'equilibriumBalance':\n                        queueShortName = 'eqbal';\n                        break;\n                    case 'class':\n                        queueShortName = 'class';\n                        break;\n                    case 'ship':\n                        queueShortName = 'ship';\n                        break;\n                }\n                if (!queueShortName) {\n                    return;\n                }\n                const queue = client.queuemanager.getQueue(type);\n                client.systemservice.sendCommand(`clearqueue ${queueShortName}`);\n                if (queue.length > 0) {\n                    const commands = [];\n                    const length = Math.min(queue.length, 9);\n                    for (let i = 0; i < length; i++) {\n                        const command = queue[i];\n                        commands.push(command.command);\n                        if (command.consumes !== 'free') {\n                            break;\n                        }\n                    }\n                    const expectedCommandArguments = commands.map(command => `{${command}}`).join(' ');\n                    const expectedCommand = `queuemanager${commands.length} ${expectedCommandArguments}`;\n                    client.queuemanager.balance.expected = expectedCommand;\n                    client.systemservice.sendCommand(`queue add ${queueShortName} ${expectedCommand}`);\n                }\n            });\n        }\n    };\n    client.systemservice.sendCommands(new Array(9).fill('').map((_value, count) => {\n        return `alias set queuemanager${count + 1} ${new Array(count + 1).fill('').map((_value, index) => `%${index + 1}`).join('/')}`;\n    }));\n    client.queuemanager.echo('Loaded.');\n})(args);"
+        },
+        {
+            "type": "group",
+            "items": [
+                {
+                    "type": "trigger",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        if (!client.queuemanager.settings.enabled) {\n            return;\n        }\n        if (client.queuemanager.settings.gag) {\n            gag_current_line();\n        }\n        // const command = args[1];\n        const queueType = client.queuemanager.noraliseQueueType(args[2]);\n        if (!queueType) {\n            client.queuemanager.error(`Unknown queue type '${args[2]}'.`);\n            if (client.queuemanager.settings.gag) {\n                client.queuemanager.error(`Original line '%lightgrey%${args[0]}%end%'.`);\n            }\n            return;\n        }\n        // const queue = client.queuemanager.getQueue(queueType);\n        // client.queuemanager.appendCommand(command, { [queueType]: true });\n        // client.queuemanager.emit(queueType, 'add', { queue: queueType, index: queue.length - 1, command });\n    })(args);"
+                        }
+                    ],
+                    "name": "Automatically Added",
+                    "enabled": true,
+                    "id": 3,
+                    "matching": "regexp",
+                    "whole_words": false,
+                    "case_sensitive": false,
+                    "text": "^([\\w\\W]+) was added to your ([\\w\\W]+) queue\\.$"
+                },
+                {
+                    "type": "trigger",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function () {\n        if (!client.queuemanager.settings.enabled) {\n            return;\n        }\n        if (client.queuemanager.settings.gag) {\n            gag_current_line();\n        }\n        // client.queuemanager.clearQueue('balance');\n        // client.queuemanager.clearQueue('equilibrium');\n        // client.queuemanager.clearQueue('equilibriumBalance');\n        // client.queuemanager.clearQueue('class');\n        // client.queuemanager.clearQueue('ship');\n        // client.queuemanager.emit('balance', 'clear', { queue: 'balance', index: 0, command: '' });\n        // client.queuemanager.emit('equilibrium', 'clear', { queue: 'equilibrium', index: 0, command: '' });\n        // client.queuemanager.emit('equilibriumBalance', 'clear', { queue: 'equilibriumBalance', index: 0, command: '' });\n        // client.queuemanager.emit('class', 'clear', { queue: 'class', index: 0, command: '' });\n        // client.queuemanager.emit('ship', 'clear', { queue: 'ship', index: 0, command: '' });\n    })(args);"
+                        }
+                    ],
+                    "name": "Cleared All Queues",
+                    "enabled": true,
+                    "id": 4,
+                    "matching": "regexp",
+                    "whole_words": false,
+                    "case_sensitive": false,
+                    "text": "^Cleared your queues\\.$"
+                },
+                {
+                    "type": "trigger",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        if (!client.queuemanager.settings.enabled) {\n            return;\n        }\n        if (client.queuemanager.settings.gag) {\n            gag_current_line();\n        }\n        const queueType = client.queuemanager.noraliseQueueType(args[1]);\n        if (!queueType) {\n            client.queuemanager.error(`Unknown queue type '${args[1]}'.`);\n            if (client.queuemanager.settings.gag) {\n                client.queuemanager.error(`Original line '%lightgrey%${args[0]}%end%'.`);\n            }\n            return;\n        }\n        // client.queuemanager.clearQueue(queueType);\n        // client.queuemanager.emit(queueType, 'clear', { queue: queueType, index: 0, command: '' });\n    })(args);"
+                        }
+                    ],
+                    "name": "Cleared Queue",
+                    "enabled": true,
+                    "id": 5,
+                    "matching": "regexp",
+                    "whole_words": false,
+                    "case_sensitive": false,
+                    "text": "^\\[System\\]: Queued ([\\w\\W]+) commands cleared\\.$"
+                },
+                {
+                    "type": "trigger",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        if (!client.queuemanager.settings.enabled) {\n            return;\n        }\n        if (client.queuemanager.settings.gag) {\n            gag_current_line();\n        }\n        // const index = Number(args[1]) - 1;\n        const queueType = client.queuemanager.noraliseQueueType(args[2]);\n        // const command = args[3];\n        if (!queueType) {\n            client.queuemanager.error(`Unknown queue type '%lightgrey%${args[2]}%end%'.`);\n            if (client.queuemanager.settings.gag) {\n                client.queuemanager.error(`Original line '%lightgrey%${args[0]}%end%'.`);\n            }\n            return;\n        }\n        // client.queuemanager.insertCommand(queueType, index, command);\n        // client.queuemanager.emit(queueType, 'insert', { queue: queueType, index, command });\n    })(args);"
+                        }
+                    ],
+                    "name": "Inserted",
+                    "enabled": true,
+                    "id": 6,
+                    "matching": "regexp",
+                    "whole_words": false,
+                    "case_sensitive": false,
+                    "text": "^\\[System\\]: inserted command #(\\d) in the ([\\w\\W]+) queue with ([\\w\\W]+)\\.$"
+                },
+                {
+                    "type": "trigger",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        if (!client.queuemanager.settings.enabled) {\n            return;\n        }\n        if (client.queuemanager.settings.gag) {\n            gag_current_line();\n        }\n        // const command = args[1];\n        const queueType = client.queuemanager.noraliseQueueType(args[2]);\n        if (!queueType) {\n            client.queuemanager.error(`Unknown queue type '%lightgrey%${args[2]}%end%'.`);\n            if (client.queuemanager.settings.gag) {\n                client.queuemanager.error(`Original line '%lightgrey%${args[0]}%end%'.`);\n            }\n            return;\n        }\n        // const queue = client.queuemanager.getQueue(queueType);\n        // client.queuemanager.appendCommand(command, { [queueType]: true });\n        //  client.queuemanager.emit(queueType, 'add', { queue: queueType, index: queue.length - 1, command });\n    })(args);"
+                        }
+                    ],
+                    "name": "Manually Added",
+                    "enabled": true,
+                    "id": 7,
+                    "matching": "regexp",
+                    "whole_words": false,
+                    "case_sensitive": false,
+                    "text": "^\\[System\\]: Added ([\\w\\W]+) to your ([\\w\\W]+) queue\\.$"
+                },
+                {
+                    "type": "trigger",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        if (!client.queuemanager.settings.enabled) {\n            return;\n        }\n        if (client.queuemanager.settings.gag) {\n            gag_current_line();\n        }\n        // const command = args[1];\n        const queueType = client.queuemanager.noraliseQueueType(args[2]);\n        if (!queueType) {\n            client.queuemanager.error(`Unknown queue type '%lightgrey%${args[2]}%end%'.`);\n            if (client.queuemanager.settings.gag) {\n                client.queuemanager.error(`Original line '%lightgrey%${args[0]}%end%'.`);\n            }\n            return;\n        }\n        // client.queuemanager.prependCommand(command, { [queueType]: true });\n        // client.queuemanager.emit(queueType, 'prepend', { queue: queueType, index: 0, command });\n    })(args);"
+                        }
+                    ],
+                    "name": "Prepended",
+                    "enabled": true,
+                    "id": 8,
+                    "matching": "regexp",
+                    "whole_words": false,
+                    "case_sensitive": false,
+                    "text": "^\\[System\\]: Prepended ([\\w\\W]+) to your ([\\w\\W]+) queue\\."
+                },
+                {
+                    "type": "group",
+                    "items": [
+                        {
+                            "type": "trigger",
+                            "items": [],
+                            "actions": [
+                                {
+                                    "action": "script",
+                                    "script": "(function () {\n        if (!client.queuemanager.settings.enabled) {\n            return;\n        }\n        if (client.queuemanager.settings.gag) {\n            gag_current_line();\n        }\n        // client.queuemanager.clearQueue('balance');\n        // client.queuemanager.clearQueue('equilibrium');\n        // client.queuemanager.clearQueue('equilibriumBalance');\n        // client.queuemanager.clearQueue('class');\n        // client.queuemanager.clearQueue('ship');\n        // client.queuemanager.emit(queueType, 'clear', { queue: queueType, index: 0, command: '' });\n    })(args);"
+                                }
+                            ],
+                            "name": "queueAlreadyEmpty:0",
+                            "enabled": true,
+                            "id": 9,
+                            "matching": "regexp",
+                            "whole_words": false,
+                            "case_sensitive": false,
+                            "text": "^Your queues are already empty\\.$"
+                        },
+                        {
+                            "type": "trigger",
+                            "items": [],
+                            "actions": [
+                                {
+                                    "action": "script",
+                                    "script": "(function () {\n        if (!client.queuemanager.settings.enabled) {\n            return;\n        }\n        if (client.queuemanager.settings.gag) {\n            gag_current_line();\n        }\n        // client.queuemanager.clearQueue('balance');\n        // client.queuemanager.clearQueue('equilibrium');\n        // client.queuemanager.clearQueue('equilibriumBalance');\n        // client.queuemanager.clearQueue('class');\n        // client.queuemanager.clearQueue('ship');\n        // client.queuemanager.emit(queueType, 'clear', { queue: queueType, index: 0, command: '' });\n    })(args);"
+                                }
+                            ],
+                            "name": "queueAlreadyEmpty:1",
+                            "enabled": true,
+                            "id": 10,
+                            "matching": "regexp",
+                            "whole_words": false,
+                            "case_sensitive": false,
+                            "text": "^You have no commands queued for equilibrium\\.$"
+                        },
+                        {
+                            "type": "trigger",
+                            "items": [],
+                            "actions": [
+                                {
+                                    "action": "script",
+                                    "script": "(function () {\n        if (!client.queuemanager.settings.enabled) {\n            return;\n        }\n        if (client.queuemanager.settings.gag) {\n            gag_current_line();\n        }\n        // client.queuemanager.clearQueue('balance');\n        // client.queuemanager.clearQueue('equilibrium');\n        // client.queuemanager.clearQueue('equilibriumBalance');\n        // client.queuemanager.clearQueue('class');\n        // client.queuemanager.clearQueue('ship');\n        // client.queuemanager.emit(queueType, 'clear', { queue: queueType, index: 0, command: '' });\n    })(args);"
+                                }
+                            ],
+                            "name": "queueAlreadyEmpty:2",
+                            "enabled": true,
+                            "id": 11,
+                            "matching": "regexp",
+                            "whole_words": false,
+                            "case_sensitive": false,
+                            "text": "^Your (?:eqbal|class balance|ship) queue is already empty\\.$"
+                        }
+                    ],
+                    "actions": [],
+                    "name": "queueAlreadyEmpty",
+                    "enabled": true,
+                    "id": 12,
+                    "matching": "regexp"
+                },
+                {
+                    "type": "trigger",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        if (!client.queuemanager.settings.enabled) {\n            return;\n        }\n        if (client.queuemanager.settings.gag) {\n            gag_current_line();\n        }\n        // const index = Number(args[1]) - 1;\n        const queueType = client.queuemanager.noraliseQueueType(args[2]);\n        if (!queueType) {\n            client.queuemanager.error(`Unknown queue type '%lightgrey%${args[2]}%end%'.`);\n            if (client.queuemanager.settings.gag) {\n                client.queuemanager.error(`Original line '%lightgrey%${args[0]}%end%'.`);\n            }\n            return;\n        }\n        // const queue = client.queuemanager.getQueue(queueType);\n        // const queuedCommand = <QueueManagerQueuedCommand | undefined>queue[index];\n        // if (!queuedCommand) {\n        //     client.queuemanager.error(`Untracked command in '%lightgrey%${queueType}%end%' at position '%lightgrey%${index}%end%'.`);\n        //     return;\n        // }\n        // client.queuemanager.removeCommand(queueType, index);\n        // client.queuemanager.emit(queueType, 'remove', { queue: queueType, index, command: queuedCommand.command });\n    })(args);"
+                        }
+                    ],
+                    "name": "Removed",
+                    "enabled": true,
+                    "id": 13,
+                    "matching": "regexp",
+                    "whole_words": false,
+                    "case_sensitive": false,
+                    "text": "^\\[System\\]: Removed the command at position (\\d+) in your ([\\w\\W]+) queue\\.$"
+                },
+                {
+                    "type": "trigger",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        if (!client.queuemanager.settings.enabled) {\n            return;\n        }\n        if (client.queuemanager.settings.gag) {\n            gag_current_line();\n        }\n        // const index = Number(args[1]) - 1;\n        const queueType = client.queuemanager.noraliseQueueType(args[2]);\n        // const command = args[3];\n        if (!queueType) {\n            client.queuemanager.error(`Unknown queue type '%lightgrey%${args[2]}%end%'.`);\n            if (client.queuemanager.settings.gag) {\n                client.queuemanager.error(`Original line '%lightgrey%${args[0]}%end%'.`);\n            }\n            return;\n        }\n        // client.queuemanager.replaceCommand(queueType, index, command);\n        // client.queuemanager.emit(queueType, 'replace', { queue: queueType, index, command });\n    })(args);"
+                        }
+                    ],
+                    "name": "Replaced",
+                    "enabled": true,
+                    "id": 14,
+                    "matching": "regexp",
+                    "whole_words": false,
+                    "case_sensitive": false,
+                    "text": "^\\[System\\]: replaced command #(\\d+) in the ([\\w\\W]+) queue with ([\\w\\W]+)\\.$"
+                },
+                {
+                    "type": "trigger",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        if (!client.queuemanager.settings.enabled) {\n            return;\n        }\n        if (client.queuemanager.settings.gag) {\n            gag_current_line();\n        }\n        const queueType = client.queuemanager.noraliseQueueType(args[1]);\n        if (!queueType) {\n            client.queuemanager.error(`Unknown queue type '%lightgrey%${args[1]}%end%'.`);\n            if (client.queuemanager.settings.gag) {\n                client.queuemanager.error(`Original line '%lightgrey%${args[0]}%end%'.`);\n            }\n            return;\n        }\n        const command = args[2];\n        const commands = client.queuemanager.parseCommand(queueType, command);\n        commands.forEach(() => {\n            client.queuemanager.removeCommand(queueType, 0);\n        });\n        client.queuemanager.emit(queueType, 'run', { queue: queueType, index: 0, commands });\n    })(args);"
+                        }
+                    ],
+                    "name": "Running",
+                    "enabled": true,
+                    "id": 15,
+                    "matching": "regexp",
+                    "whole_words": false,
+                    "case_sensitive": false,
+                    "text": "^\\[System\\]: Running queued ([\\w\\W]+) command: ([\\w\\W]+)$"
+                }
+            ],
+            "actions": [],
+            "name": "Triggers",
+            "enabled": true,
+            "id": 16
+        }
+    ],
+    "actions": [],
+    "name": "Queue Manager",
+    "enabled": true,
+    "id": 1,
+    "description": "A Queue Manager"
+}

@@ -3,14 +3,14 @@ import { SkillManagerClient } from 'skill-manager/skill-manager';
 
 declare const client: SkillManagerClient;
 
-export const inscribeStop = new AliasItem(
-    'Inscribe Stop',
-    /^inscribe stop$/,
+export const millStop = new AliasItem(
+    'Mill Stop',
+    /^mill stop$/,
     AliasType.RegularExpression,
     [
         new ExecuteScriptAction(
             function () {
-                client.skillmanager.tarot.inscribing.stop();
+                client.skillmanager.inkmilling.stop();
             }
         )
     ]

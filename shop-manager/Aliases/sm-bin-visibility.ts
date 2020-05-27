@@ -4,9 +4,9 @@ import { GMCPServiceClient } from 'gmcp-service/gmcp-service';
 
 declare const client: ShopManagerClient & GMCPServiceClient;
 
-export const shopManagerEditBinVisibility = new AliasItem(
-    'Shop Manager Edit Bin Visibility',
-    /^(?:sm|shop\-manager|shop manager)(?: edit)? bin (\d+)(?: visibility)? ([\w\W]+)?$/,
+export const shopManagerBinVisibility = new AliasItem(
+    'Shop Manager Bin Visibility',
+    /^(?:sm|shop\-manager|shop manager) bin (\d+) visibility ([\w\W]+)$/,
     AliasType.RegularExpression,
     [
         new ExecuteScriptAction(

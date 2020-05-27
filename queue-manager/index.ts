@@ -7,5 +7,5 @@ createFromFile(
         onLoad,
         Triggers
     ],
-    'queue-service/rpconfig.json'
+    'queue-manager/rpconfig.json'
 );

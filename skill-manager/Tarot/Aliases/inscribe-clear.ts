@@ -10,35 +10,8 @@ export const inscribeClear = new AliasItem(
     [
         new ExecuteScriptAction(
             function () {
-                client.skillmanager.tarot.inscribing.runningQueue = false;
-
-                client.skillmanager.tarot.inscribing.queue = {
-                    sun: 0,
-                    emperor: 0,
-                    magician: 0,
-                    priestess: 0,
-                    fool: 0,
-                    chariot: 0,
-                    hermit: 0,
-                    empress: 0,
-                    lovers: 0,
-                    hierophant: 0,
-                    hangedman: 0,
-                    tower: 0,
-                    wheel: 0,
-                    creator: 0,
-                    justice: 0,
-                    star: 0,
-                    aeon: 0,
-                    lust: 0,
-                    universe: 0,
-                    devil: 0,
-                    moon: 0,
-                    death: 0
-                };
-
-                client.skillmanager.echo('Stopped inscribing.');
-                client.skillmanager.echo('Inscribing queue cleared.');
+                client.skillmanager.tarot.inscribing.reset();
+                client.skillmanager.tarot.inscribing.stop();
             }
         )
     ]

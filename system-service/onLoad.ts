@@ -53,6 +53,11 @@ export const onLoad = new FunctionItem(
                 if (echo) {
                     display_notice(command);
                 }
+            },
+            sendCommands(commands, echo = false) {
+                commands.forEach(command => {
+                    client.systemservice.sendCommand(command, echo);
+                });
             }
         };
 

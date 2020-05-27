@@ -6,7 +6,7 @@ declare const client: ShopManagerClient & GMCPServiceClient;
 
 export const shopManagerStorefrontExpect = new AliasItem(
     'Shop Manager Storefront Expect',
-    /^(?:sm|shop\-manager|shop manager) storefront expect(?: (totem|eye|eye ?sigil|key|key ?sigil|mono|monolith|monolith ?sigil)) ([\w\W]+)$/,
+    /^(?:sm|shop\-manager|shop manager) storefront expect(?: (totem|eye|eye ?sigil|key|key ?sigil|mono|monolith|monolith ?sigil))? (\d+)$/,
     AliasType.RegularExpression,
     [
         new ExecuteScriptAction(
@@ -25,7 +25,7 @@ export const shopManagerStorefrontExpect = new AliasItem(
                     case 'totem':
                         currentShop.storefront.expectedTotemId = id;
 
-                        client.shopmanager.echo(`Set shop '%lightgray%${currentShop.room.name}%end%' storefront expected totem to '%lightgray%${id}%end%'.`);
+                        client.shopmanager.echo(`Set expected %lightgray%totem%end% in storefront of shop '%lightgray%${currentShop.room.name}%end%' to '%lightgray%${id}%end%'.`);
                         break;
 
                     case 'eye':
@@ -33,7 +33,7 @@ export const shopManagerStorefrontExpect = new AliasItem(
                     case 'eye sigil':
                         currentShop.storefront.expectedEyeSigilId = id;
 
-                        client.shopmanager.echo(`Set shop '%lightgray%${currentShop.room.name}%end%' storefront expected eye sigil to '%lightgray%${id}%end%'.`);
+                        client.shopmanager.echo(`Set expected %lightgray%eye sigil%end% in storefront of shop '%lightgray%${currentShop.room.name}%end%' to '%lightgray%${id}%end%'.`);
                         break;
 
                     case 'key':
@@ -41,7 +41,7 @@ export const shopManagerStorefrontExpect = new AliasItem(
                     case 'key sigil':
                         currentShop.storefront.expectedKeySigilId = id;
 
-                        client.shopmanager.echo(`Set shop '%lightgray%${currentShop.room.name}%end%' storefront expected key sigil to '%lightgray%${id}%end%'.`);
+                        client.shopmanager.echo(`Set expected %lightgray%key sigil%end% in storefront of shop '%lightgray%${currentShop.room.name}%end%' to '%lightgray%${id}%end%'.`);
                         break;
 
                     case 'mono':
@@ -50,19 +50,19 @@ export const shopManagerStorefrontExpect = new AliasItem(
                     case 'monolith sigil':
                         currentShop.storefront.expectedMonolithSigilId = id;
 
-                        client.shopmanager.echo(`Set shop '%lightgray%${currentShop.room.name}%end%' storefront expected monolith sigil to '%lightgray%${id}%end%'.`);
+                        client.shopmanager.echo(`Set expected %lightgray%monolith sigil%end% in storefront of shop '%lightgray%${currentShop.room.name}%end%' to '%lightgray%${id}%end%'.`);
                         break;
 
                     case undefined:
                         if (currentShop.storefront.expectedItemIds.includes(id)) {
-                            client.shopmanager.error(`Shop '%lightgray%${currentShop.room.name}%end%' storefront is already expecting item '%lightgray%${id}%end%'.`)
+                            client.shopmanager.error(`Already expecting item '%lightgray%${id}%end%' in storefront of shop '%lightgray%${currentShop.room.name}%end%'.`)
 
                             return;
                         }
 
                         currentShop.storefront.expectedItemIds.push(id);
 
-                        client.shopmanager.echo(`Added Shop '%lightgray%${currentShop.room.name}%end%' storefront expected item '%lightgray%${id}%end%'.`);
+                        client.shopmanager.echo(`Added expected item '%lightgray%totem%end%' in storefront of shop '%lightgray%${currentShop.room.name}%end%'.`);
                         break;
 
                     default:

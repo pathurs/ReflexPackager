@@ -105,7 +105,5 @@ export const cliContainers = new FunctionItem(
             default:
                 break;
         }
-
-        client.inventorymanager.save();
     }
 );

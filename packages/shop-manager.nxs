@@ -145,7 +145,7 @@
                     "actions": [
                         {
                             "action": "script",
-                            "script": "(function (args) {\n        const currentShop = client.shopmanager.getCurrentShop();\n        if (!currentShop) {\n            client.shopmanager.error(`You are not currently standing in an active shop.`);\n            return;\n        }\n        const id = args[2];\n        switch (args[1]) {\n            case 'totem':\n                currentShop.stockroom.expectedTotemId = id;\n                client.shopmanager.echo(`Set shop '%lightgray%${currentShop.room.name}%end%' stockroom expected totem to '%lightgray%${id}%end%'.`);\n                break;\n            case 'eye':\n            case 'eyesigil':\n            case 'eye sigil':\n                currentShop.stockroom.expectedEyeSigilId = id;\n                client.shopmanager.echo(`Set shop '%lightgray%${currentShop.room.name}%end%' stockroom expected eye sigil to '%lightgray%${id}%end%'.`);\n                break;\n            case 'key':\n            case 'keysigil':\n            case 'key sigil':\n                currentShop.stockroom.expectedKeySigilId = id;\n                client.shopmanager.echo(`Set shop '%lightgray%${currentShop.room.name}%end%' stockroom expected key sigil to '%lightgray%${id}%end%'.`);\n                break;\n            case 'mono':\n            case 'monolith':\n            case 'monolithsigil':\n            case 'monolith sigil':\n                currentShop.stockroom.expectedMonolithSigilId = id;\n                client.shopmanager.echo(`Set shop '%lightgray%${currentShop.room.name}%end%' stockroom expected monolith sigil to '%lightgray%${id}%end%'.`);\n                break;\n            case 'orb':\n            case 'shimmeringorb':\n            case 'shimmering orb':\n                currentShop.stockroom.expectedShimmeringOrbId = id;\n                client.shopmanager.echo(`Set shop '%lightgray%${currentShop.room.name}%end%' stockroom expected shimmering orb to '%lightgray%${id}%end%'.`);\n                break;\n            case undefined:\n                if (currentShop.stockroom.expectedItemIds.includes(id)) {\n                    client.shopmanager.error(`Shop '%lightgray%${currentShop.room.name}%end%' stockroom is already expecting item '%lightgray%${id}%end%'.`);\n                    return;\n                }\n                currentShop.stockroom.expectedItemIds.push(id);\n                client.shopmanager.echo(`Added Shop '%lightgray%${currentShop.room.name}%end%' stockroom expected item '%lightgray%${id}%end%'.`);\n                break;\n            default:\n                client.shopmanager.error(`Invalid expected item '%lightgray%${args[1]}%end%'.`);\n                return;\n        }\n        client.shopmanager.save();\n    })(args);"
+                            "script": "(function (args) {\n        const currentShop = client.shopmanager.getCurrentShop();\n        if (!currentShop) {\n            client.shopmanager.error(`You are not currently standing in an active shop.`);\n            return;\n        }\n        const id = args[2];\n        switch (args[1]) {\n            case 'totem':\n                currentShop.stockroom.expectedTotemId = id;\n                client.shopmanager.echo(`Set expected %lightgray%totem%end% in stockroom of shop '%lightgray%${currentShop.room.name}%end%' to '%lightgray%${id}%end%'.`);\n                break;\n            case 'eye':\n            case 'eyesigil':\n            case 'eye sigil':\n                currentShop.stockroom.expectedEyeSigilId = id;\n                client.shopmanager.echo(`Set expected %lightgray%eye sigil%end% in stockroom of shop '%lightgray%${currentShop.room.name}%end%' to '%lightgray%${id}%end%'.`);\n                break;\n            case 'key':\n            case 'keysigil':\n            case 'key sigil':\n                currentShop.stockroom.expectedKeySigilId = id;\n                client.shopmanager.echo(`Set expected %lightgray%key sigil%end% in stockroom of shop '%lightgray%${currentShop.room.name}%end%' to '%lightgray%${id}%end%'.`);\n                break;\n            case 'mono':\n            case 'monolith':\n            case 'monolithsigil':\n            case 'monolith sigil':\n                currentShop.stockroom.expectedMonolithSigilId = id;\n                client.shopmanager.echo(`Set expected %lightgray%monolith sigil%end% in stockroom of shop '%lightgray%${currentShop.room.name}%end%' to '%lightgray%${id}%end%'.`);\n                break;\n            case 'orb':\n            case 'shimmeringorb':\n            case 'shimmering orb':\n                currentShop.stockroom.expectedShimmeringOrbId = id;\n                client.shopmanager.echo(`Set expected %lightgray%shimmering orb%end% in stockroom of shop '%lightgray%${currentShop.room.name}%end%' to '%lightgray%${id}%end%'.`);\n                break;\n            case undefined:\n                if (currentShop.stockroom.expectedItemIds.includes(id)) {\n                    client.shopmanager.error(`Already expecting item '%lightgray%${id}%end%' in stockroom of shop '%lightgray%${currentShop.room.name}%end%'.`);\n                    return;\n                }\n                currentShop.stockroom.expectedItemIds.push(id);\n                client.shopmanager.echo(`Added expected item '%lightgray%totem%end%' in stockroom of shop '%lightgray%${currentShop.room.name}%end%'.`);\n                break;\n            default:\n                client.shopmanager.error(`Invalid expected item '%lightgray%${args[1]}%end%'.`);\n                return;\n        }\n        client.shopmanager.save();\n    })(args);"
                         }
                     ],
                     "name": "Shop Manager Stockroom Expect",
@@ -155,7 +155,7 @@
                     "whole_words": true,
                     "case_sensitive": true,
                     "prefix_suffix": true,
-                    "text": "^(?:sm|shop\\-manager|shop manager) stockroom expect(?: (totem|eye|eye ?sigil|key|key ?sigil|mono|monolith|monolith ?sigil|orb|shimmering ?orb)) ([\\w\\W]+)$"
+                    "text": "^(?:sm|shop\\-manager|shop manager) stockroom expect(?: (totem|eye|eye ?sigil|key|key ?sigil|mono|monolith|monolith ?sigil|orb|shimmering ?orb))? (\\d+)$"
                 },
                 {
                     "type": "alias",
@@ -163,23 +163,59 @@
                     "actions": [
                         {
                             "action": "script",
-                            "script": "(function (args) {\n        const currentShop = client.shopmanager.getCurrentShop();\n        if (!currentShop) {\n            client.shopmanager.error(`You are not currently standing in an active shop.`);\n            return;\n        }\n        const id = args[2];\n        switch (args[1]) {\n            case 'totem':\n                currentShop.storefront.expectedTotemId = id;\n                client.shopmanager.echo(`Set shop '%lightgray%${currentShop.room.name}%end%' storefront expected totem to '%lightgray%${id}%end%'.`);\n                break;\n            case 'eye':\n            case 'eyesigil':\n            case 'eye sigil':\n                currentShop.storefront.expectedEyeSigilId = id;\n                client.shopmanager.echo(`Set shop '%lightgray%${currentShop.room.name}%end%' storefront expected eye sigil to '%lightgray%${id}%end%'.`);\n                break;\n            case 'key':\n            case 'keysigil':\n            case 'key sigil':\n                currentShop.storefront.expectedKeySigilId = id;\n                client.shopmanager.echo(`Set shop '%lightgray%${currentShop.room.name}%end%' storefront expected key sigil to '%lightgray%${id}%end%'.`);\n                break;\n            case 'mono':\n            case 'monolith':\n            case 'monolithsigil':\n            case 'monolith sigil':\n                currentShop.storefront.expectedMonolithSigilId = id;\n                client.shopmanager.echo(`Set shop '%lightgray%${currentShop.room.name}%end%' storefront expected monolith sigil to '%lightgray%${id}%end%'.`);\n                break;\n            case undefined:\n                if (currentShop.storefront.expectedItemIds.includes(id)) {\n                    client.shopmanager.error(`Shop '%lightgray%${currentShop.room.name}%end%' storefront is already expecting item '%lightgray%${id}%end%'.`);\n                    return;\n                }\n                currentShop.storefront.expectedItemIds.push(id);\n                client.shopmanager.echo(`Added Shop '%lightgray%${currentShop.room.name}%end%' storefront expected item '%lightgray%${id}%end%'.`);\n                break;\n            default:\n                client.shopmanager.error(`Invalid expected item '%lightgray%${args[1]}%end%'.`);\n                return;\n        }\n        client.shopmanager.save();\n    })(args);"
+                            "script": "(function (args) {\n        const currentShop = client.shopmanager.getCurrentShop();\n        if (!currentShop) {\n            client.shopmanager.error(`You are not currently standing in an active shop.`);\n            return;\n        }\n        const id = args[2];\n        switch (args[1]) {\n            case 'totem':\n                currentShop.stockroom.expectedTotemId = undefined;\n                client.shopmanager.echo(`Removed expected %lightgray%totem%end% from stockroom of shop '%lightgray%${currentShop.room.name}%end%'.`);\n                break;\n            case 'eye':\n            case 'eyesigil':\n            case 'eye sigil':\n                currentShop.stockroom.expectedEyeSigilId = undefined;\n                client.shopmanager.echo(`Removed expected %lightgray%eye sigil%end% from stockroom of shop '%lightgray%${currentShop.room.name}%end%'.`);\n                break;\n            case 'key':\n            case 'keysigil':\n            case 'key sigil':\n                currentShop.stockroom.expectedKeySigilId = undefined;\n                client.shopmanager.echo(`Removed expected %lightgray%key sigil%end% from stockroom of shop '%lightgray%${currentShop.room.name}%end%'.`);\n                break;\n            case 'mono':\n            case 'monolith':\n            case 'monolithsigil':\n            case 'monolith sigil':\n                currentShop.stockroom.expectedMonolithSigilId = undefined;\n                client.shopmanager.echo(`Removed expected %lightgray%monolith sigil%end% from stockroom of shop '%lightgray%${currentShop.room.name}%end%'.`);\n                break;\n            case 'orb':\n            case 'shimmeringorb':\n            case 'shimmering orb':\n                currentShop.stockroom.expectedShimmeringOrbId = undefined;\n                client.shopmanager.echo(`Removed expected %lightgray%shimmering orb%end% from stockroom of shop '%lightgray%${currentShop.room.name}%end%'.`);\n                break;\n            default:\n                const index = currentShop.stockroom.expectedItemIds.indexOf(id);\n                if (index === -1) {\n                    client.shopmanager.error(`Was not expecting item '%lightgray%${id}%end%' in stockroom of shop '%lightgray%${currentShop.room.name}%end%'.`);\n                    return;\n                }\n                currentShop.stockroom.expectedItemIds.splice(index, 1);\n                client.shopmanager.echo(`Removed expected item '%lightgray%${id}%end%' from stockroom of shop '%lightgray%${currentShop.room.name}%end%'.`);\n                break;\n        }\n        client.shopmanager.save();\n    })(args);"
                         }
                     ],
-                    "name": "Shop Manager Storefront Expect",
+                    "name": "Shop Manager Stockroom Unexpect",
                     "enabled": true,
                     "id": 11,
                     "matching": "regexp",
                     "whole_words": true,
                     "case_sensitive": true,
                     "prefix_suffix": true,
-                    "text": "^(?:sm|shop\\-manager|shop manager) storefront expect(?: (totem|eye|eye ?sigil|key|key ?sigil|mono|monolith|monolith ?sigil)) ([\\w\\W]+)$"
+                    "text": "^(?:sm|shop\\-manager|shop manager) stockroom unexpect (totem|eye|eye ?sigil|key|key ?sigil|mono|monolith|monolith ?sigil|orb|shimmering ?orb|\\d+)$"
+                },
+                {
+                    "type": "alias",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        const currentShop = client.shopmanager.getCurrentShop();\n        if (!currentShop) {\n            client.shopmanager.error(`You are not currently standing in an active shop.`);\n            return;\n        }\n        const id = args[2];\n        switch (args[1]) {\n            case 'totem':\n                currentShop.storefront.expectedTotemId = id;\n                client.shopmanager.echo(`Set expected %lightgray%totem%end% in storefront of shop '%lightgray%${currentShop.room.name}%end%' to '%lightgray%${id}%end%'.`);\n                break;\n            case 'eye':\n            case 'eyesigil':\n            case 'eye sigil':\n                currentShop.storefront.expectedEyeSigilId = id;\n                client.shopmanager.echo(`Set expected %lightgray%eye sigil%end% in storefront of shop '%lightgray%${currentShop.room.name}%end%' to '%lightgray%${id}%end%'.`);\n                break;\n            case 'key':\n            case 'keysigil':\n            case 'key sigil':\n                currentShop.storefront.expectedKeySigilId = id;\n                client.shopmanager.echo(`Set expected %lightgray%key sigil%end% in storefront of shop '%lightgray%${currentShop.room.name}%end%' to '%lightgray%${id}%end%'.`);\n                break;\n            case 'mono':\n            case 'monolith':\n            case 'monolithsigil':\n            case 'monolith sigil':\n                currentShop.storefront.expectedMonolithSigilId = id;\n                client.shopmanager.echo(`Set expected %lightgray%monolith sigil%end% in storefront of shop '%lightgray%${currentShop.room.name}%end%' to '%lightgray%${id}%end%'.`);\n                break;\n            case undefined:\n                if (currentShop.storefront.expectedItemIds.includes(id)) {\n                    client.shopmanager.error(`Already expecting item '%lightgray%${id}%end%' in storefront of shop '%lightgray%${currentShop.room.name}%end%'.`);\n                    return;\n                }\n                currentShop.storefront.expectedItemIds.push(id);\n                client.shopmanager.echo(`Added expected item '%lightgray%totem%end%' in storefront of shop '%lightgray%${currentShop.room.name}%end%'.`);\n                break;\n            default:\n                client.shopmanager.error(`Invalid expected item '%lightgray%${args[1]}%end%'.`);\n                return;\n        }\n        client.shopmanager.save();\n    })(args);"
+                        }
+                    ],
+                    "name": "Shop Manager Storefront Expect",
+                    "enabled": true,
+                    "id": 12,
+                    "matching": "regexp",
+                    "whole_words": true,
+                    "case_sensitive": true,
+                    "prefix_suffix": true,
+                    "text": "^(?:sm|shop\\-manager|shop manager) storefront expect(?: (totem|eye|eye ?sigil|key|key ?sigil|mono|monolith|monolith ?sigil))? (\\d+)$"
+                },
+                {
+                    "type": "alias",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "(function (args) {\n        const currentShop = client.shopmanager.getCurrentShop();\n        if (!currentShop) {\n            client.shopmanager.error(`You are not currently standing in an active shop.`);\n            return;\n        }\n        const id = args[2];\n        switch (args[1]) {\n            case 'totem':\n                currentShop.storefront.expectedTotemId = undefined;\n                client.shopmanager.echo(`Removed expected %lightgray%totem%end% from storefront of shop '%lightgray%${currentShop.room.name}%end%'.`);\n                break;\n            case 'eye':\n            case 'eyesigil':\n            case 'eye sigil':\n                currentShop.storefront.expectedEyeSigilId = undefined;\n                client.shopmanager.echo(`Removed expected %lightgray%eye sigil%end% from storefront of shop '%lightgray%${currentShop.room.name}%end%'.`);\n                break;\n            case 'key':\n            case 'keysigil':\n            case 'key sigil':\n                currentShop.storefront.expectedKeySigilId = undefined;\n                client.shopmanager.echo(`Removed expected %lightgray%key sigil%end% from storefront of shop '%lightgray%${currentShop.room.name}%end%'.`);\n                break;\n            case 'mono':\n            case 'monolith':\n            case 'monolithsigil':\n            case 'monolith sigil':\n                currentShop.storefront.expectedMonolithSigilId = undefined;\n                client.shopmanager.echo(`Removed expected %lightgray%monolith sigil%end% from storefront of shop '%lightgray%${currentShop.room.name}%end%'.`);\n                break;\n            default:\n                const index = currentShop.storefront.expectedItemIds.indexOf(id);\n                if (index === -1) {\n                    client.shopmanager.error(`Was not expecting item '%lightgray%${id}%end%' in storefront of shop '%lightgray%${currentShop.room.name}%end%'.`);\n                    return;\n                }\n                currentShop.storefront.expectedItemIds.splice(index, 1);\n                client.shopmanager.echo(`Removed expected item '%lightgray%${id}%end%' from storefront of shop '%lightgray%${currentShop.room.name}%end%'.`);\n                break;\n        }\n        client.shopmanager.save();\n    })(args);"
+                        }
+                    ],
+                    "name": "Shop Manager Storefront Unexpect",
+                    "enabled": true,
+                    "id": 13,
+                    "matching": "regexp",
+                    "whole_words": true,
+                    "case_sensitive": true,
+                    "prefix_suffix": true,
+                    "text": "^(?:sm|shop\\-manager|shop manager) storefront unexpect (totem|eye|eye ?sigil|key|key ?sigil|mono|monolith|monolith ?sigil|\\d+)$"
                 }
             ],
             "actions": [],
             "name": "Aliases",
             "enabled": true,
-            "id": 12
+            "id": 14
         },
         {
             "type": "group",
@@ -195,7 +231,7 @@
                     ],
                     "name": "Report Profits",
                     "enabled": true,
-                    "id": 13,
+                    "id": 15,
                     "matching": "regexp",
                     "whole_words": false,
                     "case_sensitive": false,
@@ -212,7 +248,7 @@
                     ],
                     "name": "Report Purchase",
                     "enabled": true,
-                    "id": 14,
+                    "id": 16,
                     "matching": "regexp",
                     "whole_words": false,
                     "case_sensitive": false,
@@ -229,7 +265,7 @@
                     ],
                     "name": "Report Read",
                     "enabled": true,
-                    "id": 15,
+                    "id": 17,
                     "matching": "regexp",
                     "whole_words": false,
                     "case_sensitive": false,
@@ -239,7 +275,7 @@
             "actions": [],
             "name": "Triggers",
             "enabled": true,
-            "id": 16
+            "id": 18
         }
     ],
     "actions": [],

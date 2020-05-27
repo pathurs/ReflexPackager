@@ -7,6 +7,7 @@ interface SystemService {
     save(): void;
     save(id: string, callback: () => void): void;
     sendCommand(command: string, echo?: boolean): void;
+    sendCommands(commands: string[], echo?: boolean): void;
 }
 
 export type SystemServiceClient = typeof client & {

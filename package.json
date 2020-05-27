@@ -9,7 +9,7 @@
         "display-service": "ts-node display-service",
         "system-service": "ts-node system-service",
         "gmcp-service": "ts-node gmcp-service",
-        "queue-service": "ts-node queue-service",
+        "queue-manager": "ts-node queue-manager",
         "people-manager": "ts-node people-manager",
         "inventory-manager": "ts-node inventory-manager",
         "skill-manager": "ts-node skill-manager",

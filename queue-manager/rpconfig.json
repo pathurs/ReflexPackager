@@ -1,0 +1,5 @@
+{
+    "name": "Queue Manager",
+    "description": "A Queue Manager",
+    "outFile": "./packages/queue-manager.nxs"
+}

@@ -3,16 +3,17 @@ import { FunctionItem } from '../source';
 import { DisplayServiceClient } from 'display-service/display-service';
 import { SystemServiceClient } from 'system-service/system-service';
 import { GMCPServiceClient } from 'gmcp-service/gmcp-service';
-import { QueueServiceClient } from 'queue-service/queue-service';
+import { QueueManagerClient } from 'queue-manager/queue-manager';
 import { InventoryManagerClient } from 'inventory-manager/inventory-manager';
 import {
     SkillManagerClient,
     SkillManagerInkmillingInks,
     SkillManagerTarotInscribingQueue,
-    SkillManagerInkmillingInkReagents
+    SkillManagerInkmillingInkReagents,
+    SkillManagerInkmillingQueue
 } from './skill-manager';
 
-declare const client: SkillManagerClient & DisplayServiceClient & SystemServiceClient & GMCPServiceClient & QueueServiceClient & InventoryManagerClient;
+declare const client: SkillManagerClient & DisplayServiceClient & SystemServiceClient & GMCPServiceClient & QueueManagerClient & InventoryManagerClient;
 
 export const onLoad = new FunctionItem(
     'onLoad',
@@ -27,6 +28,9 @@ export const onLoad = new FunctionItem(
                     enabled: true
                 },
                 gathering: {
+                    enabled: true
+                },
+                collecting: {
                     enabled: true
                 },
                 inkmilling: {
@@ -245,8 +249,6 @@ export const onLoad = new FunctionItem(
 
                         client.skillmanager.gathering.butchering.active = true;
 
-                        client.systemservice.sendCommand(`alias set skillmanagerbutcher butcher corpse for reagent`);
-
                         client.skillmanager.gathering.butchering.butcher();
 
                         client.skillmanager.echo('Started butchering.');
@@ -260,8 +262,6 @@ export const onLoad = new FunctionItem(
 
                         client.skillmanager.gathering.butchering.active = false;
 
-                        client.systemservice.sendCommand(`alias clear skillmanagerbutcher`);
-
                         if (client.skillmanager.gathering.butchering.itemToRewield) {
                             client.inventorymanager.wield(client.skillmanager.gathering.butchering.itemToRewield, 'left');
                         }
@@ -273,7 +273,7 @@ export const onLoad = new FunctionItem(
                     },
                     butcher() {
                         if (client.skillmanager.gathering.butchering.active) {
-                            client.systemservice.sendCommand(`queue add eqbal skillmanagerbutcher`);
+                            client.queuemanager.appendCommand('butcher corpse for reagent', 'equilibriumBalance', 'balance');
                         }
                     }
                 },
@@ -345,6 +345,7 @@ export const onLoad = new FunctionItem(
             },
             collecting: {
                 active: false,
+                automatic: false,
                 waitingForPlants: false,
                 waitingForMinerals: false,
                 queue: new Set(),
@@ -363,7 +364,8 @@ export const onLoad = new FunctionItem(
                         client.skillmanager.collecting.queue.add(`gather ${value}`);
                     });
 
-                    client.systemservice.sendCommand('plants|minerals');
+                    client.queuemanager.appendCommand('plants');
+                    client.queuemanager.appendCommand('minerals');
 
                     client.skillmanager.echo('Started collecting.');
                 },
@@ -375,8 +377,8 @@ export const onLoad = new FunctionItem(
                     }
 
                     client.skillmanager.collecting.active = false;
-
-                    client.systemservice.sendCommand(`alias clear skillmanagercollect`);
+                    client.skillmanager.collecting.waitingForPlants = false;
+                    client.skillmanager.collecting.waitingForMinerals = false;
 
                     client.skillmanager.echo('Stopped collecting.');
                 },
@@ -391,7 +393,7 @@ export const onLoad = new FunctionItem(
                     }
 
                     if (client.skillmanager.collecting.queue.size === 0) {
-                        // Delay so last command an call inrift
+                        // Delay so last command can call inrift
                         setTimeout(() => {
                             client.skillmanager.collecting.stop();
                         });
@@ -399,15 +401,11 @@ export const onLoad = new FunctionItem(
                         return;
                     }
 
-                    const command = <string | undefined>client.skillmanager.collecting.queue.values().next().value;
+                    client.skillmanager.collecting.queue.forEach(value => {
+                        client.queuemanager.appendCommand(value, 'equilibriumBalance', 'balance');
+                    });
 
-                    if (command) {
-                        client.skillmanager.collecting.queue.delete(command);
-                        client.systemservice.sendCommand(`alias set skillmanagercollect ${command}`);
-                        client.systemservice.sendCommand(`queue add eqbal skillmanagercollect`);
-
-                        return;
-                    }
+                    client.skillmanager.collecting.queue.clear();
                 },
                 tryCollect() {
                     if (client.skillmanager.collecting.active && !client.skillmanager.collecting.waitingForPlants && !client.skillmanager.collecting.waitingForMinerals) {
@@ -418,7 +416,15 @@ export const onLoad = new FunctionItem(
             inkmilling: {
                 active: false,
                 runningQueue: false,
-                queue: [],
+                queue: {
+                    red: 0,
+                    blue: 0,
+                    yellow: 0,
+                    green: 0,
+                    purple: 0,
+                    gold: 0,
+                    black: 0
+                },
                 reagents: {
                     red: ['redclay', 'redchitin'],
                     blue: ['inkbladder', 'lumic'],
@@ -515,7 +521,15 @@ export const onLoad = new FunctionItem(
                     client.skillmanager.echo('Stopped milling.');
                 },
                 reset() {
-                    client.skillmanager.inkmilling.queue = [];
+                    client.skillmanager.inkmilling.queue = {
+                        red: 0,
+                        blue: 0,
+                        yellow: 0,
+                        green: 0,
+                        purple: 0,
+                        gold: 0,
+                        black: 0
+                    };
 
                     client.skillmanager.echo('Reset milling queue.');
                 },
@@ -528,26 +542,30 @@ export const onLoad = new FunctionItem(
                         return;
                     }
 
-                    if (client.skillmanager.inkmilling.queue.length === 0) {
+                    client.skillmanager.inkmilling.runningQueue = true;
+
+                    let inkColour: keyof SkillManagerInkmillingQueue | undefined;
+
+                    for (const queueInkColour in client.skillmanager.inkmilling.queue) {
+                        if (client.skillmanager.inkmilling.queue[<keyof SkillManagerInkmillingQueue>queueInkColour] > 0) {
+                            inkColour = <keyof SkillManagerInkmillingQueue>queueInkColour;
+
+                            break;
+                        }
+                    }
+
+                    if (!inkColour) {
                         client.skillmanager.inkmilling.stop();
 
                         return;
                     }
 
-                    client.skillmanager.inkmilling.runningQueue = true;
-
                     // client.skillmanager.echo(`Inkmilling Queue: ${client.skillmanager.inkmilling.queue.join(', ')}`);
 
-                    const next = client.skillmanager.inkmilling.queue.pop();
-                    const match = next?.match(/(\d+) (\w+)/) || [];
-                    const amount = Number(match[1]);
-                    const colour = match[2];
+                    const queuedAmount = client.skillmanager.inkmilling.queue[inkColour];
+                    const amount = 5 > queuedAmount ? queuedAmount : 5;
 
-                    if (!amount || !colour) {
-                        return;
-                    }
-
-                    const inkReagents: SkillManagerInkmillingInkReagents | undefined = client.skillmanager.inkmilling.inks[<keyof SkillManagerInkmillingInks>colour];
+                    const inkReagents: SkillManagerInkmillingInkReagents | undefined = client.skillmanager.inkmilling.inks[<keyof SkillManagerInkmillingInks>inkColour];
 
                     const outriftCommands: string[] = [];
                     const putInMillCommands: string[] = [];
@@ -560,12 +578,14 @@ export const onLoad = new FunctionItem(
                         });
 
                         if (reagent === undefined) {
-                            client.skillmanager.inkmilling.queue = [];
+                            client.skillmanager.inkmilling.queue[inkColour] = 0;
                             client.skillmanager.inkmilling.runningQueue = false;
 
                             client.systemservice.sendCommand('get 50 reagent from mill|inr 50 reagent|inr 50 reagent|inr 50 reagent|inr 50 reagent|inr 50 reagent|inr 50 reagent|inr 50 reagent|inr 50 reagent|inr 50 reagent');
 
-                            client.skillmanager.error(`Ran out of ${reagents.join(' and ')}. Queue has been cleared.`);
+                            client.skillmanager.error(`Ran out of ${reagents.join(' and ')}. Queue for ${inkColour} has been cleared.`);
+
+                            client.skillmanager.inkmilling.runQueue();
 
                             return;
                         }
@@ -580,9 +600,11 @@ export const onLoad = new FunctionItem(
                         }
                     }
 
-                    client.systemservice.sendCommand(outriftCommands.join('|'));
-                    client.systemservice.sendCommand(putInMillCommands.join('|'));
-                    client.systemservice.sendCommand(`mill for ${amount} ${colour}`);
+                    client.systemservice.sendCommands(outriftCommands);
+                    client.systemservice.sendCommands(putInMillCommands);
+                    client.systemservice.sendCommand(`mill for ${amount} ${inkColour}`);
+
+                    client.skillmanager.inkmilling.queue[inkColour] -= amount;
                 }
             },
             tarot: {
@@ -717,29 +739,35 @@ export const onLoad = new FunctionItem(
                         client.skillmanager.echo('Reset inscribing queue.');
                     },
                     runQueue() {
-                        if (!client.skillmanager.inkmilling.active) {
+                        if (!client.skillmanager.tarot.inscribing.active) {
                             return;
                         }
 
-                        if (client.skillmanager.inkmilling.runningQueue) {
+                        if (client.skillmanager.tarot.inscribing.runningQueue) {
                             return;
                         }
 
-                        if (client.skillmanager.inkmilling.queue.length === 0) {
-                            client.skillmanager.inkmilling.stop();
+                        client.skillmanager.tarot.inscribing.runningQueue = true;
 
-                            return;
-                        }
+                        let card: string | undefined;
 
-                        client.skillmanager.inkmilling.runningQueue = true;
+                        for (const queueCard in client.skillmanager.tarot.inscribing.queue) {
+                            if (client.skillmanager.tarot.inscribing.queue[<keyof SkillManagerTarotInscribingQueue>queueCard] > 0) {
+                                card = queueCard;
 
-                        for (const card in client.skillmanager.tarot.inscribing.queue) {
-                            if (client.skillmanager.tarot.inscribing.queue[<keyof SkillManagerTarotInscribingQueue>card] > 0) {
-                                client.systemservice.sendCommand(`outd blank|inscribe blank with ${card}`);
-
-                                return;
+                                break;
                             }
                         }
+
+                        if (!card) {
+                            client.skillmanager.tarot.inscribing.stop();
+
+                            return;
+                        }
+
+
+                        client.queuemanager.appendCommand('outd blank');
+                        client.queuemanager.appendCommand('inscribe blank with ${card}');
                     }
                 }
             },
@@ -758,21 +786,42 @@ export const onLoad = new FunctionItem(
             }
         };
 
-        client.queueservice.subscribe(['bal', 'eq', 'eqbal'], (_queue, method, args) => {
-            if (client.skillmanager.gathering.butchering.active) {
-                if (method === 'run' && args.command.toLowerCase() === 'skillmanagerbutcher') {
-                    client.skillmanager.gathering.butchering.butcher();
+        client.gmcpservice.subscribe(['Room.Info'], () => {
+            if (client.skillmanager.collecting.active) {
+                if (client.gmcpservice.previousRoom.num !== client.gmcpservice.room.num) {
+                    // Delay stopping so the last collect can call inrift
+                    setTimeout(() => {
+                        client.skillmanager.collecting.stop();
+                    });
                 }
             }
-            else if (client.skillmanager.collecting.active) {
-                if (method === 'run' && args.command.toLowerCase() === 'skillmanagercollect') {
-                    client.skillmanager.collecting.tryCollect();
-                }
+
+            if (client.skillmanager.collecting.automatic) {
+                // Delay starting so collecting starts after it stops
+                setTimeout(() => {
+                    client.skillmanager.collecting.start();
+                });
             }
         });
 
-        client.systemservice.sendCommand(`alias clear skillmanagerbutcher`);
-        client.systemservice.sendCommand(`alias clear skillmanagercollect`);
+        client.queuemanager.subscribe(['balance', 'equilibrium', 'equilibriumBalance'], (_queue, method, _args) => {
+            if (client.skillmanager.gathering.butchering.active) {
+                // TODO: Confirm we were actually butchering
+                if (method === 'run') {
+                    client.skillmanager.gathering.butchering.butcher();
+                }
+            }
+
+            if (client.skillmanager.collecting.active) {
+                // TODO: Confirm we were actually collecting
+                if (method === 'run' && client.queuemanager.equilibriumBalance.queue.length === 0) {
+                    // Delay stopping so the last collect can call inrift
+                    setTimeout(() => {
+                        client.skillmanager.collecting.stop();
+                    });
+                }
+            }
+        });
 
         client.skillmanager.echo('Loaded.');
     }

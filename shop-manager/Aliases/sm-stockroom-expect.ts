@@ -6,7 +6,7 @@ declare const client: ShopManagerClient & GMCPServiceClient;
 
 export const shopManagerStockroomExpect = new AliasItem(
     'Shop Manager Stockroom Expect',
-    /^(?:sm|shop\-manager|shop manager) stockroom expect(?: (totem|eye|eye ?sigil|key|key ?sigil|mono|monolith|monolith ?sigil|orb|shimmering ?orb)) ([\w\W]+)$/,
+    /^(?:sm|shop\-manager|shop manager) stockroom expect(?: (totem|eye|eye ?sigil|key|key ?sigil|mono|monolith|monolith ?sigil|orb|shimmering ?orb))? (\d+)$/,
     AliasType.RegularExpression,
     [
         new ExecuteScriptAction(
@@ -25,7 +25,7 @@ export const shopManagerStockroomExpect = new AliasItem(
                     case 'totem':
                         currentShop.stockroom.expectedTotemId = id;
 
-                        client.shopmanager.echo(`Set shop '%lightgray%${currentShop.room.name}%end%' stockroom expected totem to '%lightgray%${id}%end%'.`);
+                        client.shopmanager.echo(`Set expected %lightgray%totem%end% in stockroom of shop '%lightgray%${currentShop.room.name}%end%' to '%lightgray%${id}%end%'.`);
                         break;
 
                     case 'eye':
@@ -33,7 +33,7 @@ export const shopManagerStockroomExpect = new AliasItem(
                     case 'eye sigil':
                         currentShop.stockroom.expectedEyeSigilId = id;
 
-                        client.shopmanager.echo(`Set shop '%lightgray%${currentShop.room.name}%end%' stockroom expected eye sigil to '%lightgray%${id}%end%'.`);
+                        client.shopmanager.echo(`Set expected %lightgray%eye sigil%end% in stockroom of shop '%lightgray%${currentShop.room.name}%end%' to '%lightgray%${id}%end%'.`);
                         break;
 
                     case 'key':
@@ -41,7 +41,7 @@ export const shopManagerStockroomExpect = new AliasItem(
                     case 'key sigil':
                         currentShop.stockroom.expectedKeySigilId = id;
 
-                        client.shopmanager.echo(`Set shop '%lightgray%${currentShop.room.name}%end%' stockroom expected key sigil to '%lightgray%${id}%end%'.`);
+                        client.shopmanager.echo(`Set expected %lightgray%key sigil%end% in stockroom of shop '%lightgray%${currentShop.room.name}%end%' to '%lightgray%${id}%end%'.`);
                         break;
 
                     case 'mono':
@@ -50,7 +50,7 @@ export const shopManagerStockroomExpect = new AliasItem(
                     case 'monolith sigil':
                         currentShop.stockroom.expectedMonolithSigilId = id;
 
-                        client.shopmanager.echo(`Set shop '%lightgray%${currentShop.room.name}%end%' stockroom expected monolith sigil to '%lightgray%${id}%end%'.`);
+                        client.shopmanager.echo(`Set expected %lightgray%monolith sigil%end% in stockroom of shop '%lightgray%${currentShop.room.name}%end%' to '%lightgray%${id}%end%'.`);
                         break;
 
                     case 'orb':
@@ -58,19 +58,19 @@ export const shopManagerStockroomExpect = new AliasItem(
                     case 'shimmering orb':
                         currentShop.stockroom.expectedShimmeringOrbId = id;
 
-                        client.shopmanager.echo(`Set shop '%lightgray%${currentShop.room.name}%end%' stockroom expected shimmering orb to '%lightgray%${id}%end%'.`);
+                        client.shopmanager.echo(`Set expected %lightgray%shimmering orb%end% in stockroom of shop '%lightgray%${currentShop.room.name}%end%' to '%lightgray%${id}%end%'.`);
                         break;
 
                     case undefined:
                         if (currentShop.stockroom.expectedItemIds.includes(id)) {
-                            client.shopmanager.error(`Shop '%lightgray%${currentShop.room.name}%end%' stockroom is already expecting item '%lightgray%${id}%end%'.`)
+                            client.shopmanager.error(`Already expecting item '%lightgray%${id}%end%' in stockroom of shop '%lightgray%${currentShop.room.name}%end%'.`)
 
                             return;
                         }
 
                         currentShop.stockroom.expectedItemIds.push(id);
 
-                        client.shopmanager.echo(`Added Shop '%lightgray%${currentShop.room.name}%end%' stockroom expected item '%lightgray%${id}%end%'.`);
+                        client.shopmanager.echo(`Added expected item '%lightgray%totem%end%' in stockroom of shop '%lightgray%${currentShop.room.name}%end%'.`);
                         break;
 
                     default:
