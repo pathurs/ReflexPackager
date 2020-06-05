@@ -12,9 +12,9 @@ export const swappedHands = new MultiTriggerItem(
     [
         new ExecuteScriptAction(
             function () {
-                client.inventorymanager.expectdSwapHands = undefined;
+                client.inventoryManager.expectdSwapHands = undefined;
 
-                client.inventorymanager.save();
+                client.inventoryManager.save();
             }
         )
     ]

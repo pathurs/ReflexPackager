@@ -9,8 +9,8 @@ declare const client: InventoryManagerClient & DisplayServiceClient & SystemServ
 export const onLoad = new FunctionItem(
     'onLoad',
     function () {
-        client.inventorymanager = {
-            settings: get_variable('inventory-manager:settings') || {
+        client.inventoryManager = {
+            settings: client.systemService.defaultsDeep(get_variable('inventory-manager:settings'), {
                 enabled: true,
                 wielding: {
                     enabled: true
@@ -26,139 +26,139 @@ export const onLoad = new FunctionItem(
                     enabled: true,
                     tracked: []
                 }
-            },
+            }),
             echo(text) {
-                client.displayservice.echo(`%lightgray%[%deepskyblue%Inventory Manager%end%]:%end% ${text}`);
+                client.displayService.echo(`%lightgray%[%deepskyblue%Inventory Manager%end%]:%end% ${text}`);
             },
             error(text) {
-                client.inventorymanager.echo(`%red%${text}`);
+                client.inventoryManager.echo(`%red%${text}%end%`);
             },
             save() {
-                client.systemservice.save('inventory-manager', () => {
-                    set_variable('inventory-manager:settings', client.inventorymanager.settings);
+                client.systemService.save('inventory-manager', () => {
+                    set_variable('inventory-manager:settings', client.inventoryManager.settings);
 
-                    client.inventorymanager.echo('Settings saved.');
+                    client.inventoryManager.echo('Settings saved.');
                 });
             },
             wield(item, hand) {
                 const isId = !isNaN(Number(item.match(/(\d+)/)?.[1]))
 
-                const currentLeft = client.gmcpservice.items.inv.find(value => value.attrib?.includes('l'));
-                const currentRight = client.gmcpservice.items.inv.find(value => value.attrib?.includes('L'));
+                const currentLeft = client.gmcpService.items.inv.find(value => value.attrib?.includes('l'));
+                const currentRight = client.gmcpService.items.inv.find(value => value.attrib?.includes('L'));
 
                 switch (hand) {
                     case 'left':
-                        client.inventorymanager.expectedWield = 'left';
+                        client.inventoryManager.expectedWield = 'left';
 
                         if (currentLeft) {
-                            client.inventorymanager.expectdUnwield = 'left';
+                            client.inventoryManager.expectdUnwield = 'left';
                         }
 
                         if (isId) {
-                            client.inventorymanager.settings.wielding.expectedLeftId = item;
+                            client.inventoryManager.settings.wielding.expectedLeftId = item;
                         }
 
-                        client.systemservice.sendCommand(`wield left ${item}`);
+                        client.systemService.sendCommand(`wield left ${item}`);
                         break;
 
                     case 'right':
-                        client.inventorymanager.expectedWield = 'right';
+                        client.inventoryManager.expectedWield = 'right';
 
                         if (currentRight) {
-                            client.inventorymanager.expectdUnwield = 'right';
+                            client.inventoryManager.expectdUnwield = 'right';
                         }
 
                         if (isId) {
-                            client.inventorymanager.settings.wielding.expectedRightId = item;
+                            client.inventoryManager.settings.wielding.expectedRightId = item;
                         }
 
-                        client.systemservice.sendCommand(`wield right ${item}`);
+                        client.systemService.sendCommand(`wield right ${item}`);
                         break;
 
                     case 'both':
-                        client.inventorymanager.expectdUnwield = 'both';
-                        client.inventorymanager.expectedWield = 'both';
+                        client.inventoryManager.expectdUnwield = 'both';
+                        client.inventoryManager.expectedWield = 'both';
 
                         if (isId) {
-                            client.inventorymanager.settings.wielding.expectedLeftId = item;
-                            client.inventorymanager.settings.wielding.expectedRightId = item;
+                            client.inventoryManager.settings.wielding.expectedLeftId = item;
+                            client.inventoryManager.settings.wielding.expectedRightId = item;
                         }
 
-                        client.systemservice.sendCommand(`wield ${item}`);
+                        client.systemService.sendCommand(`wield ${item}`);
                         break;
 
                     default:
                         if (currentLeft && currentRight) {
-                            client.inventorymanager.expectdUnwield = 'left';
-                            client.inventorymanager.expectedWield = 'left';
+                            client.inventoryManager.expectdUnwield = 'left';
+                            client.inventoryManager.expectedWield = 'left';
 
                             if (isId) {
-                                client.inventorymanager.settings.wielding.expectedLeftId = item;
-                                client.inventorymanager.settings.wielding.expectedRightId = item;
+                                client.inventoryManager.settings.wielding.expectedLeftId = item;
+                                client.inventoryManager.settings.wielding.expectedRightId = item;
                             }
                         }
                         else if (currentLeft) {
-                            client.inventorymanager.expectedWield = 'right';
+                            client.inventoryManager.expectedWield = 'right';
 
                             if (isId) {
-                                client.inventorymanager.settings.wielding.expectedRightId = item;
+                                client.inventoryManager.settings.wielding.expectedRightId = item;
                             }
                         }
                         else {
-                            client.inventorymanager.expectedWield = 'left';
+                            client.inventoryManager.expectedWield = 'left';
 
                             if (isId) {
-                                client.inventorymanager.settings.wielding.expectedLeftId = item;
+                                client.inventoryManager.settings.wielding.expectedLeftId = item;
                             }
                         }
 
-                        client.systemservice.sendCommand(`wield ${item}`);
+                        client.systemService.sendCommand(`wield ${item}`);
                         break;
                 }
 
                 if (currentLeft && currentRight && currentLeft === currentRight) {
-                    client.inventorymanager.expectdUnwield = 'both';
+                    client.inventoryManager.expectdUnwield = 'both';
                 }
             },
             unwield(itemOrHand: string) {
-                const currentLeft = client.gmcpservice.items.inv.find(value => value.attrib?.includes('l'));
-                const currentRight = client.gmcpservice.items.inv.find(value => value.attrib?.includes('L'));
+                const currentLeft = client.gmcpService.items.inv.find(value => value.attrib?.includes('l'));
+                const currentRight = client.gmcpService.items.inv.find(value => value.attrib?.includes('L'));
 
                 if (currentLeft && currentRight && currentLeft === currentRight) {
-                    client.inventorymanager.expectdUnwield = 'both';
+                    client.inventoryManager.expectdUnwield = 'both';
 
-                    client.inventorymanager.settings.wielding.expectedLeftId = undefined;
-                    client.inventorymanager.settings.wielding.expectedRightId = undefined;
+                    client.inventoryManager.settings.wielding.expectedLeftId = undefined;
+                    client.inventoryManager.settings.wielding.expectedRightId = undefined;
                 }
                 else {
                     switch (itemOrHand) {
                         case 'left':
-                            client.inventorymanager.settings.wielding.expectedLeftId = undefined;
-                            client.inventorymanager.expectdUnwield = 'left';
+                            client.inventoryManager.settings.wielding.expectedLeftId = undefined;
+                            client.inventoryManager.expectdUnwield = 'left';
 
-                            client.systemservice.sendCommand(`unwield left`);
+                            client.systemService.sendCommand(`unwield left`);
                             break;
 
                         case 'right':
-                            client.inventorymanager.settings.wielding.expectedRightId = undefined;
-                            client.inventorymanager.expectdUnwield = 'right';
+                            client.inventoryManager.settings.wielding.expectedRightId = undefined;
+                            client.inventoryManager.expectdUnwield = 'right';
 
-                            client.systemservice.sendCommand(`unwield right`);
+                            client.systemService.sendCommand(`unwield right`);
                             break;
 
                         default:
-                            client.inventorymanager.expectdUnwield = 'any';
+                            client.inventoryManager.expectdUnwield = 'any';
 
-                            client.systemservice.sendCommand(`unwield ${itemOrHand}`);
+                            client.systemService.sendCommand(`unwield ${itemOrHand}`);
                             break;
                     }
                 }
 
-                client.inventorymanager.save();
+                client.inventoryManager.save();
             }
         };
 
-        client.gmcpservice.subscribe(['Char.Items.List', 'Char.Items.Add', 'Char.Items.Remove', 'Char.Items.Update'], args => {
+        client.gmcpService.subscribe(['Char.Items.List', 'Char.Items.Add', 'Char.Items.Remove', 'Char.Items.Update'], args => {
             if (args.gmcp_args.location === 'inv') {
                 switch (args.gmcp_method) {
                     case 'Char.Items.List':
@@ -173,8 +173,8 @@ export const onLoad = new FunctionItem(
                     case 'Char.Items.Update':
                         {
                             const item = args.gmcp_args.item;
-                            const newItem = client.gmcpservice.items.inv.find(value => value.id === item.id);
-                            const oldItem = client.gmcpservice.previousItems.inv.find(value => value.id === item.id);
+                            const newItem = client.gmcpService.items.inv.find(value => value.id === item.id);
+                            const oldItem = client.gmcpService.previousItems.inv.find(value => value.id === item.id);
 
                             if (newItem && oldItem) {
                                 updateItem(oldItem, newItem);
@@ -202,56 +202,56 @@ export const onLoad = new FunctionItem(
                 function updateItem(oldItem: GMCPCharItemsItem, item: GMCPCharItemsItem) {
                     // Wielded, Left
                     if (attributeChange(oldItem, item, 'l') === 'add') {
-                        if (client.inventorymanager.expectedWield === 'left') {
-                            client.inventorymanager.settings.wielding.expectedLeftId = item.id;
-                            client.inventorymanager.expectedWield = undefined;
+                        if (client.inventoryManager.expectedWield === 'left') {
+                            client.inventoryManager.settings.wielding.expectedLeftId = item.id;
+                            client.inventoryManager.expectedWield = undefined;
 
-                            client.inventorymanager.save();
+                            client.inventoryManager.save();
                         }
                     }
                     else if (attributeChange(oldItem, item, 'l') === 'remove') {
-                        if (client.inventorymanager.settings.wielding.expectedLeftId === item.id) {
-                            if (['any', 'left', 'both'].includes(<string>client.inventorymanager.expectdUnwield)) {
-                                client.inventorymanager.settings.wielding.expectedLeftId = undefined;
-                                client.inventorymanager.expectdUnwield = undefined;
+                        if (client.inventoryManager.settings.wielding.expectedLeftId === item.id) {
+                            if (['any', 'left', 'both'].includes(<string>client.inventoryManager.expectdUnwield)) {
+                                client.inventoryManager.settings.wielding.expectedLeftId = undefined;
+                                client.inventoryManager.expectdUnwield = undefined;
                             }
                             else {
-                                client.systemservice.sendCommand(`wield left ${item.id}`);
+                                client.systemService.sendCommand(`wield left ${item.id}`);
                             }
                         }
-                        else if (client.inventorymanager.expectdUnwield) {
-                            client.inventorymanager.expectdUnwield = undefined;
+                        else if (client.inventoryManager.expectdUnwield) {
+                            client.inventoryManager.expectdUnwield = undefined;
                         }
                     }
 
                     // Wielded, Right
                     if (attributeChange(oldItem, item, 'L') === 'add') {
-                        if (client.inventorymanager.expectedWield === 'right') {
-                            client.inventorymanager.settings.wielding.expectedRightId = item.id;
-                            client.inventorymanager.expectedWield = undefined;
+                        if (client.inventoryManager.expectedWield === 'right') {
+                            client.inventoryManager.settings.wielding.expectedRightId = item.id;
+                            client.inventoryManager.expectedWield = undefined;
 
-                            client.inventorymanager.save();
+                            client.inventoryManager.save();
                         }
                     }
                     else if (attributeChange(oldItem, item, 'L') === 'remove') {
-                        if (client.inventorymanager.settings.wielding.expectedRightId === item.id) {
-                            if (['any', 'right', 'both'].includes(<string>client.inventorymanager.expectdUnwield)) {
-                                client.inventorymanager.settings.wielding.expectedRightId = undefined;
-                                client.inventorymanager.expectdUnwield = undefined;
+                        if (client.inventoryManager.settings.wielding.expectedRightId === item.id) {
+                            if (['any', 'right', 'both'].includes(<string>client.inventoryManager.expectdUnwield)) {
+                                client.inventoryManager.settings.wielding.expectedRightId = undefined;
+                                client.inventoryManager.expectdUnwield = undefined;
                             }
                             else {
-                                client.systemservice.sendCommand(`wield right ${item.id}`);
+                                client.systemService.sendCommand(`wield right ${item.id}`);
                             }
                         }
-                        else if (client.inventorymanager.expectdUnwield) {
-                            client.inventorymanager.expectdUnwield = undefined;
+                        else if (client.inventoryManager.expectdUnwield) {
+                            client.inventoryManager.expectdUnwield = undefined;
                         }
                     }
                 }
             }
             else if (args.gmcp_args.location.startsWith('rep')) {
                 const containerId: string | undefined = (args.gmcp_args.location.match(/rep(\d+)/) || [])[1];
-                const trackedContainer = client.inventorymanager.settings.containers.tracked.find(value => value.id == containerId);
+                const trackedContainer = client.inventoryManager.settings.containers.tracked.find(value => value.id == containerId);
 
                 if (trackedContainer) {
                     send_GMCP('Char.Items.Contents', Number(trackedContainer.id));
@@ -259,10 +259,10 @@ export const onLoad = new FunctionItem(
             }
         });
 
-        client.inventorymanager.settings.containers.tracked.forEach(container => {
+        client.inventoryManager.settings.containers.tracked.forEach(container => {
             send_GMCP('Char.Items.Contents', Number(container.id));
         });
 
-        client.inventorymanager.echo('Loaded.');
+        client.inventoryManager.echo('Loaded.');
     }
 );

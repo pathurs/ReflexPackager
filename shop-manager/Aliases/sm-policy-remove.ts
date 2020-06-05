@@ -13,7 +13,7 @@ export const shopManagerPolicyRemove = new AliasItem(
             function (args: TriggerFunctionArgs & { 1: string }) {
                 const id = Number(args[1]);
 
-                client.shopmanager.removePolicy(id);
+                client.shopManager.removePolicy(id);
             }
         )
     ]

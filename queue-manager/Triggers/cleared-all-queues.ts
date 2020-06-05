@@ -12,11 +12,11 @@ export const clearedAllQueue = new TriggerItem(
     [
         new ExecuteScriptAction(
             function () {
-                if (!client.queuemanager.settings.enabled) {
+                if (!client.queueManager.settings.enabled) {
                     return;
                 }
 
-                if (client.queuemanager.settings.gag) {
+                if (client.queueManager.settings.gag) {
                     gag_current_line();
                 }
 

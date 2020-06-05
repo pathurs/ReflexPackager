@@ -68,7 +68,7 @@ interface QueueManager {
     equilibriumBalance: QueueManagerEquilibriumBalance;
     class: QueueManagerClass;
     ship: QueueManagerShip;
-    sendingQueue: boolean;
+    queuesToSend: Set<QueueManagerQueueType>;
     subscriptions: QueueManagerQueueSubscription<QueueManagerQueueType>[];
     echo(message: string): void;
     error(text: string): void;
@@ -77,17 +77,17 @@ interface QueueManager {
     once<TQueueType extends QueueManagerQueueType>(queues: TQueueType[], subscriber: QueueManagerQueueSubscriber<TQueueType>): QueueManagerQueueSubscription<TQueueType>;
     emit(queueType: QueueManagerQueueType, method: QueueManagerQueueMethod, args: QueueManagerSubscriberArgs): void;
     parseCommand(queueType: QueueManagerQueueType, command: string): QueueManagerQueuedCommand[];
-    noraliseQueueType(type: string): QueueManagerQueueType | undefined;
-    getQueue(type: QueueManagerQueueType): QueueManagerQueuedCommand[];
+    noraliseQueueType(queueType: string): QueueManagerQueueType | undefined;
+    getQueue(queueType: QueueManagerQueueType): QueueManagerQueuedCommand[];
     appendCommand(command: string, requires?: QueueManagerQueueType, consumes?: QueueManagerQueueType): QueueManagerQueuedCommand;
     prependCommand(command: string, requires?: QueueManagerQueueType, consumes?: QueueManagerQueueType): QueueManagerQueuedCommand;
-    // replaceCommand(type: QueueManagerQueueType, index: number, command: string, requires?: QueueManagerQueueTypeInteractions, consumes?: QueueManagerQueueTypeInteractions): QueueManagerQueuedCommand;
-    // insertCommand(type: QueueManagerQueueType, index: number, command: string, requires?: QueueManagerQueueTypeInteractions, consumes?: QueueManagerQueueTypeInteractions): QueueManagerQueuedCommand;
-    removeCommand(type: QueueManagerQueueType, index: number): void;
-    clearQueue(type: QueueManagerQueueType): void;
-    sendQueue(type: QueueManagerQueueType): void;
+    // replaceCommand(queueType: QueueManagerQueueType, index: number, command: string, requires?: QueueManagerQueueTypeInteractions, consumes?: QueueManagerQueueTypeInteractions): QueueManagerQueuedCommand;
+    // insertCommand(queueType: QueueManagerQueueType, index: number, command: string, requires?: QueueManagerQueueTypeInteractions, consumes?: QueueManagerQueueTypeInteractions): QueueManagerQueuedCommand;
+    removeCommand(queueType: QueueManagerQueueType, index: number): void;
+    clearQueue(queueType: QueueManagerQueueType): void;
+    sendQueue(queueType: QueueManagerQueueType): void;
 }
 
 export type QueueManagerClient = typeof client & {
-    queuemanager: QueueManager;
+    queueManager: QueueManager;
 };

@@ -10,7 +10,7 @@ export const reportRead = new TriggerItem(
     [
         new ExecuteScriptAction(
             function (args: TriggerFunctionArgs & { 1: string; 2: string; 3: string }) {
-                client.shopmanager.echo(JSON.stringify(args));
+                client.shopManager.echo(JSON.stringify(args));
             }
         )
     ]

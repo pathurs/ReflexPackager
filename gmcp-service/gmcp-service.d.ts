@@ -49,5 +49,5 @@ interface GMCPService {
 }
 
 export type GMCPServiceClient = typeof client & {
-    gmcpservice: GMCPService;
+    gmcpService: GMCPService;
 };

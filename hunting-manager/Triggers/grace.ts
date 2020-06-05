@@ -10,10 +10,10 @@ export const grace = new TriggerItem(
     [
         new ExecuteScriptAction(
             function () {
-                if (client.huntingmanager.settings.enabled && client.huntingmanager.active) {
-                    client.huntingmanager.error(`Cannot hunt while graced.`);
+                if (client.huntingManager.settings.enabled && client.huntingManager.active) {
+                    client.huntingManager.error(`Cannot hunt while graced.`);
 
-                    client.huntingmanager.stop();
+                    client.huntingManager.stop();
                 }
             }
         )

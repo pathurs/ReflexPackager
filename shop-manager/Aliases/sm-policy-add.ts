@@ -11,13 +11,13 @@ export const shopManagerPolicyAdd = new AliasItem(
     [
         new ExecuteScriptAction(
             function (args: TriggerFunctionArgs & { 1: string }) {
-                const policy = client.shopmanager.parseRawPolicy(args[1]);
+                const policy = client.shopManager.parseRawPolicy(args[1]);
 
                 if (!policy) {
                     return;
                 }
 
-                client.shopmanager.addPolicy(policy);
+                client.shopManager.addPolicy(policy);
             }
         )
     ]

@@ -11,17 +11,17 @@ export const swapHands = new AliasItem(
     [
         new ExecuteScriptAction(
             function () {
-                client.systemservice.sendCommand('swap hands');
+                client.systemService.sendCommand('swap hands');
 
-                const expectdLeft = client.inventorymanager.settings.wielding.expectedLeftId;
-                const expectdRight = client.inventorymanager.settings.wielding.expectedRightId;
+                const expectdLeft = client.inventoryManager.settings.wielding.expectedLeftId;
+                const expectdRight = client.inventoryManager.settings.wielding.expectedRightId;
 
-                client.inventorymanager.settings.wielding.expectedLeftId = expectdRight;
-                client.inventorymanager.settings.wielding.expectedRightId = expectdLeft;
+                client.inventoryManager.settings.wielding.expectedLeftId = expectdRight;
+                client.inventoryManager.settings.wielding.expectedRightId = expectdLeft;
 
-                client.inventorymanager.expectdSwapHands = true;
+                client.inventoryManager.expectdSwapHands = true;
 
-                client.inventorymanager.save();
+                client.inventoryManager.save();
             }
         )
     ]

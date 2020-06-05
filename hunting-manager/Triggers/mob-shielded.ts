@@ -10,9 +10,9 @@ export const mobShielded = new TriggerItem(
     [
         new ExecuteScriptAction(
             function (args: TriggerFunctionArgs & { 1: string }) {
-                if (client.huntingmanager.settings.enabled && client.huntingmanager.active) {
-                    if (client.huntingmanager.target.currentTarget && client.huntingmanager.target.currentTarget.name === args[1]) {
-                        client.huntingmanager.raze.tryRazeTarget();
+                if (client.huntingManager.settings.enabled && client.huntingManager.active) {
+                    if (client.huntingManager.target.currentTarget && client.huntingManager.target.currentTarget.name === args[1]) {
+                        client.huntingManager.raze.tryRazeTarget();
                     }
                 }
             }

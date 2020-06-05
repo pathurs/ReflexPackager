@@ -10,6 +10,7 @@ import { shopManagerStockroomExpect } from './sm-stockroom-expect';
 import { shopManagerStockroomUnexpect } from './sm-stockroom-unexpect';
 import { shopManagerStorefrontExpect } from './sm-storefront-expect';
 import { shopManagerStorefrontUnexpect } from './sm-storefront-unexpect';
+import { shopManagerUpdateStockroom } from './sm-update-stockroom';
 
 export const Aliases = new GroupItem(
     'Aliases',
@@ -24,6 +25,7 @@ export const Aliases = new GroupItem(
         shopManagerStockroomExpect,
         shopManagerStockroomUnexpect,
         shopManagerStorefrontExpect,
-        shopManagerStorefrontUnexpect
+        shopManagerStorefrontUnexpect,
+        shopManagerUpdateStockroom
     ]
 );

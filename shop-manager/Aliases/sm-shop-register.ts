@@ -11,7 +11,7 @@ export const shopManagerShopRegister = new AliasItem(
     [
         new ExecuteScriptAction(
             function () {
-                client.shopmanager.registerShop();
+                client.shopManager.registerShop();
             }
         )
     ]

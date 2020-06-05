@@ -10,8 +10,8 @@ export const leftParty = new TriggerItem(
     [
         new ExecuteScriptAction(
             function () {
-                if (client.huntingmanager.settings.enabled) {
-                    client.huntingmanager.target.setTargetCaller('none');
+                if (client.huntingManager.settings.enabled) {
+                    client.huntingManager.target.setTargetCaller('none');
                 }
             }
         )

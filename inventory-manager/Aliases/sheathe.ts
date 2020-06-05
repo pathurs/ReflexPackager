@@ -12,36 +12,36 @@ export const sheathe = new AliasItem(
     [
         new ExecuteScriptAction(
             function (args: GMCPAliasRegexArgs & { 1: 'left' | 'right' | string }) {
-                client.systemservice.sendCommand(args[0]);
+                client.systemService.sendCommand(args[0]);
 
-                const currentLeft = client.gmcpservice.items.inv.find(value => value.attrib?.includes('l'));
-                const currentRight = client.gmcpservice.items.inv.find(value => value.attrib?.includes('L'));
+                const currentLeft = client.gmcpService.items.inv.find(value => value.attrib?.includes('l'));
+                const currentRight = client.gmcpService.items.inv.find(value => value.attrib?.includes('L'));
 
                 if (currentLeft && currentRight && currentLeft === currentRight) {
-                    client.inventorymanager.expectdUnwield = 'both';
+                    client.inventoryManager.expectdUnwield = 'both';
 
-                    client.inventorymanager.settings.wielding.expectedLeftId = undefined;
-                    client.inventorymanager.settings.wielding.expectedRightId = undefined;
+                    client.inventoryManager.settings.wielding.expectedLeftId = undefined;
+                    client.inventoryManager.settings.wielding.expectedRightId = undefined;
                 }
                 else {
                     switch (args[1]) {
                         case 'left':
-                            client.inventorymanager.settings.wielding.expectedLeftId = undefined;
-                            client.inventorymanager.expectdUnwield = 'left';
+                            client.inventoryManager.settings.wielding.expectedLeftId = undefined;
+                            client.inventoryManager.expectdUnwield = 'left';
                             break;
 
                         case 'right':
-                            client.inventorymanager.settings.wielding.expectedRightId = undefined;
-                            client.inventorymanager.expectdUnwield = 'right';
+                            client.inventoryManager.settings.wielding.expectedRightId = undefined;
+                            client.inventoryManager.expectdUnwield = 'right';
                             break;
 
                         default:
-                            client.inventorymanager.expectdUnwield = 'any';
+                            client.inventoryManager.expectdUnwield = 'any';
                             break;
                     }
                 }
 
-                client.inventorymanager.save();
+                client.inventoryManager.save();
             }
         )
     ]

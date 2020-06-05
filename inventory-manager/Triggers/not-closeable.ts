@@ -17,10 +17,10 @@ export const notCloseable = new TriggerItem(
                     return;
                 }
 
-                const containers = client.gmcpservice.items.inv
+                const containers = client.gmcpService.items.inv
                     .filter(value => value.attrib?.includes('c') && value.name === containerDescription);
 
-                const trackedContainers = client.inventorymanager.settings.containers.tracked
+                const trackedContainers = client.inventoryManager.settings.containers.tracked
                     .filter(value => containers.map(value => value.id).includes(value.id));
 
                 if (trackedContainers.length === 0) {
@@ -28,13 +28,13 @@ export const notCloseable = new TriggerItem(
                 }
 
                 trackedContainers.forEach(trackedContainer => {
-                    if (client.inventorymanager.expectedOpen === trackedContainer.id || client.inventorymanager.expectedClose === trackedContainer.id) {
+                    if (client.inventoryManager.expectedOpen === trackedContainer.id || client.inventoryManager.expectedClose === trackedContainer.id) {
                         trackedContainer.closeable = false;
                         trackedContainer.possiblyOpen = undefined;
                     }
                 });
 
-                client.inventorymanager.save();
+                client.inventoryManager.save();
             }
         )
     ]

@@ -12,8 +12,8 @@ export const huntingManagerShowArea = new AliasItem(
     [
         new ExecuteScriptAction(
             function () {
-                if (client.huntingmanager.settings.enabled) {
-                    client.huntingmanager.showArea(client.gmcpservice.room.area);
+                if (client.huntingManager.settings.enabled) {
+                    client.huntingManager.showArea(client.gmcpService.room.area);
                 }
             }
         )

@@ -12,11 +12,11 @@ export const huntingManagerMoveMob = new AliasItem(
     [
         new ExecuteScriptAction(
             function (args: GMCPAliasRegexArgs & { 1: string; 2: string }) {
-                if (client.huntingmanager.settings.enabled) {
+                if (client.huntingManager.settings.enabled) {
                     const mob = args[1];
                     const index = Number(args[2]);
 
-                    client.huntingmanager.moveMob(client.gmcpservice.room.area, mob, index);
+                    client.huntingManager.moveMob(client.gmcpService.room.area, mob, index);
                 }
             }
         )

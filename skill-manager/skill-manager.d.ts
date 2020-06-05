@@ -1,6 +1,85 @@
 type DescriptionDictionary = { [key: string]: string | undefined };
 type EnvironmentDictionary = { [key: string]: string[] | undefined };
 
+//#region Pranks
+
+type SkillManagerPranksProps = 'balloon' | 'blackjack' | 'itchpowder' | 'mickey';
+type SkillManagerPranksPropAmount = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+type SkillManagerPranksIllusionColour = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 'lethal';
+type SkillManagerPranksRunAwayDistance = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
+
+interface SkillManagerPranks {
+    handspring(target: string): string;
+    // props(): void;
+    // wishForProp(prop: SkillManagerPranksProps, amount?: SkillManagerPranksPropAmount): void;
+    // inflateBalloon(): void;
+    // slipperiness(): void;
+    // bop(target?: string | number): void;
+    // inflateBalloonIntoGiraffe(): void;
+    // mountGiraffe(): void;
+    // stepIntoTrees(): void;
+    // backflip(direction: string): void;
+    // hocuspocus(illusion: string, delay: number, colour?: SkillManagerPranksIllusionColour): void;
+    // runAway(direction: string, distance?: SkillManagerPranksRunAwayDistance): void;
+    // balloonHandoff(target?: string): void;
+    // backHandspring(target: string, direction: string): void;
+}
+
+interface SkillManagerPranksSettings {
+    enabled: boolean;
+}
+
+//#endregion
+
+//#region Tarot
+
+interface SkillManagerTarotInscribingQueue {
+    sun: number;
+    emperor: number;
+    magician: number;
+    priestess: number;
+    fool: number;
+    chariot: number;
+    hermit: number;
+    empress: number;
+    lovers: number;
+    hierophant: number;
+    hangedman: number;
+    tower: number;
+    wheel: number;
+    creator: number;
+    justice: number;
+    star: number;
+    aeon: number;
+    lust: number;
+    universe: number;
+    devil: number;
+    moon: number;
+    death: number;
+}
+
+interface SkillManagerTarotInscribing {
+    active: boolean;
+    runningQueue: boolean;
+    queue: SkillManagerTarotInscribingQueue;
+    start(): void;
+    stop(): void;
+    reset(): void;
+    runQueue(): void;
+}
+
+interface SkillManagerTarot {
+    cards: string[];
+    descriptionDictionary: DescriptionDictionary;
+    inscribing: SkillManagerTarotInscribing;
+}
+
+interface SkillManagerTarotSettings {
+    enabled: boolean;
+}
+
+//#endregion
+
 //#region Harvesting
 
 interface SkillManagerHarvesting {
@@ -116,6 +195,7 @@ interface SkillManagerInkmilling {
     reagents: ReagentDictionary;
     inks: SkillManagerInkmillingInks;
     descriptionDictionary: DescriptionDictionary;
+    mill(colour: string, amount?: number): string;
     start(): void;
     stop(): void;
     reset(): void;
@@ -129,78 +209,31 @@ interface SkillManagerInkmillingSettings {
 
 //#endregion
 
-//#region Tarot
-
-interface SkillManagerTarotInscribingQueue {
-    sun: number;
-    emperor: number;
-    magician: number;
-    priestess: number;
-    fool: number;
-    chariot: number;
-    hermit: number;
-    empress: number;
-    lovers: number;
-    hierophant: number;
-    hangedman: number;
-    tower: number;
-    wheel: number;
-    creator: number;
-    justice: number;
-    star: number;
-    aeon: number;
-    lust: number;
-    universe: number;
-    devil: number;
-    moon: number;
-    death: number;
-}
-
-interface SkillManagerTarotInscribing {
-    active: boolean;
-    runningQueue: boolean;
-    queue: SkillManagerTarotInscribingQueue;
-    start(): void;
-    stop(): void;
-    reset(): void;
-    runQueue(): void;
-}
-
-interface SkillManagerTarot {
-    cards: string[];
-    descriptionDictionary: DescriptionDictionary;
-    inscribing: SkillManagerTarotInscribing;
-}
-
-interface SkillManagerTarotSettings {
-    enabled: boolean;
-}
-
-//#endregion
-
 interface SkillManagerSettings {
     enabled: boolean;
+    pranks: SkillManagerPranksSettings;
+    tarot: SkillManagerTarotSettings;
     harvesting: SkillManagerHarvestingSettings;
     transmutation: SkillManagerTransmutationSettings;
     gathering: SkillManagerGatheringSettings;
     collecting: SkillManagerCollectingSettings;
     inkmilling: SkillManagerInkmillingSettings;
-    tarot: SkillManagerTarotSettings;
 }
 
 interface SkillManager {
     settings: SkillManagerSettings;
+    pranks: SkillManagerPranks;
+    tarot: SkillManagerTarot;
     harvesting: SkillManagerHarvesting;
     transmutation: SkillManagerTransmutation;
     gathering: SkillManagerGathering;
     collecting: SkillManagerCollecting;
     inkmilling: SkillManagerInkmilling;
-    tarot: SkillManagerTarot;
     echo(message: string): void;
     error(text: string): void;
     save(): void;
 }
 
 export type SkillManagerClient = typeof client & {
-    skillmanager: SkillManager;
+    skillManager: SkillManager;
 };

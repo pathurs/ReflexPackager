@@ -11,7 +11,7 @@ export const unwield = new AliasItem(
     [
         new ExecuteScriptAction(
             function (args: GMCPAliasRegexArgs & { 1: 'left' | 'right' | string }) {
-                client.inventorymanager.unwield(args[1]);
+                client.inventoryManager.unwield(args[1]);
             }
         )
     ]

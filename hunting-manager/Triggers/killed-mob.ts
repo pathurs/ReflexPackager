@@ -11,8 +11,8 @@ export const killedMob = new TriggerItem(
     [
         new ExecuteScriptAction(
             function (args: TriggerFunctionArgs & { 1: string }) {
-                if (client.huntingmanager.settings.enabled) {
-                    client.huntingmanager.addMob(client.gmcpservice.room.area, args[1]);
+                if (client.huntingManager.settings.enabled) {
+                    client.huntingManager.addMob(client.gmcpService.room.area, args[1]);
                 }
             }
         )

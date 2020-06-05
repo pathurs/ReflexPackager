@@ -11,21 +11,21 @@ export const running = new TriggerItem(
     [
         new ExecuteScriptAction(
             function (args: TriggerFunctionArgs & { 1: string; 2: string }) {
-                if (!client.queuemanager.settings.enabled) {
+                if (!client.queueManager.settings.enabled) {
                     return;
                 }
 
-                if (client.queuemanager.settings.gag) {
+                if (client.queueManager.settings.gag) {
                     gag_current_line();
                 }
 
-                const queueType = client.queuemanager.noraliseQueueType(args[1]);
+                const queueType = client.queueManager.noraliseQueueType(args[1]);
 
                 if (!queueType) {
-                    client.queuemanager.error(`Unknown queue type '%lightgrey%${args[1]}%end%'.`);
+                    client.queueManager.error(`Unknown queue type '%lightgrey%${args[1]}%end%'.`);
 
-                    if (client.queuemanager.settings.gag) {
-                        client.queuemanager.error(`Original line '%lightgrey%${args[0]}%end%'.`);
+                    if (client.queueManager.settings.gag) {
+                        client.queueManager.error(`Original line '%lightgrey%${args[0]}%end%'.`);
                     }
 
                     return;
@@ -33,13 +33,13 @@ export const running = new TriggerItem(
 
                 const command = args[2];
 
-                const commands = client.queuemanager.parseCommand(queueType, command);
+                const commands = client.queueManager.parseCommand(queueType, command);
 
                 commands.forEach(() => {
-                    client.queuemanager.removeCommand(queueType, 0);
+                    client.queueManager.removeCommand(queueType, 0);
                 });
 
-                client.queuemanager.emit(queueType, 'run', { queue: queueType, index: 0, commands });
+                client.queueManager.emit(queueType, 'run', { queue: queueType, index: 0, commands });
             }
         )
     ]

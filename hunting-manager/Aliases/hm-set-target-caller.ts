@@ -12,10 +12,10 @@ export const huntingManagerSetTargetCaller = new AliasItem(
     [
         new ExecuteScriptAction(
             function (args: GMCPAliasRegexArgs & { 1: string }) {
-                if (client.huntingmanager.settings.enabled) {
+                if (client.huntingManager.settings.enabled) {
                     const targetCallerName = args[1];
 
-                    client.huntingmanager.target.setTargetCaller(targetCallerName);
+                    client.huntingManager.target.setTargetCaller(targetCallerName);
                 }
             }
         )

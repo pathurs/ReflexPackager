@@ -8,25 +8,25 @@ declare const client: PeopleManagerClient & DisplayServiceClient & SystemService
 export const onLoad = new FunctionItem(
     'onLoad',
     function () {
-        client.peoplemanager = {
-            settings: get_variable('people-manager:settings') || {
+        client.peopleManager = {
+            settings: client.systemService.defaultsDeep(get_variable('people-manager:settings'), {
                 enabled: true
-            },
+            }),
             echo(text) {
                 client.displayservice.echo(`%lightgray%[%deepskyblue%People Manager%end%]:%end% ${text}`);
             },
             error(text) {
-                client.peoplemanager.echo(`%red%${text}`);
+                client.peopleManager.echo(`%red%${text}%end%`);
             },
             save() {
-                client.systemservice.save('people-manager', () => {
-                    set_variable('people-manager:settings', client.peoplemanager.settings);
+                client.systemService.save('people-manager', () => {
+                    set_variable('people-manager:settings', client.peopleManager.settings);
 
-                    client.peoplemanager.echo('Settings saved.');
+                    client.peopleManager.echo('Settings saved.');
                 });
             }
         };
 
-        client.peoplemanager.echo('Loaded.');
+        client.peopleManager.echo('Loaded.');
     }
 );

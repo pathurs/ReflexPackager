@@ -18,10 +18,10 @@ export const containerOpened = new TriggerItem(
                     return;
                 }
 
-                const containers = client.gmcpservice.items.inv
+                const containers = client.gmcpService.items.inv
                     .filter(value => value.attrib?.includes('c') && value.name === containerDescription);
 
-                const trackedContainers = client.inventorymanager.settings.containers.tracked
+                const trackedContainers = client.inventoryManager.settings.containers.tracked
                     .filter(value => containers.map(value => value.id).includes(value.id));
 
                 if (trackedContainers.length === 0) {
@@ -34,14 +34,14 @@ export const containerOpened = new TriggerItem(
 
                     send_GMCP('Char.Items.Contents', Number(trackedContainer.id));
 
-                    if (client.inventorymanager.expectedOpen !== trackedContainer.id) {
-                        client.systemservice.sendCommand(`close ${trackedContainer.id}`);
+                    if (client.inventoryManager.expectedOpen !== trackedContainer.id) {
+                        client.systemService.sendCommand(`close ${trackedContainer.id}`);
                     }
                 });
 
-                client.inventorymanager.expectedOpen = undefined;
+                client.inventoryManager.expectedOpen = undefined;
 
-                client.inventorymanager.save();
+                client.inventoryManager.save();
             }
         )
     ]

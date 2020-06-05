@@ -49,5 +49,5 @@ export interface InventoryManager {
 }
 
 export type InventoryManagerClient = typeof client & {
-    inventorymanager: InventoryManager;
+    inventoryManager: InventoryManager;
 };

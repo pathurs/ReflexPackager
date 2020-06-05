@@ -11,10 +11,10 @@ export const huntingManagerSetRazeCommand = new AliasItem(
     [
         new ExecuteScriptAction(
             function (args: GMCPAliasRegexArgs & { 1: string }) {
-                if (client.huntingmanager.settings.enabled) {
+                if (client.huntingManager.settings.enabled) {
                     const command = args[1];
 
-                    client.huntingmanager.raze.setRazeCommand(command);
+                    client.huntingManager.raze.setRazeCommand(command);
                 }
             }
         )

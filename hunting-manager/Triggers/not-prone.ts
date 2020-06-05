@@ -10,7 +10,7 @@ export const notProne = new TriggerItem(
     [
         new ExecuteScriptAction(
             function () {
-                if (client.huntingmanager.settings.enabled && client.huntingmanager.active) {
+                if (client.huntingManager.settings.enabled && client.huntingManager.active) {
                     gag_current_line();
                 }
             }

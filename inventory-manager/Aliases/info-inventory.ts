@@ -11,7 +11,7 @@ export const infoInventory = new AliasItem(
     [
         new ExecuteScriptAction(
             function () {
-                client.systemservice.sendCommand('ii');
+                client.systemService.sendCommand('ii');
 
                 send_GMCP('Char.Items.Inv');
             }

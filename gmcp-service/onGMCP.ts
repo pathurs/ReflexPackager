@@ -6,20 +6,20 @@ declare const client: GMCPServiceClient;
 export const onGMCP = new FunctionItem(
     'onGMCP',
     function (args: GMCPFunctionArgs) {
-        (<unknown>client.gmcpservice.latest[args.gmcp_method]) = args.gmcp_args;
+        (<unknown>client.gmcpService.latest[args.gmcp_method]) = args.gmcp_args;
 
         // Vitals
 
         if (args.gmcp_method === 'Char.Vitals') {
-            client.gmcpservice.previousVitals = deepCopy(client.gmcpservice.vitals);
-            client.gmcpservice.vitals = args.gmcp_args;
+            client.gmcpService.previousVitals = deepCopy(client.gmcpService.vitals);
+            client.gmcpService.vitals = args.gmcp_args;
         }
 
         // Room
 
         if (args.gmcp_method === 'Room.Info') {
-            client.gmcpservice.previousRoom = deepCopy(client.gmcpservice.room);
-            client.gmcpservice.room = args.gmcp_args;
+            client.gmcpService.previousRoom = deepCopy(client.gmcpService.room);
+            client.gmcpService.room = args.gmcp_args;
         }
 
         // Items
@@ -30,14 +30,14 @@ export const onGMCP = new FunctionItem(
             || args.gmcp_method === 'Char.Items.Remove'
             || args.gmcp_method === 'Char.Items.Update'
         ) {
-            client.gmcpservice.previousItems = deepCopy({ ...client.gmcpservice.items });
+            client.gmcpService.previousItems = deepCopy({ ...client.gmcpService.items });
 
-            client.gmcpservice.items[args.gmcp_args.location] = client.gmcpservice.items[args.gmcp_args.location] || [];
+            client.gmcpService.items[args.gmcp_args.location] = client.gmcpService.items[args.gmcp_args.location] || [];
 
-            const items = <GMCPCharItemsItem[]>client.gmcpservice.items[args.gmcp_args.location];
+            const items = <GMCPCharItemsItem[]>client.gmcpService.items[args.gmcp_args.location];
 
             if (args.gmcp_method === 'Char.Items.List') {
-                client.gmcpservice.items[args.gmcp_args.location] = args.gmcp_args.items;
+                client.gmcpService.items[args.gmcp_args.location] = args.gmcp_args.items;
             }
             else if (args.gmcp_method === 'Char.Items.Add') {
                 items.push(args.gmcp_args.item);
@@ -65,20 +65,20 @@ export const onGMCP = new FunctionItem(
             || args.gmcp_method === 'Char.Defences.Add'
             || args.gmcp_method === 'Char.Defences.Remove'
         ) {
-            client.gmcpservice.previousDefences = deepCopy(client.gmcpservice.defences);
+            client.gmcpService.previousDefences = deepCopy(client.gmcpService.defences);
 
             if (args.gmcp_method === 'Char.Defences.List') {
-                client.gmcpservice.defences = args.gmcp_args;
+                client.gmcpService.defences = args.gmcp_args;
             }
             else if (args.gmcp_method === 'Char.Defences.Add') {
-                client.gmcpservice.defences.push(args.gmcp_args);
+                client.gmcpService.defences.push(args.gmcp_args);
             }
             else {
                 args.gmcp_args.forEach(defence => {
-                    const index = client.gmcpservice.defences.findIndex(value => value.name === defence);
+                    const index = client.gmcpService.defences.findIndex(value => value.name === defence);
 
                     if (index !== -1) {
-                        client.gmcpservice.defences.splice(index, 1);
+                        client.gmcpService.defences.splice(index, 1);
                     }
                 });
             }
@@ -91,20 +91,20 @@ export const onGMCP = new FunctionItem(
             || args.gmcp_method === 'Char.Afflictions.Add'
             || args.gmcp_method === 'Char.Afflictions.Remove'
         ) {
-            client.gmcpservice.previousAfflictions = deepCopy(client.gmcpservice.afflictions);
+            client.gmcpService.previousAfflictions = deepCopy(client.gmcpService.afflictions);
 
             if (args.gmcp_method === 'Char.Afflictions.List') {
-                client.gmcpservice.afflictions = args.gmcp_args;
+                client.gmcpService.afflictions = args.gmcp_args;
             }
             else if (args.gmcp_method === 'Char.Afflictions.Add') {
-                client.gmcpservice.afflictions.push(args.gmcp_args);
+                client.gmcpService.afflictions.push(args.gmcp_args);
             }
             else {
                 args.gmcp_args.forEach(affliction => {
-                    const index = client.gmcpservice.afflictions.findIndex(value => value.name === affliction);
+                    const index = client.gmcpService.afflictions.findIndex(value => value.name === affliction);
 
                     if (index !== -1) {
-                        client.gmcpservice.afflictions.splice(index, 1);
+                        client.gmcpService.afflictions.splice(index, 1);
                     }
                 });
             }
@@ -113,21 +113,21 @@ export const onGMCP = new FunctionItem(
         // Rift
 
         if (args.gmcp_method === 'IRE.Rift.List' || args.gmcp_method === 'IRE.Rift.Change') {
-            client.gmcpservice.previousRift = deepCopy(client.gmcpservice.rift);
+            client.gmcpService.previousRift = deepCopy(client.gmcpService.rift);
 
             if (args.gmcp_method === 'IRE.Rift.List') {
-                client.gmcpservice.rift = {};
+                client.gmcpService.rift = {};
 
                 args.gmcp_args.forEach(value => {
                     const id = getRiftItemId(value);
 
-                    client.gmcpservice.rift[id] = { id, ...value };
+                    client.gmcpService.rift[id] = { id, ...value };
                 });
             }
             else {
                 const id = getRiftItemId(args.gmcp_args);
 
-                client.gmcpservice.rift[id] = { id, ...args.gmcp_args };
+                client.gmcpService.rift[id] = { id, ...args.gmcp_args };
             }
 
             function getRiftItemId(item: GMCPRiftItem): string {
@@ -148,7 +148,7 @@ export const onGMCP = new FunctionItem(
         }
 
         // setTimeout(() => {
-        client.gmcpservice.subscriptions.forEach(subscription => {
+        client.gmcpService.subscriptions.forEach(subscription => {
             subscription.methods.forEach(method => {
                 if (args.gmcp_method.includes(method)) {
                     subscription.subscriber(args);

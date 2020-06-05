@@ -12,7 +12,7 @@ export const cliContainers = new FunctionItem(
         switch (args[0]) {
             case undefined:
             case 'show':
-                client.displayservice.table(
+                client.displayService.table(
                     'Inventory Manager - Containers',
                     [
                         {
@@ -29,14 +29,14 @@ export const cliContainers = new FunctionItem(
                         {
                             title: 'Tracking',
                             columns: 1,
-                            items: client.gmcpservice.items.inv
+                            items: client.gmcpService.items.inv
                                 .filter(item => item.attrib?.includes('c'))
                                 .map<TableGroupItemDefinition>(
                                     container => {
                                         const label = `${container.id} ${container.name}`;
-                                        const value = client.inventorymanager.settings.containers.tracked.find(value => value.id == container.id)
-                                            ? client.displayservice.commandify('%lime%Yes', `inventory-manager containers untrack ${container.id}`, `Untrack ${container.name}`)
-                                            : client.displayservice.commandify('%red%No', `inventory-manager containers track ${container.id}`, `Track ${container.name}`);
+                                        const value = client.inventoryManager.settings.containers.tracked.find(value => value.id == container.id)
+                                            ? client.displayService.commandify('%lime%Yes', `inventory-manager containers untrack ${container.id}`, `Untrack ${container.name}`)
+                                            : client.displayService.commandify('%red%No', `inventory-manager containers track ${container.id}`, `Track ${container.name}`);
 
                                         return {
                                             label,
@@ -52,27 +52,27 @@ export const cliContainers = new FunctionItem(
             case 'track':
                 {
                     const containerId = args[1];
-                    const container = client.gmcpservice.items.inv.find(item => item.id === containerId);
+                    const container = client.gmcpService.items.inv.find(item => item.id === containerId);
 
                     if (!container) {
-                        client.inventorymanager.error(`Unknown container '${containerId}'.`);
+                        client.inventoryManager.error(`Unknown container '${containerId}'.`);
 
                         return;
                     }
 
-                    if (!client.inventorymanager.settings.containers.tracked.find(value => value.id == container.id)) {
-                        client.inventorymanager.settings.containers.tracked.push({
+                    if (!client.inventoryManager.settings.containers.tracked.find(value => value.id == container.id)) {
+                        client.inventoryManager.settings.containers.tracked.push({
                             id: container.id,
                             items: []
                         });
 
-                        client.systemservice.sendCommand(`close ${containerId}`);
+                        client.systemService.sendCommand(`close ${containerId}`);
                         send_GMCP('Char.Items.Contents', Number(containerId));
 
-                        client.inventorymanager.echo(`Now tracking container '%lightgray%${container.name}%end% (%lightgray%${container.id}%end%)'.`);
+                        client.inventoryManager.echo(`Now tracking container '%lightgray%${container.name}%end% (%lightgray%${container.id}%end%)'.`);
                     }
                     else {
-                        client.inventorymanager.echo(`Already tracking container '%lightgray%${container.name}%end% (%lightgray%${container.id}%end%)'.`);
+                        client.inventoryManager.echo(`Already tracking container '%lightgray%${container.name}%end% (%lightgray%${container.id}%end%)'.`);
                     }
                 }
                 break;
@@ -80,23 +80,23 @@ export const cliContainers = new FunctionItem(
             case 'untrack':
                 {
                     const containerId = args[1];
-                    const container = client.gmcpservice.items.inv.find(item => item.id === containerId);
+                    const container = client.gmcpService.items.inv.find(item => item.id === containerId);
 
                     if (!container) {
-                        client.inventorymanager.error(`Unknown container '${containerId}'`);
+                        client.inventoryManager.error(`Unknown container '${containerId}'`);
 
                         return;
                     }
 
-                    const index = client.inventorymanager.settings.containers.tracked.findIndex(value => value.id === containerId);
+                    const index = client.inventoryManager.settings.containers.tracked.findIndex(value => value.id === containerId);
 
                     if (index !== -1) {
-                        client.inventorymanager.settings.containers.tracked.splice(index, 1);
+                        client.inventoryManager.settings.containers.tracked.splice(index, 1);
 
-                        client.inventorymanager.echo(`No longer tracking container '%lightgray%${container.name}%end% (%lightgray%${container.id})%end%'.`);
+                        client.inventoryManager.echo(`No longer tracking container '%lightgray%${container.name}%end% (%lightgray%${container.id})%end%'.`);
                     }
                     else {
-                        client.inventorymanager.echo(`Already not tracking container '%lightgray%${container.name}%end% (%lightgray%${container.id})%end%'.`);
+                        client.inventoryManager.echo(`Already not tracking container '%lightgray%${container.name}%end% (%lightgray%${container.id})%end%'.`);
                     }
                 }
                 break;

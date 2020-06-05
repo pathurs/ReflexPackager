@@ -11,21 +11,21 @@ export const clearedQueue = new TriggerItem(
     [
         new ExecuteScriptAction(
             function (args: TriggerFunctionArgs & { 1: string }) {
-                if (!client.queuemanager.settings.enabled) {
+                if (!client.queueManager.settings.enabled) {
                     return;
                 }
 
-                if (client.queuemanager.settings.gag) {
+                if (client.queueManager.settings.gag) {
                     gag_current_line();
                 }
 
-                const queueType = client.queuemanager.noraliseQueueType(args[1]);
+                const queueType = client.queueManager.noraliseQueueType(args[1]);
 
                 if (!queueType) {
-                    client.queuemanager.error(`Unknown queue type '${args[1]}'.`);
+                    client.queueManager.error(`Unknown queue type '${args[1]}'.`);
 
-                    if (client.queuemanager.settings.gag) {
-                        client.queuemanager.error(`Original line '%lightgrey%${args[0]}%end%'.`);
+                    if (client.queueManager.settings.gag) {
+                        client.queueManager.error(`Original line '%lightgrey%${args[0]}%end%'.`);
                     }
 
                     return;

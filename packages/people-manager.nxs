@@ -8,7 +8,7 @@
             "name": "onLoad",
             "enabled": true,
             "id": 2,
-            "code": "(function () {\n    client.peoplemanager = {\n        settings: get_variable('people-manager:settings') || {\n            enabled: true\n        },\n        echo(text) {\n            client.displayservice.echo(`%lightgray%[%deepskyblue%People Manager%end%]:%end% ${text}`);\n        },\n        error(text) {\n            client.peoplemanager.echo(`%red%${text}`);\n        },\n        save() {\n            client.systemservice.save('people-manager', () => {\n                set_variable('people-manager:settings', client.peoplemanager.settings);\n                client.peoplemanager.echo('Settings saved.');\n            });\n        }\n    };\n    client.peoplemanager.echo('Loaded.');\n})(args);"
+            "code": "(function () {\n    client.peoplemanager = {\n        settings: client.systemservice.defaultsDeep(get_variable('people-manager:settings'), {\n            enabled: true\n        }),\n        echo(text) {\n            client.displayservice.echo(`%lightgray%[%deepskyblue%People Manager%end%]:%end% ${text}`);\n        },\n        error(text) {\n            client.peoplemanager.echo(`%red%${text}`);\n        },\n        save() {\n            client.systemservice.save('people-manager', () => {\n                set_variable('people-manager:settings', client.peoplemanager.settings);\n                client.peoplemanager.echo('Settings saved.');\n            });\n        }\n    };\n    client.peoplemanager.echo('Loaded.');\n})(args);"
         }
     ],
     "actions": [],

@@ -11,10 +11,10 @@ export const shopManagerStorefrontExpect = new AliasItem(
     [
         new ExecuteScriptAction(
             function (args: TriggerFunctionArgs & { 1: string | undefined, 2: string }) {
-                const currentShop = client.shopmanager.getCurrentShop();
+                const currentShop = client.shopManager.getCurrentShop();
 
                 if (!currentShop) {
-                    client.shopmanager.error(`You are not currently standing in an active shop.`);
+                    client.shopManager.error(`You are not currently standing in an active shop.`);
 
                     return;
                 }
@@ -25,7 +25,7 @@ export const shopManagerStorefrontExpect = new AliasItem(
                     case 'totem':
                         currentShop.storefront.expectedTotemId = id;
 
-                        client.shopmanager.echo(`Set expected %lightgray%totem%end% in storefront of shop '%lightgray%${currentShop.room.name}%end%' to '%lightgray%${id}%end%'.`);
+                        client.shopManager.echo(`Set expected %lightgray%totem%end% in storefront of shop '%lightgray%${currentShop.room.name}%end%' to '%lightgray%${id}%end%'.`);
                         break;
 
                     case 'eye':
@@ -33,7 +33,7 @@ export const shopManagerStorefrontExpect = new AliasItem(
                     case 'eye sigil':
                         currentShop.storefront.expectedEyeSigilId = id;
 
-                        client.shopmanager.echo(`Set expected %lightgray%eye sigil%end% in storefront of shop '%lightgray%${currentShop.room.name}%end%' to '%lightgray%${id}%end%'.`);
+                        client.shopManager.echo(`Set expected %lightgray%eye sigil%end% in storefront of shop '%lightgray%${currentShop.room.name}%end%' to '%lightgray%${id}%end%'.`);
                         break;
 
                     case 'key':
@@ -41,7 +41,7 @@ export const shopManagerStorefrontExpect = new AliasItem(
                     case 'key sigil':
                         currentShop.storefront.expectedKeySigilId = id;
 
-                        client.shopmanager.echo(`Set expected %lightgray%key sigil%end% in storefront of shop '%lightgray%${currentShop.room.name}%end%' to '%lightgray%${id}%end%'.`);
+                        client.shopManager.echo(`Set expected %lightgray%key sigil%end% in storefront of shop '%lightgray%${currentShop.room.name}%end%' to '%lightgray%${id}%end%'.`);
                         break;
 
                     case 'mono':
@@ -50,27 +50,27 @@ export const shopManagerStorefrontExpect = new AliasItem(
                     case 'monolith sigil':
                         currentShop.storefront.expectedMonolithSigilId = id;
 
-                        client.shopmanager.echo(`Set expected %lightgray%monolith sigil%end% in storefront of shop '%lightgray%${currentShop.room.name}%end%' to '%lightgray%${id}%end%'.`);
+                        client.shopManager.echo(`Set expected %lightgray%monolith sigil%end% in storefront of shop '%lightgray%${currentShop.room.name}%end%' to '%lightgray%${id}%end%'.`);
                         break;
 
                     case undefined:
                         if (currentShop.storefront.expectedItemIds.includes(id)) {
-                            client.shopmanager.error(`Already expecting item '%lightgray%${id}%end%' in storefront of shop '%lightgray%${currentShop.room.name}%end%'.`)
+                            client.shopManager.error(`Already expecting item '%lightgray%${id}%end%' in storefront of shop '%lightgray%${currentShop.room.name}%end%'.`)
 
                             return;
                         }
 
                         currentShop.storefront.expectedItemIds.push(id);
 
-                        client.shopmanager.echo(`Added expected item '%lightgray%totem%end%' in storefront of shop '%lightgray%${currentShop.room.name}%end%'.`);
+                        client.shopManager.echo(`Added expected item '%lightgray%totem%end%' in storefront of shop '%lightgray%${currentShop.room.name}%end%'.`);
                         break;
 
                     default:
-                        client.shopmanager.error(`Invalid expected item '%lightgray%${args[1]}%end%'.`);
+                        client.shopManager.error(`Invalid expected item '%lightgray%${args[1]}%end%'.`);
                         return;
                 }
 
-                client.shopmanager.save();
+                client.shopManager.save();
             }
         )
     ]

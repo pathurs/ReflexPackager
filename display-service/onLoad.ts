@@ -6,12 +6,34 @@ declare const client: DisplayServiceClient;
 export const onLoad = new FunctionItem(
     'onLoad',
     function () {
-        client.displayservice = {
-            echo(text: string) {
-                ow_Write('#output_main', client.displayservice.colorify(text));
+        client.displayService = {
+            echo(messageOrMessages: string | string[]) {
+                if (Array.isArray(messageOrMessages)) {
+                    client.displayService.echo(messageOrMessages.map(message => `<div>${message}</div>`).join(''));
+                }
+                else {
+                    ow_Write('#output_main', client.displayService.colorify(messageOrMessages));
+                }
             },
-            color(text: string, color: string) {
-                return `<span style="color: ${color};">${text}</span>`;
+            box(message, borderCharacter = '%lightgray%*%end%') {
+                const colorifiedBorderCharacter = client.displayService.colorify(borderCharacter);
+
+                if (getLength(colorifiedBorderCharacter) !== 1) {
+                    throw new Error(`'borderCharacter' must have a length of 1.`);
+                }
+
+                const lines: string[] = [];
+
+                const messageLength = getLength(message);
+                const boxWidth = Math.min(messageLength, 76);
+
+                lines.push(safeRepeat(colorifiedBorderCharacter, boxWidth + 4));
+                lines.push(`${colorifiedBorderCharacter}${safeRepeat(' ', boxWidth + 2)}${colorifiedBorderCharacter}`);
+                lines.push(`${colorifiedBorderCharacter}${center(message, boxWidth + 2, '', ' ')}${colorifiedBorderCharacter}`);
+                lines.push(`${colorifiedBorderCharacter}${safeRepeat(' ', boxWidth + 2)}${colorifiedBorderCharacter}`);
+                lines.push(safeRepeat(colorifiedBorderCharacter, boxWidth + 4));
+
+                client.displayService.echo(lines);
             },
             table(title, groups) {
                 const lines: string[] = [];
@@ -24,11 +46,11 @@ export const onLoad = new FunctionItem(
 
                 displayTableFooter();
 
-                client.displayservice.echo(lines.map(line => `<div>${line}</div>`).join(''));
+                client.displayService.echo(lines);
 
                 function displayTableTitle(title: string) {
-                    const left = 39 - Math.floor(client.displayservice.getLength(title) / 2);
-                    const right = 39 - Math.ceil(client.displayservice.getLength(title) / 2);
+                    const left = 39 - Math.floor(getLength(title) / 2);
+                    const right = 39 - Math.ceil(getLength(title) / 2);
 
                     lines.push(`+${safeRepeat('-', left)}${title}${safeRepeat('-', right)}+`);
                 }
@@ -48,7 +70,7 @@ export const onLoad = new FunctionItem(
                 }
 
                 function displayTableGroupTitle(title: string) {
-                    const right = 76 - client.displayservice.getLength(title);
+                    const right = 76 - getLength(title);
 
                     lines.push(`+-${title}${safeRepeat('-', right)}-+`);
                 }
@@ -82,7 +104,7 @@ export const onLoad = new FunctionItem(
 
                     for (let i = 0; i < items.length; i++) {
                         const item = items[i];
-                        const parsed = `${item.label}${safeRepeat(' ', columnWidth - client.displayservice.getLength(item.label) - client.displayservice.getLength(item.value))}${item.value}`;
+                        const parsed = `${item.label}${safeRepeat(' ', columnWidth - getLength(item.label) - getLength(item.value))}${item.value}`;
 
                         if (i !== 0) {
                             line += safeRepeat(' ', columnSpacerWidth);
@@ -91,13 +113,16 @@ export const onLoad = new FunctionItem(
                         line += parsed;
                     }
 
-                    line += safeRepeat(' ', 74 - client.displayservice.getLength(line));
+                    line += safeRepeat(' ', 74 - getLength(line));
 
                     lines.push(`|   ${line} |`);
                 }
             },
-            colorify(message: string) {
-                let result = message;
+            color(text: string, color: string) {
+                return `<span style="color: ${color};">${text}</span>`;
+            },
+            colorify(text: string) {
+                let result = text;
 
                 const pattern = /%([a-zA-Z]+|#[0-9a-fA-F]{6,6})%/;
                 let depth = 0;
@@ -126,30 +151,45 @@ export const onLoad = new FunctionItem(
                 return result;
             },
             commandify(text, command, hint) {
-                return client.displayservice.clickify(
+                return client.displayService.clickify(
                     text,
                     `handle_aliases('${command}')`,
                     hint
                 );
             },
             clickify(text, code, hint) {
-                const anchorTag = $(`<a>${client.displayservice.colorify(text)}</a>`);
+                const anchorTag = $(`<a>${client.displayService.colorify(text)}</a>`);
 
                 anchorTag.attr('onclick', code + ';return false;');
                 anchorTag.attr('title', hint);
                 anchorTag.attr('style', 'cursor: pointer; text-decoration: underline;')
 
                 return anchorTag.prop('outerHTML');
-            },
-            getLength(text: string) {
-                return $($.parseHTML(text)).text().length;
             }
         };
+
+        function getLength(text: string): number {
+            return $($.parseHTML(text)).text().length;
+        }
 
         function safeRepeat(text: string, count: number): string {
             return text.repeat(Math.max(count, 0));
         }
 
-        client.displayservice.echo('%lightgray%[%deepskyblue%Display Service%end%]:%end% Loaded.');
+        function center(text: string, width: number, gap: string = '', repeat: string = ' ') {
+            if (getLength(repeat) !== 1) {
+                throw new Error(`'repeat' must have a length of 1.`);
+            }
+
+            const textLength = getLength(text);
+            const gapLength = getLength(gap);
+
+            const left = Math.floor(width / 2) - Math.floor(textLength / 2) - gapLength;
+            const right = Math.ceil(width / 2) - Math.ceil(textLength / 2) - gapLength;
+
+            return `${safeRepeat(repeat, left)}${gap}${text}${gap}${safeRepeat(repeat, right)}`;
+        }
+
+        client.displayService.echo('%lightgray%[%deepskyblue%Display Service%end%]:%end% Loaded.');
     }
 );

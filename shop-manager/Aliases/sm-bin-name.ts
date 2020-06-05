@@ -11,10 +11,16 @@ export const shopManagerBinName = new AliasItem(
     [
         new ExecuteScriptAction(
             function (args: TriggerFunctionArgs & { 1: string, 2: string }) {
-                const id = Number(args[1]);
+                const id = args[1];
                 const name = args[2];
 
-                client.shopmanager.setBinName(<keyof ShopBins>id, name);
+                if (!['0', '1', '2', '3', '4', '5', '6', '7'].includes(id)) {
+                    client.shopManager.error(`Bin ID '${id}' is invalid. The bin ID must be a whole number between 0 and 7.`);
+
+                    return;
+                }
+
+                client.shopManager.setBinName(<keyof ShopBins>id, name);
             }
         )
     ]

@@ -10,13 +10,13 @@ export const targetCalled = new TriggerItem(
     [
         new ExecuteScriptAction(
             function (args: TriggerFunctionArgs & { 1: string; 2: string }) {
-                if (client.huntingmanager.settings.enabled) {
+                if (client.huntingManager.settings.enabled) {
                     const person = args[1].toLowerCase();
 
-                    if (client.huntingmanager.target.targetCallerName === person) {
+                    if (client.huntingManager.target.targetCallerName === person) {
                         const targetId = Number(args[2]);
 
-                        client.huntingmanager.target.setTarget(targetId);
+                        client.huntingManager.target.setTarget(targetId);
                     }
                 }
             }

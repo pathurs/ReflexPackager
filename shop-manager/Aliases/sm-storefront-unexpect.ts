@@ -11,10 +11,10 @@ export const shopManagerStorefrontUnexpect = new AliasItem(
     [
         new ExecuteScriptAction(
             function (args: TriggerFunctionArgs & { 1: string | undefined, 2: string }) {
-                const currentShop = client.shopmanager.getCurrentShop();
+                const currentShop = client.shopManager.getCurrentShop();
 
                 if (!currentShop) {
-                    client.shopmanager.error(`You are not currently standing in an active shop.`);
+                    client.shopManager.error(`You are not currently standing in an active shop.`);
 
                     return;
                 }
@@ -25,7 +25,7 @@ export const shopManagerStorefrontUnexpect = new AliasItem(
                     case 'totem':
                         currentShop.storefront.expectedTotemId = undefined;
 
-                        client.shopmanager.echo(`Removed expected %lightgray%totem%end% from storefront of shop '%lightgray%${currentShop.room.name}%end%'.`);
+                        client.shopManager.echo(`Removed expected %lightgray%totem%end% from storefront of shop '%lightgray%${currentShop.room.name}%end%'.`);
                         break;
 
                     case 'eye':
@@ -33,7 +33,7 @@ export const shopManagerStorefrontUnexpect = new AliasItem(
                     case 'eye sigil':
                         currentShop.storefront.expectedEyeSigilId = undefined;
 
-                        client.shopmanager.echo(`Removed expected %lightgray%eye sigil%end% from storefront of shop '%lightgray%${currentShop.room.name}%end%'.`);
+                        client.shopManager.echo(`Removed expected %lightgray%eye sigil%end% from storefront of shop '%lightgray%${currentShop.room.name}%end%'.`);
                         break;
 
                     case 'key':
@@ -41,7 +41,7 @@ export const shopManagerStorefrontUnexpect = new AliasItem(
                     case 'key sigil':
                         currentShop.storefront.expectedKeySigilId = undefined;
 
-                        client.shopmanager.echo(`Removed expected %lightgray%key sigil%end% from storefront of shop '%lightgray%${currentShop.room.name}%end%'.`);
+                        client.shopManager.echo(`Removed expected %lightgray%key sigil%end% from storefront of shop '%lightgray%${currentShop.room.name}%end%'.`);
                         break;
 
                     case 'mono':
@@ -50,25 +50,25 @@ export const shopManagerStorefrontUnexpect = new AliasItem(
                     case 'monolith sigil':
                         currentShop.storefront.expectedMonolithSigilId = undefined;
 
-                        client.shopmanager.echo(`Removed expected %lightgray%monolith sigil%end% from storefront of shop '%lightgray%${currentShop.room.name}%end%'.`);
+                        client.shopManager.echo(`Removed expected %lightgray%monolith sigil%end% from storefront of shop '%lightgray%${currentShop.room.name}%end%'.`);
                         break;
 
                     default:
                         const index = currentShop.storefront.expectedItemIds.indexOf(id);
 
                         if (index === -1) {
-                            client.shopmanager.error(`Was not expecting item '%lightgray%${id}%end%' in storefront of shop '%lightgray%${currentShop.room.name}%end%'.`)
+                            client.shopManager.error(`Was not expecting item '%lightgray%${id}%end%' in storefront of shop '%lightgray%${currentShop.room.name}%end%'.`)
 
                             return;
                         }
 
                         currentShop.storefront.expectedItemIds.splice(index, 1);
 
-                        client.shopmanager.echo(`Removed expected item '%lightgray%${id}%end%' from storefront of shop '%lightgray%${currentShop.room.name}%end%'.`);
+                        client.shopManager.echo(`Removed expected item '%lightgray%${id}%end%' from storefront of shop '%lightgray%${currentShop.room.name}%end%'.`);
                         break;
                 }
 
-                client.shopmanager.save();
+                client.shopManager.save();
             }
         )
     ]

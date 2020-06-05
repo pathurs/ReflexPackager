@@ -11,14 +11,15 @@ interface TableGroupDefinition {
 
 interface DisplayService {
     echo(message: string): void;
-    color(message: string, color: string): void;
+    echo(messages: string[]): void;
+    box(message: string, borderCharacter?: string): void;
     table(title: string, groups: TableGroupDefinition[]): void;
+    color(text: string, color: string): void;
     colorify(text: string): string;
     commandify(text: string, commands: string, hint: string): string;
     clickify(text: string, code: string, hint: string): string;
-    getLength(text: string): number;
 }
 
 export type DisplayServiceClient = typeof client & {
-    displayservice: DisplayService;
+    displayService: DisplayService;
 };

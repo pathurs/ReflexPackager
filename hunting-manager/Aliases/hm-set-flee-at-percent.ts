@@ -11,10 +11,10 @@ export const huntingManagerSetFleeAtPercent = new AliasItem(
     [
         new ExecuteScriptAction(
             function (args: GMCPAliasRegexArgs & { 1: string }) {
-                if (client.huntingmanager.settings.enabled) {
+                if (client.huntingManager.settings.enabled) {
                     const percent = Number(args[1]);
 
-                    client.huntingmanager.flee.setFleeAtPercent(percent);
+                    client.huntingManager.flee.setFleeAtPercent(percent);
                 }
             }
         )

@@ -23,26 +23,26 @@ export const cli = new FunctionItem(
                                 case 'true':
                                 case 'yes':
                                 case '1':
-                                    client.inventorymanager.settings.enabled = true;
+                                    client.inventoryManager.settings.enabled = true;
 
-                                    client.inventorymanager.echo(`%lime%Enabled%end%.`);
+                                    client.inventoryManager.echo(`%lime%Enabled%end%.`);
                                     break;
 
                                 case 'false':
                                 case 'no':
                                 case '0':
-                                    client.inventorymanager.settings.enabled = false;
+                                    client.inventoryManager.settings.enabled = false;
 
-                                    client.inventorymanager.echo(`%red%Disabled%end%.`);
+                                    client.inventoryManager.echo(`%red%Disabled%end%.`);
                                     break;
 
                                 default:
-                                    client.inventorymanager.error(`Could not parse value '${args[2]}'.`);
+                                    client.inventoryManager.error(`Could not parse value '${args[2]}'.`);
                             }
                             break;
 
                         default:
-                            client.inventorymanager.error(`Unknown config setting '${args[1]}'.`);
+                            client.inventoryManager.error(`Unknown config setting '${args[1]}'.`);
                     }
                 }
                 break;

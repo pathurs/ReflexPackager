@@ -10,14 +10,14 @@ export const onLoad = new FunctionItem(
         let timeoutId: number | undefined;
         let callbacks: { [id: string]: () => void } = {};
 
-        client.systemservice = {
+        client.systemService = {
             enabled: true,
             lastSavedAt: 0,
             echo(text) {
-                client.displayservice.echo(`%lightgray%[%deepskyblue%System Service%end%]:%end% ${text}`);
+                client.displayService.echo(`%lightgray%[%deepskyblue%System Service%end%]:%end% ${text}`);
             },
             error(text) {
-                client.systemservice.echo(`%red%${text}`);
+                client.systemService.echo(`%red%${text}%end%`);
             },
             save(newCallbackId?: string, newCallback?: () => void) {
                 if (newCallbackId && newCallback) {
@@ -29,7 +29,7 @@ export const onLoad = new FunctionItem(
                 }
 
                 // For example: 30s - 60s = -30s so it will then be saved instantly.
-                const timeoutMilliseconds = Math.max(30000 - (Date.now() - client.systemservice.lastSavedAt), 0);
+                const timeoutMilliseconds = Math.max(30000 - (Date.now() - client.systemService.lastSavedAt), 0);
 
                 timeoutId = window.setTimeout(() => {
                     for (let id in callbacks) {
@@ -40,12 +40,38 @@ export const onLoad = new FunctionItem(
 
                     gmcp_save_system();
 
-                    client.systemservice.lastSavedAt = Date.now();
+                    client.systemService.lastSavedAt = Date.now();
 
-                    client.systemservice.echo('Settings saved.');
+                    client.systemService.echo('Settings saved.');
 
                     timeoutId = undefined;
                 }, timeoutMilliseconds);
+            },
+            mergeDeep<T extends object>(target: T, ...sources: T[]): T {
+                if (!sources.length) {
+                    return target
+                };
+
+                const source = sources.shift();
+
+                if (isObject(target) && isObject(source)) {
+                    for (const key in source) {
+                        if (isObject(source[<keyof object>key])) {
+                            if (!target[<keyof object>key]) {
+                                Object.assign(target, { [key]: {} });
+                            }
+
+                            client.systemService.mergeDeep(target[<keyof object>key], source[<keyof object>key]);
+                        } else {
+                            Object.assign(target, { [key]: source[<keyof object>key] });
+                        }
+                    }
+                }
+
+                return client.systemService.mergeDeep(target, ...sources);
+            },
+            defaultsDeep<T extends object>(target: T | undefined, ...sources: T[]): T {
+                return client.systemService.mergeDeep<T>(<T>{}, ...[...sources, target || <T>{}]);
             },
             sendCommand(command, echo = false) {
                 ws_send(command + '\r\n');
@@ -56,11 +82,15 @@ export const onLoad = new FunctionItem(
             },
             sendCommands(commands, echo = false) {
                 commands.forEach(command => {
-                    client.systemservice.sendCommand(command, echo);
+                    client.systemService.sendCommand(command, echo);
                 });
             }
         };
 
-        client.systemservice.echo('Loaded.');
+        function isObject(object: unknown): object is object {
+            return object !== undefined && typeof object === 'object' && !Array.isArray(object);
+        }
+
+        client.systemService.echo('Loaded.');
     }
 );

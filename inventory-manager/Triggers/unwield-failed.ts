@@ -12,9 +12,9 @@ export const unwieldFailed = new MultiTriggerItem(
     [
         new ExecuteScriptAction(
             function () {
-                client.inventorymanager.expectdUnwield = undefined;
+                client.inventoryManager.expectdUnwield = undefined;
 
-                client.inventorymanager.save();
+                client.inventoryManager.save();
             }
         )
     ]

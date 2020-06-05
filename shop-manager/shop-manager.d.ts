@@ -1,3 +1,5 @@
+type ShopBinIds = keyof ShopBins;
+
 interface ShopStorefront {
     roomId: number;
     expectedTotemId?: string;
@@ -23,26 +25,26 @@ interface ShopBinVisibility {
 }
 
 interface ShopDefaultBin {
-    id: number;
+    id: ShopBinIds;
     visibility?: ShopBinVisibility;
     hasChanges?: boolean;
 }
 
 interface ShopBin {
-    id: number;
+    id: ShopBinIds;
     name?: string;
     visibility?: ShopBinVisibility;
 }
 
 interface ShopBins {
-    0: ShopDefaultBin;
-    1: ShopBin;
-    2: ShopBin;
-    3: ShopBin;
-    4: ShopBin;
-    5: ShopBin;
-    6: ShopBin;
-    7: ShopBin;
+    '0': ShopDefaultBin;
+    '1': ShopBin;
+    '2': ShopBin;
+    '3': ShopBin;
+    '4': ShopBin;
+    '5': ShopBin;
+    '6': ShopBin;
+    '7': ShopBin;
 }
 
 interface ShopUnsavedPolicy {
@@ -60,9 +62,9 @@ interface Shop {
     storefront: ShopStorefront;
     stockroom: ShopStockroom;
     currentBins: ShopBins;
-    expectedBins: ShopBins;
+    bins: ShopBins;
     currentPolicies: ShopPolicy[];
-    expectedPolicies: ShopUnsavedPolicy[];
+    policies: ShopUnsavedPolicy[];
 }
 
 interface ShopManagerSettings {
@@ -86,8 +88,10 @@ interface ShopManager {
     parseRawPolicy(modifier: string): ShopUnsavedPolicy | undefined;
     addPolicy(policy: ShopUnsavedPolicy): void;
     removePolicy(id: number): void;
+    do(command: string): void;
+    updateStockroom(): void;
 }
 
 export type ShopManagerClient = typeof client & {
-    shopmanager: ShopManager;
+    shopManager: ShopManager;
 };

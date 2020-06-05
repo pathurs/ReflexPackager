@@ -10,7 +10,7 @@ export const reportProfits = new TriggerItem(
     [
         new ExecuteScriptAction(
             function (args: TriggerFunctionArgs & { 1: string }) {
-                client.shopmanager.echo(JSON.stringify(args));
+                client.shopManager.echo(JSON.stringify(args));
             }
         )
     ]

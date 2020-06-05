@@ -10,8 +10,8 @@ export const huntingManagerStop = new AliasItem(
     [
         new ExecuteScriptAction(
             function () {
-                if (client.huntingmanager.settings.enabled) {
-                    client.huntingmanager.stop();
+                if (client.huntingManager.settings.enabled) {
+                    client.huntingManager.stop();
                 }
             }
         )

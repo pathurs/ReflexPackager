@@ -10,7 +10,7 @@ export const percentToLevel = new AliasItem(
     [
         new ExecuteScriptAction(
             function (args: TriggerFunctionArgs) {
-                if (client.huntingmanager.settings.enabled) {
+                if (client.huntingManager.settings.enabled) {
                     const levelExperiences = [
                         0, 5000, 10500, 20550, 35205,
                         50525, 70577, 95043, 122000, 152000,
@@ -58,7 +58,7 @@ export const percentToLevel = new AliasItem(
                     const to = Number(args[2]);
                     const percent = percentageTo(from, to);
 
-                    client.huntingmanager.echo(`Percent from level '%lightgray%${from}%end%' to level '%lightgray%${to}%end%' is '%lightgray%${percent}%%end%'.`);
+                    client.huntingManager.echo(`Percent from level '%lightgray%${from}%end%' to level '%lightgray%${to}%end%' is '%lightgray%${percent}%%end%'.`);
 
                     function getExperience(level: number): number {
                         const levelInteger = Math.floor(level);

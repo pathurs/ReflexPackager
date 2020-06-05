@@ -9,7 +9,7 @@ declare const client: DefenceManagerClient & DisplayServiceClient & SystemServic
 export const onLoad = new FunctionItem(
     'onLoad',
     function () {
-        client.defencemanager = {
+        client.defenceManager = {
             defences: {
                 nightsight: {
                     name: 'nightsight',
@@ -647,22 +647,22 @@ export const onLoad = new FunctionItem(
             currentDefenceIds: [],
             expectedDefenceIds: [],
             echo(text) {
-                client.displayservice.echo(`%lightgray%[%deepskyblue%Defence Manager%end%]:%end% ${text}`);
+                client.displayService.echo(`%lightgray%[%deepskyblue%Defence Manager%end%]:%end% ${text}`);
             },
             error(text) {
-                client.defencemanager.echo(`%red%${text}`);
+                client.defenceManager.echo(`%red%${text}%end%`);
             },
             save() {
-                client.systemservice.save('defence-manager', () => {
-                    client.defencemanager.echo('Settings saved.');
+                client.systemService.save('defence-manager', () => {
+                    client.defenceManager.echo('Settings saved.');
                 });
             }
         };
 
-        client.gmcpservice.subscribe(['Char.Defences.List', 'Char.Defences.Add', 'Char.Defences.Remove'], args => {
+        client.gmcpService.subscribe(['Char.Defences.List', 'Char.Defences.Add', 'Char.Defences.Remove'], args => {
             run_function('defence-manager:onDefenceChange', args, 'Defence Manager');
         });
 
-        client.defencemanager.echo('Loaded.');
+        client.defenceManager.echo('Loaded.');
     }
 );

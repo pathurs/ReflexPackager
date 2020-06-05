@@ -1,21 +1,15 @@
 import { createFromFile } from '../source';
 import { onLoad } from './onLoad';
-import { Tarot } from './Tarot';
-import { Gathering } from './Gathering';
-import { Harvesting } from './Harvesting';
-import { Inkmilling } from './Inkmilling';
-import { Transmutation } from './Transmutation';
-import { Collecting } from './Collecting';
+import { TradeSkills } from './Trade Skills';
+import { ClassSkills } from './Class Skills';
+import { GeneralSkills } from './General Skills';
 
 createFromFile(
     [
-        onLoad,
-        Collecting,
-        Gathering,
-        Harvesting,
-        Inkmilling,
-        Transmutation,
-        Tarot
+        ClassSkills,
+        GeneralSkills,
+        TradeSkills,
+        onLoad
     ],
     'skill-manager/rpconfig.json'
 );

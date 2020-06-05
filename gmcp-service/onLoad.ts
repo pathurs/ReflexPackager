@@ -9,7 +9,7 @@ export const onLoad = new FunctionItem(
     'onLoad',
     function () {
 
-        client.gmcpservice = {
+        client.gmcpService = {
             latest: {},
             subscriptions: [],
             vitals: <GMCPCharVitals>{},
@@ -36,29 +36,29 @@ export const onLoad = new FunctionItem(
                     subscriber
                 };
 
-                client.gmcpservice.subscriptions.push(<GMCPSubscription<GMCPServerMethod>><unknown>subscription);
+                client.gmcpService.subscriptions.push(<GMCPSubscription<GMCPServerMethod>><unknown>subscription);
 
                 return subscription;
             },
             unsubscribe(subscription) {
-                const index = client.gmcpservice.subscriptions.findIndex(value => value === subscription);
+                const index = client.gmcpService.subscriptions.findIndex(value => value === subscription);
 
-                client.gmcpservice.subscriptions.splice(index, 1);
+                client.gmcpService.subscriptions.splice(index, 1);
             },
             once<TMethod extends GMCPServerMethod>(methods: TMethod[], subscriber: GMCPSubscriber<TMethod>) {
-                const subscription = client.gmcpservice.subscribe(methods, function (args) {
+                const subscription = client.gmcpService.subscribe(methods, function (args) {
                     subscriber(args);
 
-                    client.gmcpservice.unsubscribe(<GMCPSubscription<GMCPServerMethod>><unknown>subscription);
+                    client.gmcpService.unsubscribe(<GMCPSubscription<GMCPServerMethod>><unknown>subscription);
                 });
 
                 return subscription;
             },
             echo(text) {
-                client.displayservice.echo(`%lightgray%[%deepskyblue%GMCP Service%end%]:%end% ${text}`);
+                client.displayService.echo(`%lightgray%[%deepskyblue%GMCP Service%end%]:%end% ${text}`);
             },
             error(text) {
-                client.gmcpservice.echo(`%red%${text}`);
+                client.gmcpService.echo(`%red%${text}%end%`);
             }
         };
 
@@ -66,8 +66,8 @@ export const onLoad = new FunctionItem(
         send_GMCP('Char.Items.Room');
         send_GMCP('IRE.Rift.Request');
 
-        client.systemservice.sendCommand('quicklook');
+        client.systemService.sendCommand('quicklook');
 
-        client.gmcpservice.echo('Loaded.');
+        client.gmcpService.echo('Loaded.');
     }
 );

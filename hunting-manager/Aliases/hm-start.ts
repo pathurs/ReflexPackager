@@ -10,8 +10,8 @@ export const huntingManagerStart = new AliasItem(
     [
         new ExecuteScriptAction(
             function () {
-                if (client.huntingmanager.settings.enabled) {
-                    client.huntingmanager.start();
+                if (client.huntingManager.settings.enabled) {
+                    client.huntingManager.start();
                 }
             }
         )

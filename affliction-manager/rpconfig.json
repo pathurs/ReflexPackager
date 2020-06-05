@@ -1,0 +1,5 @@
+{
+    "name": "Affliction Manager",
+    "description": "A Affliction Manager",
+    "outFile": "./packages/affliction-manager.nxs"
+}

@@ -1,5 +1,3 @@
-import { QueueSubscription } from 'queue-manager/queue-manager';
-
 interface Area {
     name: string;
     mobs: string[];
@@ -89,5 +87,5 @@ interface HuntingManager {
 }
 
 export type HuntingManagerClient = typeof client & {
-    huntingmanager: HuntingManager;
+    huntingManager: HuntingManager;
 };

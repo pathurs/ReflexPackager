@@ -8,11 +8,11 @@ declare const client: QueueManagerClient & DisplayServiceClient & SystemServiceC
 export const onLoad = new FunctionItem(
     'onLoad',
     function () {
-        client.queuemanager = {
-            settings: {
+        client.queueManager = {
+            settings: client.systemService.defaultsDeep({
                 enabled: true,
                 gag: true
-            },
+            }),
             free: {
                 queue: []
             },
@@ -31,7 +31,7 @@ export const onLoad = new FunctionItem(
             ship: {
                 queue: []
             },
-            sendingQueue: false,
+            queuesToSend: new Set(),
             subscriptions: [],
             subscribe<TQueueType extends QueueManagerQueueType>(queues: TQueueType[], subscriber: QueueManagerQueueSubscriber<TQueueType>) {
                 const subscription = {
@@ -39,26 +39,26 @@ export const onLoad = new FunctionItem(
                     subscriber
                 };
 
-                client.queuemanager.subscriptions.push(<QueueManagerQueueSubscription<QueueManagerQueueType>><unknown>subscription);
+                client.queueManager.subscriptions.push(<QueueManagerQueueSubscription<QueueManagerQueueType>><unknown>subscription);
 
                 return subscription;
             },
             unsubscribe(subscription) {
-                const index = client.queuemanager.subscriptions.findIndex(value => value === subscription);
+                const index = client.queueManager.subscriptions.findIndex(value => value === subscription);
 
-                client.queuemanager.subscriptions.splice(index, 1);
+                client.queueManager.subscriptions.splice(index, 1);
             },
             once<TQueueType extends QueueManagerQueueType>(queues: TQueueType[], subscriber: QueueManagerQueueSubscriber<TQueueType>) {
-                const subscription = client.queuemanager.subscribe(queues, function (queue, method, commands) {
+                const subscription = client.queueManager.subscribe(queues, function (queue, method, commands) {
                     subscriber(queue, method, commands);
 
-                    client.queuemanager.unsubscribe(<QueueManagerQueueSubscription<QueueManagerQueueType>><unknown>subscription);
+                    client.queueManager.unsubscribe(<QueueManagerQueueSubscription<QueueManagerQueueType>><unknown>subscription);
                 });
 
                 return subscription;
             },
             emit(queueType, method, args) {
-                client.queuemanager.subscriptions.forEach(subscription => {
+                client.queueManager.subscriptions.forEach(subscription => {
                     if (subscription.queues.includes(queueType)) {
                         subscription.subscriber(queueType, method, args);
                     }
@@ -88,7 +88,7 @@ export const onLoad = new FunctionItem(
                     throw new Error(`Unexpected amount of commands in queued commands. Expected: '${count}' Actual: '${commands.length}' Queue: '${queueType}' Full Command: '${command}'`);
                 }
 
-                const queue = client.queuemanager.getQueue(queueType);
+                const queue = client.queueManager.getQueue(queueType);
                 const result: QueueManagerQueuedCommand[] = [];
 
                 for (let i = 0; i < commands.length; i++) {
@@ -102,13 +102,13 @@ export const onLoad = new FunctionItem(
                 return result;
             },
             echo(text) {
-                client.displayservice.echo(`%lightgray%[%deepskyblue%Queue Manager%end%]:%end% ${text}`);
+                client.displayService.echo(`%lightgray%[%deepskyblue%Queue Manager%end%]:%end% ${text}`);
             },
             error(text) {
-                client.queuemanager.echo(`%red%${text}`);
+                client.queueManager.echo(`%red%${text}%end%`);
             },
-            noraliseQueueType(type) {
-                switch (type.toLowerCase()) {
+            noraliseQueueType(queueType) {
+                switch (queueType.toLowerCase()) {
                     case 'b':
                     case 'bal':
                     case 'balance':
@@ -163,25 +163,25 @@ export const onLoad = new FunctionItem(
 
             //     return 'free';
             // },
-            getQueue(type) {
-                switch (type) {
+            getQueue(queueType) {
+                switch (queueType) {
                     case 'free':
-                        return client.queuemanager.free.queue;
+                        return client.queueManager.free.queue;
 
                     case 'balance':
-                        return client.queuemanager.balance.queue;
+                        return client.queueManager.balance.queue;
 
                     case 'equilibrium':
-                        return client.queuemanager.equilibrium.queue;
+                        return client.queueManager.equilibrium.queue;
 
                     case 'equilibriumBalance':
-                        return client.queuemanager.equilibriumBalance.queue;
+                        return client.queueManager.equilibriumBalance.queue;
 
                     case 'class':
-                        return client.queuemanager.class.queue;
+                        return client.queueManager.class.queue;
 
                     case 'ship':
-                        return client.queuemanager.ship.queue;
+                        return client.queueManager.ship.queue;
                 }
             },
             appendCommand(command, requires = 'free', consumes = 'free') {
@@ -194,11 +194,11 @@ export const onLoad = new FunctionItem(
                     consumes
                 };
 
-                const queue = client.queuemanager.getQueue(queueType);
+                const queue = client.queueManager.getQueue(queueType);
 
                 queue.push(queuedCommand);
 
-                client.queuemanager.sendQueue(queueType);
+                client.queueManager.sendQueue(queueType);
 
                 return queuedCommand;
             },
@@ -212,11 +212,11 @@ export const onLoad = new FunctionItem(
                     consumes
                 };
 
-                const queue = client.queuemanager.getQueue(queueType);
+                const queue = client.queueManager.getQueue(queueType);
 
                 queue.unshift(queuedCommand);
 
-                client.queuemanager.sendQueue(queueType);
+                client.queueManager.sendQueue(queueType);
 
                 return queuedCommand;
             },
@@ -243,13 +243,13 @@ export const onLoad = new FunctionItem(
 
             //     return queuedCommand;
             // },
-            // insertCommand(type, index, command, _requires, _consumes) {
+            // insertCommand(queueType, index, command, _requires, _consumes) {
             //     const queuedCommand: QueueManagerQueuedCommand = {
-            //         queue: type,
+            //         queue: queueType,
             //         command
             //     };
 
-            //     const queue = client.queuemanager.getQueue(type);
+            //     const queue = client.queuemanager.getQueue(queueType);
 
             //     let constrainedIndex = index;
 
@@ -264,8 +264,8 @@ export const onLoad = new FunctionItem(
 
             //     return queuedCommand;
             // },
-            removeCommand(type, index) {
-                const queue = client.queuemanager.getQueue(type);
+            removeCommand(queueType, index) {
+                const queue = client.queueManager.getQueue(queueType);
 
                 let constrainedIndex = index;
 
@@ -278,94 +278,96 @@ export const onLoad = new FunctionItem(
 
                 queue.splice(constrainedIndex, 1);
 
-                client.queuemanager.sendQueue(type);
+                client.queueManager.sendQueue(queueType);
             },
-            clearQueue(type) {
-                const queue = client.queuemanager.getQueue(type);
+            clearQueue(queueType) {
+                const queue = client.queueManager.getQueue(queueType);
 
                 queue.splice(0, queue.length);
             },
-            sendQueue(type) {
-                if (client.queuemanager.sendingQueue) {
+            sendQueue(queueType) {
+                if (client.queueManager.queuesToSend.has(queueType)) {
                     return;
                 }
 
-                client.queuemanager.sendingQueue = true;
+                client.queueManager.queuesToSend.add(queueType);
 
                 setTimeout(() => {
-                    client.queuemanager.sendingQueue = false;
+                    client.queueManager.queuesToSend.forEach(queueTypeToSend => {
+                        client.queueManager.queuesToSend.delete(queueTypeToSend);
 
-                    let queueShortName: string | undefined;
+                        let queueShortName: string | undefined;
 
-                    switch (type) {
-                        case 'free':
-                            if (client.queuemanager.free.queue.length > 0) {
-                                client.systemservice.sendCommands(client.queuemanager.free.queue.map(value => value.command));
+                        switch (queueTypeToSend) {
+                            case 'free':
+                                if (client.queueManager.free.queue.length > 0) {
+                                    client.systemService.sendCommands(client.queueManager.free.queue.map(value => value.command));
 
-                                client.queuemanager.clearQueue('free');
-                            }
-                            break;
-
-                        case 'balance':
-                            queueShortName = 'bal';
-                            break;
-
-                        case 'equilibrium':
-                            queueShortName = 'eq';
-                            break;
-
-                        case 'equilibriumBalance':
-                            queueShortName = 'eqbal';
-                            break;
-
-                        case 'class':
-                            queueShortName = 'class';
-                            break;
-
-                        case 'ship':
-                            queueShortName = 'ship';
-                            break;
-                    }
-
-                    if (!queueShortName) {
-                        return;
-                    }
-
-                    const queue = client.queuemanager.getQueue(type);
-
-                    client.systemservice.sendCommand(`clearqueue ${queueShortName}`);
-
-                    if (queue.length > 0) {
-                        const commands: string[] = [];
-                        const length = Math.min(queue.length, 9);
-
-                        for (let i = 0; i < length; i++) {
-                            const command = queue[i];
-
-                            commands.push(command.command);
-
-                            if (command.consumes !== 'free') {
+                                    client.queueManager.clearQueue('free');
+                                }
                                 break;
-                            }
+
+                            case 'balance':
+                                queueShortName = 'bal';
+                                break;
+
+                            case 'equilibrium':
+                                queueShortName = 'eq';
+                                break;
+
+                            case 'equilibriumBalance':
+                                queueShortName = 'eqbal';
+                                break;
+
+                            case 'class':
+                                queueShortName = 'class';
+                                break;
+
+                            case 'ship':
+                                queueShortName = 'ship';
+                                break;
                         }
 
-                        const expectedCommandArguments = commands.map(command => `{${command}}`).join(' ');
+                        if (!queueShortName) {
+                            return;
+                        }
 
-                        const expectedCommand = `queuemanager${commands.length} ${expectedCommandArguments}`;
+                        const queue = client.queueManager.getQueue(queueTypeToSend);
 
-                        client.queuemanager.balance.expected = expectedCommand
-                        client.systemservice.sendCommand(`queue add ${queueShortName} ${expectedCommand}`);
-                    }
+                        client.systemService.sendCommand(`clearqueue ${queueShortName}`);
+
+                        if (queue.length > 0) {
+                            const commands: string[] = [];
+                            const length = Math.min(queue.length, 9);
+
+                            for (let i = 0; i < length; i++) {
+                                const command = queue[i];
+
+                                commands.push(command.command);
+
+                                if (command.consumes !== 'free') {
+                                    break;
+                                }
+                            }
+
+                            const expectedCommandArguments = commands.map(command => `{${command}}`).join(' ');
+
+                            const expectedCommand = `queuemanager${commands.length} ${expectedCommandArguments}`;
+
+                            client.queueManager.balance.expected = expectedCommand
+                            client.systemService.sendCommand(`queue add ${queueShortName} ${expectedCommand}`);
+                        }
+                    });
                 });
             }
         };
 
-        client.systemservice.sendCommands(
+        client.systemService.sendCommands(
             new Array(9).fill('').map((_value, count) => {
                 return `alias set queuemanager${count + 1} ${new Array(count + 1).fill('').map((_value, index) => `%${index + 1}`).join('/')}`;
             })
         );
 
-        client.queuemanager.echo('Loaded.');
+        client.queueManager.echo('Loaded.');
     }
 );

@@ -11,7 +11,7 @@ export const shopManagerShopUnregister = new AliasItem(
     [
         new ExecuteScriptAction(
             function () {
-                client.shopmanager.unregisterShop();
+                client.shopManager.unregisterShop();
             }
         )
     ]

@@ -10,5 +10,5 @@ interface PeopleManager {
 }
 
 export type PeopleManagerClient = typeof client & {
-    peoplemanager: PeopleManager;
+    peopleManager: PeopleManager;
 };

@@ -11,10 +11,10 @@ export const huntingManagerSetWarnAtPercent = new AliasItem(
     [
         new ExecuteScriptAction(
             function (args: GMCPAliasRegexArgs & { 1: string }) {
-                if (client.huntingmanager.settings.enabled) {
+                if (client.huntingManager.settings.enabled) {
                     const percent = Number(args[1]);
 
-                    client.huntingmanager.warn.setWarnAtPercent(percent);
+                    client.huntingManager.warn.setWarnAtPercent(percent);
                 }
             }
         )

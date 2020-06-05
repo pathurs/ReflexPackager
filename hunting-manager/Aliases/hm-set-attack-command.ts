@@ -11,10 +11,10 @@ export const huntingManagerSetAttackCommand = new AliasItem(
     [
         new ExecuteScriptAction(
             function (args: GMCPAliasRegexArgs & { 1: string }) {
-                if (client.huntingmanager.settings.enabled) {
+                if (client.huntingManager.settings.enabled) {
                     const command = args[1];
 
-                    client.huntingmanager.attack.setAttackCommand(command);
+                    client.huntingManager.attack.setAttackCommand(command);
                 }
             }
         )

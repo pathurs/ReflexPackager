@@ -113,5 +113,5 @@ interface DefenceManager {
 }
 
 export type DefenceManagerClient = typeof client & {
-    defencemanager: DefenceManager;
+    defenceManager: DefenceManager;
 };

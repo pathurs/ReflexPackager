@@ -7,7 +7,7 @@ declare const client: InventoryManagerClient & DisplayServiceClient;
 export const cliShow = new FunctionItem(
     'inventory-manager:cli-show',
     function () {
-        client.displayservice.table(
+        client.displayService.table(
             'Inventory Manager',
             [
                 {
@@ -17,7 +17,7 @@ export const cliShow = new FunctionItem(
                         {
                             label: 'Enabled',
                             value: makeBooleanValue(
-                                client.inventorymanager.settings.enabled,
+                                client.inventoryManager.settings.enabled,
                                 'inventory-manager config enabled false',
                                 'Disable Inventory Manager.',
                                 'inventory-manager config enabled true',
@@ -91,8 +91,8 @@ export const cliShow = new FunctionItem(
 
         function makeBooleanValue(value: boolean, trueCommand: string, trueHint: string, falseCommand: string, falseHint: string) {
             return value
-                ? client.displayservice.commandify('%lime%Yes', trueCommand, trueHint)
-                : client.displayservice.commandify('%red%No', falseCommand, falseHint);
+                ? client.displayService.commandify('%lime%Yes', trueCommand, trueHint)
+                : client.displayService.commandify('%red%No', falseCommand, falseHint);
         }
     }
 );
