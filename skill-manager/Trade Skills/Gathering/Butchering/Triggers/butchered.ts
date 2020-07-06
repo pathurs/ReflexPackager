@@ -11,14 +11,14 @@ export const butchered = new TriggerItem(
     [
         new ExecuteScriptAction(
             function (args: TriggerFunctionArgs & { 1?: string; 2: string }) {
-                if (client.skillManager.gathering.butchering.active) {
+                if (client.skillManager.skills.trade.gathering.butchering.running) {
                     const amountMatch = args[1] || '';
                     const itemNameMatch = args[2];
 
                     const amount = amountMatch.match(/(\d+)/)?.[1] || '1';
 
-                    if (itemNameMatch in client.skillManager.gathering.butchering.descriptionDictionary) {
-                        const item: string | undefined = client.skillManager.gathering.butchering.descriptionDictionary[itemNameMatch];
+                    if (itemNameMatch in client.skillManager.skills.trade.gathering.butchering.descriptionDictionary) {
+                        const item: string | undefined = client.skillManager.skills.trade.gathering.butchering.descriptionDictionary[itemNameMatch];
 
                         if (item) {
                             client.systemService.sendCommand(`inrift ${amount} ${item}`);

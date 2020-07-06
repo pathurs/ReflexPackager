@@ -10,7 +10,7 @@ export const inscribeStop = new AliasItem(
     [
         new ExecuteScriptAction(
             function () {
-                client.skillManager.tarot.inscribing.stop();
+                client.skillManager.skills.class.tarot.inscribing.stop();
             }
         )
     ]

@@ -1,0 +1,5 @@
+{
+    "name": "Combat Manager",
+    "description": "A Combat Manager",
+    "outFile": "./packages/combat-manager.nxs"
+}

@@ -27,7 +27,7 @@ export class TriggerItem extends Item<ItemType.Trigger> implements TriggerDefini
     );
     public constructor (
         name: string | undefined,
-        textOrRegExpOrRegExpArray: string | RegExp,
+        textOrRegExp: string | RegExp,
         public matching: TriggerType,
         actions: Actions,
         public whole_words: boolean = false,
@@ -36,11 +36,11 @@ export class TriggerItem extends Item<ItemType.Trigger> implements TriggerDefini
     ) {
         super(ItemType.Trigger, undefined, actions, name, enabled);
 
-        if (typeof textOrRegExpOrRegExpArray === 'string') {
-            this.text = textOrRegExpOrRegExpArray;
+        if (typeof textOrRegExp === 'string') {
+            this.text = textOrRegExp;
         }
         else {
-            this.text = textOrRegExpOrRegExpArray.source;
+            this.text = textOrRegExp.source;
         }
     }
 }

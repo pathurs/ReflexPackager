@@ -324,6 +324,30 @@ interface GMCPRiftItem {
 type GMCPIRERiftList = GMCPRiftItem[];
 type GMCPIRERiftChange = GMCPRiftItem;
 
+// IRE.Time
+
+interface GMCPIRETimeList {
+    day: string;
+    mon: string;
+    month: string; // 'Phaestian'
+    year: string;
+    hour: string;
+    time: string;
+    moonphase: string;
+    daynight: string;
+}
+
+interface GMCPIRETimeUpdate {
+    day?: string;
+    mon?: string;
+    month?: string; // 'Phaestian'
+    year?: string;
+    hour?: string;
+    time?: string;
+    moonphase?: string;
+    daynight?: string;
+}
+
 // IRE.Target
 
 type GMCPIRETargetSet = string;
@@ -392,8 +416,8 @@ interface GMCPServerMethodToArgsMap {
     'IRE.Tasks.List': unknown;
     'IRE.Tasks.Update': unknown;
     'IRE.Tasks.Completed': unknown;
-    'IRE.Time.List': unknown;
-    'IRE.Time.Update': unknown;
+    'IRE.Time.List': GMCPIRETimeList;
+    'IRE.Time.Update': GMCPIRETimeUpdate;
     'IRE.CombatMessage': unknown;
 }
 
@@ -408,9 +432,13 @@ type GMCPServerArgs =
     | GMCPCharItemsUpdate
     ;
 
-interface TriggerFunctionArgs {
-    0: string;
-    [key: number]: string | undefined;
+type TriggerFunctionArgs = [string, ...(string | undefined)[]];
+
+interface MultiLineTriggerFunctionArgs {
+    matches: RegExpMatchArray[];
+    block: NexusBlock;
+    lines: NexusLine[];
+    prompt?: NexusBlockPrompt;
 }
 
 interface AliasFunctionArgs {
@@ -436,6 +464,34 @@ interface ScriptsArgs {
 
 // Variables
 
+interface NexusBlockParsedLine {
+    chunks: string[];
+    text(): string;
+    colorize(start: number, length: number, fgcolor: string, bgcolor?: string): void;
+}
+
+interface NexusBlockLine {
+    line: string;
+    monospace: boolean;
+    parsed_line: NexusBlockParsedLine;
+}
+
+interface NexusBlockParsedPrompt {
+    chunks: string[];
+    text(): string;
+    colorize(start: number, length: number, fgcolor: string, bgcolor?: string): void;
+}
+
+interface NexusBlockPrompt {
+    prompt: string;
+    parsed_prompt: NexusBlockParsedPrompt;
+}
+
+type NexusLine = NexusBlockLine | NexusBlockPrompt;
+type NexusBlock = NexusLine[];
+
+declare const current_line: NexusLine;
+declare const current_block: NexusBlock;
 declare const stack_delimiter: string;
 
 // Calling functions
@@ -563,7 +619,7 @@ declare function gag_current_line(): void;
  * @param fgcolor
  * @param bgcolor
  */
-declare function colorize_current_line(start: number, length: number, fgcolor: string, bgcolor: string): void;
+declare function colorize_current_line(start: number, length: number, fgcolor: string, bgcolor?: string): void;
 /**
  * Replace a party of the current line with the specified text and color.
  *
@@ -633,6 +689,7 @@ declare function send_GMCP(message: 'Char.Skills.Get', args: GMCPCharSkillsGet):
 declare function send_GMCP(message: 'Char.Items.Inv'): void;
 declare function send_GMCP(message: 'Char.Items.Contents', args: number): void;
 declare function send_GMCP(message: 'Char.Items.Room'): void;
+declare function send_GMCP(message: 'IRE.Time.Request'): void;
 declare function send_GMCP(message: 'IRE.Target.Set', args: string): void;
 declare function send_GMCP(message: 'IRE.Rift.Request'): void;
 // declare function send_GMCP(message: GMCPClientMethod, args?: unknown): void;

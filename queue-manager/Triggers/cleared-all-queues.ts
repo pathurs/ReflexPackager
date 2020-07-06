@@ -20,17 +20,17 @@ export const clearedAllQueue = new TriggerItem(
                     gag_current_line();
                 }
 
-                // client.queuemanager.clearQueue('balance');
-                // client.queuemanager.clearQueue('equilibrium');
-                // client.queuemanager.clearQueue('equilibriumBalance');
-                // client.queuemanager.clearQueue('class');
-                // client.queuemanager.clearQueue('ship');
+                // client.queueManager.clearQueue('balance');
+                // client.queueManager.clearQueue('equilibrium');
+                // client.queueManager.clearQueue('equilibriumBalance');
+                // client.queueManager.clearQueue('class');
+                // client.queueManager.clearQueue('ship');
 
-                // client.queuemanager.emit('balance', 'clear', { queue: 'balance', index: 0, command: '' });
-                // client.queuemanager.emit('equilibrium', 'clear', { queue: 'equilibrium', index: 0, command: '' });
-                // client.queuemanager.emit('equilibriumBalance', 'clear', { queue: 'equilibriumBalance', index: 0, command: '' });
-                // client.queuemanager.emit('class', 'clear', { queue: 'class', index: 0, command: '' });
-                // client.queuemanager.emit('ship', 'clear', { queue: 'ship', index: 0, command: '' });
+                // client.queueManager.emit('balance', 'clear', { queue: 'balance', index: 0, command: '' });
+                // client.queueManager.emit('equilibrium', 'clear', { queue: 'equilibrium', index: 0, command: '' });
+                // client.queueManager.emit('equilibriumBalance', 'clear', { queue: 'equilibriumBalance', index: 0, command: '' });
+                // client.queueManager.emit('class', 'clear', { queue: 'class', index: 0, command: '' });
+                // client.queueManager.emit('ship', 'clear', { queue: 'ship', index: 0, command: '' });
             }
         )
     ]

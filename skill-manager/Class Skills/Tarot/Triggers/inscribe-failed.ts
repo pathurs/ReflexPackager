@@ -9,20 +9,21 @@ export const inscribeFailed = new TriggerItem(
     TriggerType.RegularExpression,
     [
         new ExecuteScriptAction(
-            function () {
-                if (client.skillManager.tarot.inscribing.active) {
+            function (args: TriggerFunctionArgs) {
+                if (client.skillManager.skills.class.tarot.active) {
+                    client.skillManager.onAbility('tarot', 'CHANGEME', 'CHANGEME', args);
+                }
+
+                if (client.skillManager.skills.class.tarot.inscribing.active) {
                     gag_current_line();
 
                     client.skillManager.error('Inscribing failed!');
 
-                    client.skillManager.tarot.inscribing.runningQueue = false;
+                    client.skillManager.skills.class.tarot.inscribing.runningQueue = false;
 
-                    client.skillManager.tarot.inscribing.runQueue();
+                    client.skillManager.skills.class.tarot.inscribing.runQueue();
                 }
             }
         )
     ]
 );
-
-
-

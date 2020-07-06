@@ -7,7 +7,7 @@ export const putIn = new AliasItem(
     [
         // new ExecuteScriptAction(
         //     function (args: TriggerFunctionArgs) {
-        //         client.systemservice.sendCommand(args[0], 1);
+        //         client.systemService.sendCommand(args[0], 1);
         //     }
         // )
     ]

@@ -11,13 +11,7 @@ export const plantsPlant = new TriggerItem(
     [
         new ExecuteScriptAction(
             function (args: TriggerFunctionArgs & { 1: string }) {
-                const item = args[1].trim().toLowerCase();
-
-                if (client.skillManager.collecting.active && client.skillManager.harvesting.harvestables.includes(item)) {
-                    gag_current_line();
-
-                    client.skillManager.collecting.queue.add(`harvest ${item}`);
-                }
+                client.skillManager.skills.trade.collecting.onPlant(args);
             }
         )
     ]

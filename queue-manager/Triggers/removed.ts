@@ -31,18 +31,18 @@ export const removed = new TriggerItem(
                     return;
                 }
 
-                // const queue = client.queuemanager.getQueue(queueType);
+                // const queue = client.queueManager.getQueue(queueType);
                 // const queuedCommand = <QueueManagerQueuedCommand | undefined>queue[index];
 
                 // if (!queuedCommand) {
-                //     client.queuemanager.error(`Untracked command in '%lightgrey%${queueType}%end%' at position '%lightgrey%${index}%end%'.`);
+                //     client.queueManager.error(`Untracked command in '%lightgrey%${queueType}%end%' at position '%lightgrey%${index}%end%'.`);
 
                 //     return;
                 // }
 
-                // client.queuemanager.removeCommand(queueType, index);
+                // client.queueManager.removeCommand(queueType, index);
 
-                // client.queuemanager.emit(queueType, 'remove', { queue: queueType, index, command: queuedCommand.command });
+                // client.queueManager.emit(queueType, 'remove', { queue: queueType, index, command: queuedCommand.command });
             }
         )
     ]

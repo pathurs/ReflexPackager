@@ -12,7 +12,7 @@ export const collect = new AliasItem(
     [
         new ExecuteScriptAction(
             function () {
-                client.skillManager.collecting.start();
+                client.skillManager.skills.trade.collecting.start();
             }
         )
     ]

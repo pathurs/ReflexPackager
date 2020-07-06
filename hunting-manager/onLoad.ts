@@ -151,7 +151,7 @@ export const onLoad = new FunctionItem(
                     if (client.huntingManager.target.currentTarget) {
                         const attackCommand = client.huntingManager.settings.attackCommand.toLowerCase();
 
-                        const index = client.queueManager.equilibriumBalance.queue.findIndex(command => {
+                        const index = client.queueManager.equilibriumBalanceQueue.findIndex(command => {
                             command.command.toLowerCase() === attackCommand;
                         });
 
@@ -195,7 +195,7 @@ export const onLoad = new FunctionItem(
                     if (client.huntingManager.settings.razeCommand && client.huntingManager.target.currentTarget) {
                         const razeCommand = client.huntingManager.settings.razeCommand.toLowerCase();
 
-                        const index = client.queueManager.equilibriumBalance.queue.findIndex(command => {
+                        const index = client.queueManager.equilibriumBalanceQueue.findIndex(command => {
                             command.command.toLowerCase() === razeCommand;
                         });
 
@@ -245,7 +245,7 @@ export const onLoad = new FunctionItem(
                     if (client.huntingManager.settings.shieldCommand) {
                         const shieldCommand = client.huntingManager.settings.shieldCommand.toLowerCase();
 
-                        const index = client.queueManager.equilibriumBalance.queue.findIndex(command => {
+                        const index = client.queueManager.equilibriumBalanceQueue.findIndex(command => {
                             command.command.toLowerCase() === shieldCommand;
                         });
 
@@ -350,7 +350,7 @@ export const onLoad = new FunctionItem(
 
                         result += client.displayService.clickify(
                             client.displayService.colorify('%red%v'),
-                            `client.huntingmanager.moveMob('${area.name}', '${mobName}', ${index + 1});`,
+                            `client.huntingManager.moveMob('${area.name}', '${mobName}', ${index + 1});`,
                             'Move down'
                         );
                     }
@@ -463,21 +463,21 @@ export const onLoad = new FunctionItem(
                     client.huntingManager.active = false;
                 });
 
-                // client.queuemanager.balanceQueue.forEach((value, index) => {
+                // client.queueManager.balanceQueue.forEach((value, index) => {
                 //     if (value.toLowerCase().startsWith('huntingmanager')) {
-                //         client.systemservice.sendCommand(`queue remove bal ${index + 1}`);
+                //         client.systemService.sendCommand(`queue remove bal ${index + 1}`);
                 //     }
                 // });
 
-                // client.queuemanager.equilibriumQueue.forEach((value, index) => {
+                // client.queueManager.equilibriumQueue.forEach((value, index) => {
                 //     if (value.toLowerCase().startsWith('huntingmanager')) {
-                //         client.systemservice.sendCommand(`queue remove eq ${index + 1}`);
+                //         client.systemService.sendCommand(`queue remove eq ${index + 1}`);
                 //     }
                 // });
 
-                // client.queuemanager.equilibriumBalanceQueue.forEach((value, index) => {
+                // client.queueManager.equilibriumBalanceQueue.forEach((value, index) => {
                 //     if (value.toLowerCase().startsWith('huntingmanager')) {
-                //         client.systemservice.sendCommand(`queue remove eqbal ${index + 1}`);
+                //         client.systemService.sendCommand(`queue remove eqbal ${index + 1}`);
                 //     }
                 // });
 
@@ -512,10 +512,10 @@ export const onLoad = new FunctionItem(
             }
         });
 
-        // client.gmcpservice.subscribe(['IRE.Target.Set'], args => {
-        //     if (client.huntingmanager.settings.enabled && client.huntingmanager.active) {
+        // client.gmcpService.subscribe(['IRE.Target.Set'], args => {
+        //     if (client.huntingManager.settings.enabled && client.huntingManager.active) {
         //         if (!args.gmcp_args) {
-        //             client.huntingmanager.target.tryTargetPriority();
+        //             client.huntingManager.target.tryTargetPriority();
 
         //             return;
         //         }

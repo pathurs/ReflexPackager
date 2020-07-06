@@ -32,11 +32,11 @@ export const manuallyAdded = new TriggerItem(
                     return;
                 }
 
-                // const queue = client.queuemanager.getQueue(queueType);
+                // const queue = client.queueManager.getQueue(queueType);
 
-                // client.queuemanager.appendCommand(command, { [queueType]: true });
+                // client.queueManager.appendCommand(command, { [queueType]: true });
 
-                //  client.queuemanager.emit(queueType, 'add', { queue: queueType, index: queue.length - 1, command });
+                //  client.queueManager.emit(queueType, 'add', { queue: queueType, index: queue.length - 1, command });
             }
         )
     ]

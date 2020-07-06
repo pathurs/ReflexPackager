@@ -4,20 +4,20 @@ import { GMCPServiceClient } from 'gmcp-service/gmcp-service';
 
 declare const client: SkillManagerClient & GMCPServiceClient;
 
-export const plantsStart = new TriggerItem(
-    'Plants Start',
-    /^The following plants are growing in this room:$/,
+export const noMinerals = new TriggerItem(
+    'No Minerals',
+    /^There are no minerals here\.$/,
     TriggerType.RegularExpression,
     [
         new ExecuteScriptAction(
             function () {
-                if (client.skillManager.collecting.active) {
+                if (client.skillManager.skills.trade.collecting.running) {
                     gag_current_line();
 
                     setTimeout(() => {
-                        client.skillManager.collecting.waitingForPlants = false;
+                        client.skillManager.skills.trade.collecting.waitingForMinerals = false;
 
-                        client.skillManager.collecting.tryCollect();
+                        client.skillManager.skills.trade.collecting.tryCollect();
                     });
                 }
             }

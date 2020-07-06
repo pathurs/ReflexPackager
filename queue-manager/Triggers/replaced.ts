@@ -32,9 +32,9 @@ export const replaced = new TriggerItem(
                     return;
                 }
 
-                // client.queuemanager.replaceCommand(queueType, index, command);
+                // client.queueManager.replaceCommand(queueType, index, command);
 
-                // client.queuemanager.emit(queueType, 'replace', { queue: queueType, index, command });
+                // client.queueManager.emit(queueType, 'replace', { queue: queueType, index, command });
             }
         )
     ]

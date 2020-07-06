@@ -12,9 +12,9 @@ export const collectAutomatically = new AliasItem(
     [
         new ExecuteScriptAction(
             function () {
-                const wasAutomatic = client.skillManager.collecting.automatic;
+                const wasAutomatic = client.skillManager.skills.trade.collecting.automatic;
 
-                client.skillManager.collecting.automatic = !client.skillManager.collecting.automatic;
+                client.skillManager.skills.trade.collecting.automatic = !client.skillManager.skills.trade.collecting.automatic;
 
                 if (wasAutomatic) {
                     client.skillManager.echo(`Will no longer automatically start collecting in each room.`);
@@ -22,7 +22,7 @@ export const collectAutomatically = new AliasItem(
                 else {
                     client.skillManager.echo(`Will now automatically start collecting in each room.`);
 
-                    client.skillManager.collecting.start();
+                    client.skillManager.skills.trade.collecting.start();
                 }
             }
         )

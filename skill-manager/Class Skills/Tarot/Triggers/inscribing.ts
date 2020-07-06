@@ -13,14 +13,15 @@ export const inscribing = new MultiTriggerItem(
     ],
     [
         new ExecuteScriptAction(
-            function () {
-                if (client.skillManager.tarot.inscribing.active) {
+            function (args: TriggerFunctionArgs) {
+                if (client.skillManager.skills.class.tarot.active) {
+                    client.skillManager.onAbility('tarot', 'CHANGEME', 'CHANGEME', args);
+                }
+
+                if (client.skillManager.skills.class.tarot.inscribing.active) {
                     gag_current_line();
                 }
             }
         )
     ]
 );
-
-
-

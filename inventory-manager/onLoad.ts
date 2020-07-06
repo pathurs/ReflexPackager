@@ -254,7 +254,7 @@ export const onLoad = new FunctionItem(
                 const trackedContainer = client.inventoryManager.settings.containers.tracked.find(value => value.id == containerId);
 
                 if (trackedContainer) {
-                    send_GMCP('Char.Items.Contents', Number(trackedContainer.id));
+                    // send_GMCP('Char.Items.Contents', Number(trackedContainer.id));
                 }
             }
         });

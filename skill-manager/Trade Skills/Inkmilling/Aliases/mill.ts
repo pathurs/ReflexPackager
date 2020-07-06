@@ -13,7 +13,7 @@ export const mill = new AliasItem(
                 const amount = Number(args[1]);
                 const colour = args[2];
 
-                if (!(colour in client.skillManager.inkmilling.queue)) {
+                if (!(colour in client.skillManager.skills.trade.inkmilling.queue)) {
                     client.skillManager.error(`Unknown ink colour '${colour}'.`);
 
                     return;
@@ -25,16 +25,16 @@ export const mill = new AliasItem(
                     return;
                 }
 
-                client.skillManager.inkmilling.queue[<keyof SkillManagerInkmillingQueue>colour] += amount;
+                client.skillManager.skills.trade.inkmilling.queue[<keyof SkillManagerInkmillingQueue>colour] += amount;
 
-                const total = client.skillManager.inkmilling.queue[<keyof SkillManagerInkmillingQueue>colour];
+                const total = client.skillManager.skills.trade.inkmilling.queue[<keyof SkillManagerInkmillingQueue>colour];
 
                 client.skillManager.echo(
                     `Added %lightgray%${amount} ${colour} ${amount > 1 ? 'inks' : 'ink'}%end% to inkmilling queue, to make a total of %lightgray%${total} ${colour} ${total > 1 ? 'inks' : 'ink'}%end%.`
                 );
 
-                if (!client.skillManager.inkmilling.active) {
-                    client.skillManager.inkmilling.start();
+                if (!client.skillManager.skills.trade.inkmilling.running) {
+                    client.skillManager.skills.trade.inkmilling.start();
                 }
             }
         )

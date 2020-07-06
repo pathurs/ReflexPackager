@@ -10,7 +10,7 @@ export const millStop = new AliasItem(
     [
         new ExecuteScriptAction(
             function () {
-                client.skillManager.inkmilling.stop();
+                client.skillManager.skills.trade.inkmilling.stop();
             }
         )
     ]

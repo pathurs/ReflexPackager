@@ -11,13 +11,13 @@ export const cantMill = new TriggerItem(
     [
         new ExecuteScriptAction(
             function () {
-                if (client.skillManager.inkmilling.active) {
+                if (client.skillManager.skills.trade.inkmilling.running) {
                     gag_current_line();
 
                     client.systemService.sendCommand('get 50 reagent from mill|inr 50 reagent|inr 50 reagent|inr 50 reagent|inr 50 reagent|inr 50 reagent|inr 50 reagent|inr 50 reagent|inr 50 reagent|inr 50 reagent');
 
-                    client.skillManager.inkmilling.stop();
-                    client.skillManager.inkmilling.reset();
+                    client.skillManager.skills.trade.inkmilling.stop();
+                    client.skillManager.skills.trade.inkmilling.reset();
 
                     client.skillManager.error('Ran out of reagents. Queue has been cleared.');
                 }

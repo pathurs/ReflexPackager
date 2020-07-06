@@ -32,9 +32,9 @@ export const inserted = new TriggerItem(
                     return;
                 }
 
-                // client.queuemanager.insertCommand(queueType, index, command);
+                // client.queueManager.insertCommand(queueType, index, command);
 
-                // client.queuemanager.emit(queueType, 'insert', { queue: queueType, index, command });
+                // client.queueManager.emit(queueType, 'insert', { queue: queueType, index, command });
             }
         )
     ]

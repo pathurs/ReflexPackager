@@ -10,8 +10,8 @@ export const millClear = new AliasItem(
     [
         new ExecuteScriptAction(
             function () {
-                client.skillManager.inkmilling.reset();
-                client.skillManager.inkmilling.stop();
+                client.skillManager.skills.trade.inkmilling.reset();
+                client.skillManager.skills.trade.inkmilling.stop();
             }
         )
     ]

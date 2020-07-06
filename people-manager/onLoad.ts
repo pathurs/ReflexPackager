@@ -13,7 +13,7 @@ export const onLoad = new FunctionItem(
                 enabled: true
             }),
             echo(text) {
-                client.displayservice.echo(`%lightgray%[%deepskyblue%People Manager%end%]:%end% ${text}`);
+                client.displayService.echo(`%lightgray%[%deepskyblue%People Manager%end%]:%end% ${text}`);
             },
             error(text) {
                 client.peopleManager.echo(`%red%${text}%end%`);

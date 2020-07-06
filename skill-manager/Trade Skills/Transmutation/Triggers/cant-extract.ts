@@ -16,7 +16,7 @@ export const cantExtract = new MultiTriggerItem(
     [
         new ExecuteScriptAction(
             function () {
-                if (client.skillManager.collecting.active) {
+                if (client.skillManager.skills.trade.collecting.running) {
                     gag_current_line();
                 }
             }

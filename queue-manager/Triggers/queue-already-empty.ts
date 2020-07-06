@@ -23,13 +23,13 @@ export const queueAlreadyEmpty = new MultiTriggerItem(
                     gag_current_line();
                 }
 
-                // client.queuemanager.clearQueue('balance');
-                // client.queuemanager.clearQueue('equilibrium');
-                // client.queuemanager.clearQueue('equilibriumBalance');
-                // client.queuemanager.clearQueue('class');
-                // client.queuemanager.clearQueue('ship');
+                // client.queueManager.clearQueue('balance');
+                // client.queueManager.clearQueue('equilibrium');
+                // client.queueManager.clearQueue('equilibriumBalance');
+                // client.queueManager.clearQueue('class');
+                // client.queueManager.clearQueue('ship');
 
-                // client.queuemanager.emit(queueType, 'clear', { queue: queueType, index: 0, command: '' });
+                // client.queueManager.emit(queueType, 'clear', { queue: queueType, index: 0, command: '' });
             }
         )
     ]

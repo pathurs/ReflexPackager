@@ -11,12 +11,12 @@ export const milled = new TriggerItem(
     [
         new ExecuteScriptAction(
             function () {
-                if (client.skillManager.inkmilling.active) {
+                if (client.skillManager.skills.trade.inkmilling.running) {
                     client.systemService.sendCommand(`get group ink from mill|get ink from mill|inrift all ink`);
 
-                    client.skillManager.inkmilling.runningQueue = false;
+                    client.skillManager.skills.trade.inkmilling.runningQueue = false;
 
-                    client.skillManager.inkmilling.runQueue();
+                    client.skillManager.skills.trade.inkmilling.runQueue();
                 }
             }
         )

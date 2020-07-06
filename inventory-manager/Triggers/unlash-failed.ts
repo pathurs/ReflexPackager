@@ -10,8 +10,8 @@ export const unlashFailed = new TriggerItem(
     [
         new ExecuteScriptAction(
             function () {
-                client.inventoryManager.wielding.expectedWield = undefined;
-                client.inventoryManager.wielding.expectdUnwield = undefined;
+                client.inventoryManager.expectedWield = undefined;
+                client.inventoryManager.expectdUnwield = undefined;
 
                 client.inventoryManager.save();
             }

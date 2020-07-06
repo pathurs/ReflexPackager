@@ -13,10 +13,10 @@ export const cantButcher = new MultiTriggerItem(
     [
         new ExecuteScriptAction(
             function () {
-                if (client.skillManager.gathering.butchering.active) {
+                if (client.skillManager.skills.trade.gathering.butchering.running) {
                     gag_current_line();
 
-                    client.skillManager.gathering.butchering.stop();
+                    client.skillManager.skills.trade.gathering.butchering.stop();
                 }
             }
         )

@@ -8,7 +8,33 @@
             "name": "onLoad",
             "enabled": true,
             "id": 2,
-            "code": "(function () {\n    client.peoplemanager = {\n        settings: client.systemservice.defaultsDeep(get_variable('people-manager:settings'), {\n            enabled: true\n        }),\n        echo(text) {\n            client.displayservice.echo(`%lightgray%[%deepskyblue%People Manager%end%]:%end% ${text}`);\n        },\n        error(text) {\n            client.peoplemanager.echo(`%red%${text}`);\n        },\n        save() {\n            client.systemservice.save('people-manager', () => {\n                set_variable('people-manager:settings', client.peoplemanager.settings);\n                client.peoplemanager.echo('Settings saved.');\n            });\n        }\n    };\n    client.peoplemanager.echo('Loaded.');\n})(args);"
+            "code": "client.peopleManager = {\r\n        settings: client.systemService.defaultsDeep(get_variable('people-manager:settings'), {\r\n            enabled: true\r\n        }),\r\n        echo(text) {\r\n            client.displayService.echo(`%lightgray%[%deepskyblue%People Manager%end%]:%end% ${text}`);\r\n        },\r\n        error(text) {\r\n            client.peopleManager.echo(`%red%${text}%end%`);\r\n        },\r\n        save() {\r\n            client.systemService.save('people-manager', () => {\r\n                set_variable('people-manager:settings', client.peopleManager.settings);\r\n                client.peopleManager.echo('Settings saved.');\r\n            });\r\n        }\r\n    };\r\n    client.peopleManager.echo('Loaded.');\r\n"
+        },
+        {
+            "type": "group",
+            "items": [
+                {
+                    "type": "trigger",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "\nvar regExpArray = [\n    /^Citizen                                                   Rank CT  Class$/,\n    /^-------                                                   ---- --  -----$/\n];\n\nvar firstIndex = current_block.indexOf(current_line);\nvar lastIndex = firstIndex + 2 - 1;\n\n// Override args\nvar args = {\n    matches: [],\n    block: current_block,\n    lines: []\n};\n\nvar prompt = current_block[current_block.length - 1];\n\nif (prompt.parsed_prompt) {\n    args.prompt = prompt;\n}\n\nfor (let i = firstIndex; i <= lastIndex; i++) {\n    if (!current_block[i] || !current_block[i].parsed_line) {\n        break;\n    }\n\n    var currentRegExp = regExpArray[i];\n    var currentText = current_block[i].parsed_line.text();\n\n    if (!currentRegExp.test(currentText)) {\n        break;\n    }\n\n    args.matches.push(currentText.match(currentRegExp));\n    args.lines.push(current_block[i]);\n\n    if (i === lastIndex) {\n        console.log('City Who');\r\n        console.log(args);\r\n        const nameRegExp = /\\u001b\\[38;5;006m([A-Z][a-z]+)\\u001b\\[38;5;007m/;\r\n        for (const line of args.lines) {\r\n            if ('line' in line) {\r\n                const match = line.line.match(nameRegExp) || [];\r\n                if (match[1]) {\r\n                    console.log(`Found: ${match[1]}`);\r\n                }\r\n            }\r\n        }\r\n    \n    }\n}\n"
+                        }
+                    ],
+                    "name": "City Who",
+                    "enabled": true,
+                    "id": 3,
+                    "whole_words": false,
+                    "case_sensitive": false,
+                    "matching": "regexp",
+                    "text": "^Citizen                                                   Rank CT  Class$"
+                }
+            ],
+            "actions": [],
+            "name": "Triggers",
+            "enabled": true,
+            "id": 4
         }
     ],
     "actions": [],

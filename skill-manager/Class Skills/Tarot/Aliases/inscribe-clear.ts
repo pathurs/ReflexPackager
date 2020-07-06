@@ -10,8 +10,8 @@ export const inscribeClear = new AliasItem(
     [
         new ExecuteScriptAction(
             function () {
-                client.skillManager.tarot.inscribing.reset();
-                client.skillManager.tarot.inscribing.stop();
+                client.skillManager.skills.class.tarot.inscribing.reset();
+                client.skillManager.skills.class.tarot.inscribing.stop();
             }
         )
     ]

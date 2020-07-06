@@ -31,9 +31,9 @@ export const clearedQueue = new TriggerItem(
                     return;
                 }
 
-                // client.queuemanager.clearQueue(queueType);
+                // client.queueManager.clearQueue(queueType);
 
-                // client.queuemanager.emit(queueType, 'clear', { queue: queueType, index: 0, command: '' });
+                // client.queueManager.emit(queueType, 'clear', { queue: queueType, index: 0, command: '' });
             }
         )
     ]

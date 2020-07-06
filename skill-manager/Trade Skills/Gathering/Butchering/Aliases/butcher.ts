@@ -13,7 +13,7 @@ export const butcher = new AliasItem(
     [
         new ExecuteScriptAction(
             function () {
-                client.skillManager.gathering.butchering.start();
+                client.skillManager.skills.trade.gathering.butchering.start();
             }
         )
     ]

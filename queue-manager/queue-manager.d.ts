@@ -25,36 +25,6 @@ interface QueueManagerQueueSubscription<TQueueType extends QueueManagerQueueType
     subscriber: QueueManagerQueueSubscriber<TQueueType>;
 }
 
-interface QueueManagerFree {
-    // expected: QueueManagerQueuedCommand;
-    queue: QueueManagerQueuedCommand[];
-}
-
-interface QueueManagerBalance {
-    expected?: string;
-    queue: QueueManagerQueuedCommand[];
-}
-
-interface QueueManagerEquilibrium {
-    expected?: string;
-    queue: QueueManagerQueuedCommand[];
-}
-
-interface QueueManagerEquilibriumBalance {
-    expected?: string;
-    queue: QueueManagerQueuedCommand[];
-}
-
-interface QueueManagerClass {
-    expected?: string;
-    queue: QueueManagerQueuedCommand[];
-}
-
-interface QueueManagerShip {
-    expected?: string;
-    queue: QueueManagerQueuedCommand[];
-}
-
 interface QueueManagerSettings {
     enabled: boolean;
     gag: boolean;
@@ -62,15 +32,13 @@ interface QueueManagerSettings {
 
 interface QueueManager {
     settings: QueueManagerSettings;
-    free: QueueManagerFree;
-    balance: QueueManagerBalance;
-    equilibrium: QueueManagerEquilibrium;
-    equilibriumBalance: QueueManagerEquilibriumBalance;
-    class: QueueManagerClass;
-    ship: QueueManagerShip;
-    queuesToSend: Set<QueueManagerQueueType>;
-    subscriptions: QueueManagerQueueSubscription<QueueManagerQueueType>[];
-    echo(message: string): void;
+    freeQueue: QueueManagerQueuedCommand[];
+    balanceQueue: QueueManagerQueuedCommand[];
+    equilibriumQueue: QueueManagerQueuedCommand[];
+    equilibriumBalanceQueue: QueueManagerQueuedCommand[];
+    classQueue: QueueManagerQueuedCommand[];
+    shipQueue: QueueManagerQueuedCommand[];
+    echo(text: string): void;
     error(text: string): void;
     subscribe<TQueueType extends QueueManagerQueueType>(queues: TQueueType[], subscriber: QueueManagerQueueSubscriber<TQueueType>): QueueManagerQueueSubscription<TQueueType>;
     unsubscribe(subscription: QueueManagerQueueSubscription<QueueManagerQueueType>): void;
@@ -86,6 +54,7 @@ interface QueueManager {
     removeCommand(queueType: QueueManagerQueueType, index: number): void;
     clearQueue(queueType: QueueManagerQueueType): void;
     sendQueue(queueType: QueueManagerQueueType): void;
+    onRun(args: TriggerFunctionArgs & { 1: string; 2: string }): void;
 }
 
 export type QueueManagerClient = typeof client & {

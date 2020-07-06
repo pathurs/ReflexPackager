@@ -31,9 +31,9 @@ export const prepended = new TriggerItem(
                     return;
                 }
 
-                // client.queuemanager.prependCommand(command, { [queueType]: true });
+                // client.queueManager.prependCommand(command, { [queueType]: true });
 
-                // client.queuemanager.emit(queueType, 'prepend', { queue: queueType, index: 0, command });
+                // client.queueManager.emit(queueType, 'prepend', { queue: queueType, index: 0, command });
             }
         )
     ]

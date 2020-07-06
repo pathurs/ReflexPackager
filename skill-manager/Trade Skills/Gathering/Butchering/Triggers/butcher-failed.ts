@@ -10,7 +10,7 @@ export const butcherFailed = new TriggerItem(
     [
         new ExecuteScriptAction(
             function () {
-                if (client.skillManager.gathering.butchering.active) {
+                if (client.skillManager.skills.trade.gathering.butchering.running) {
                     gag_current_line();
                 }
             }
