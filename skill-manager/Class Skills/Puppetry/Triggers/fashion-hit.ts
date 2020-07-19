@@ -1,10 +1,10 @@
-import { ExecuteScriptAction, MultiTriggerItem } from '../../../../source';
+import { ExecuteScriptAction, TriggerItem, TriggerType } from '../../../../source';
 import { SystemServiceClient } from 'system-service/system-service';
 import { SkillManagerClient } from 'skill-manager/skill-manager';
 
 declare const client: SkillManagerClient & SystemServiceClient;
 
-export const CHANGEME = new MultiTriggerItem(
+export const CHANGEME = new TriggerItem(
     'CHANGEME',
     [
         /^While you hastily examine ([A-Z][a-z]+), you mould the fledgling puppet a bit, further defining the arms and legs\.$/, // 0-9
@@ -14,6 +14,7 @@ export const CHANGEME = new MultiTriggerItem(
         /^With one hand pointed towards ([A-Z][a-z]+), you rub your finger over the heart of your puppet\.$/, // 40-49
         /^You laugh darkly and squint at ([A-Z][a-z]+) as you add some final touches to your puppet of (?:him|her)\.$/ // 50-102
     ],
+    TriggerType.MultiTrigger,
     [
         new ExecuteScriptAction(
             function (args: TriggerFunctionArgs & { 1: string }) {

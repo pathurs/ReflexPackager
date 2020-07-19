@@ -1,96 +1,173 @@
 import { FunctionItem } from '../source';
-import { SystemServiceClient } from './system-service';
-import { DisplayServiceClient } from 'display-service/display-service';
+import { SystemServiceClient, SystemService } from './system-service';
+import { DisplayServiceClient, DisplayService } from 'display-service/display-service';
 
 declare const client: SystemServiceClient & DisplayServiceClient;
 
 export const onLoad = new FunctionItem(
     'onLoad',
     function () {
-        let timeoutId: number | undefined;
-        let callbacks: { [id: string]: () => void } = {};
+        class _BasePackage<TSettings extends object = object> {
+            public readonly settings: TSettings;
 
-        client.systemService = {
-            enabled: true,
-            lastSavedAt: 0,
-            echo(text) {
-                client.displayService.echo(`%lightgray%[%deepskyblue%System Service%end%]:%end% ${text}`);
-            },
-            error(text) {
-                client.systemService.echo(`%red%${text}%end%`);
-            },
-            save(newCallbackId?: string, newCallback?: () => void) {
-                if (newCallbackId && newCallback) {
-                    callbacks[newCallbackId] = newCallback;
-                }
+            protected readonly displayService: DisplayService = client.displayService;
+            protected readonly systemService: SystemService = client.systemService;
 
-                if (timeoutId) {
+            public constructor (
+                public readonly name: string,
+                public readonly settingsId: string,
+                settings: TSettings
+            ) {
+                this.settings = new Proxy(
+                    this.systemService.defaultsDeep(get_variable(this.settingsId), settings),
+                    {
+                        set: <T extends object>(target: T, property: keyof T, value: T[keyof T]) => {
+                            target[property] = value;
+
+                            this.save();
+
+                            return true;
+                        }
+                    }
+                );
+            }
+
+            public echo(text: string): void {
+                this.displayService.echo(`%lightgray%[%deepskyblue%${this.name}%end%]:%end% ${text}`);
+            }
+
+            public error(text: string): void {
+                this.systemService.echo(`%red%${text}%end%`);
+            }
+
+            public save(): void {
+                this.systemService.save(this.name, () => {
+                    set_variable(this.settingsId, this.settings);
+
+                    this.echo('Settings saved.');
+                });
+            }
+        }
+
+        class _SystemService implements SystemService {
+            private timeoutId: number | undefined;
+            private callbacks: { [id: string]: () => void } = {};
+
+            public readonly name: string = 'System Service';
+            public readonly settingsId: string = 'system-service:settings';
+            public readonly settings: object;
+            public readonly BasePackage = <any>_BasePackage;
+            public lastSavedAt = 0;
+
+            public constructor (
+                settings: object,
+                private readonly displayService: DisplayService
+            ) {
+                this.settings = new Proxy(
+                    this.defaultsDeep(get_variable(this.settingsId), settings),
+                    {
+                        set: <T extends object>(target: T, property: keyof T, value: T[keyof T]) => {
+                            target[property] = value;
+
+                            this.save(this.name, () => {
+                                set_variable(this.settingsId, this.settings);
+
+                                this.echo('Settings saved.');
+                            });
+
+                            return true;
+                        }
+                    }
+                );
+
+                this.echo('Loaded.');
+            }
+
+            public echo(text: string) {
+                this.displayService.echo(`%lightgray%[%deepskyblue%${this.name}%end%]:%end% ${text}`);
+            }
+
+            public error(text: string) {
+                this.echo(`%red%${text}%end%`);
+            }
+
+            public save(newCallbackId: string, newCallback: () => void) {
+                this.callbacks[newCallbackId] = newCallback;
+
+                if (this.timeoutId) {
                     return;
                 }
 
                 // For example: 30s - 60s = -30s so it will then be saved instantly.
-                const timeoutMilliseconds = Math.max(30000 - (Date.now() - client.systemService.lastSavedAt), 0);
+                const timeoutMilliseconds = Math.max(30000 - (Date.now() - this.lastSavedAt), 0);
 
-                timeoutId = window.setTimeout(() => {
-                    for (let id in callbacks) {
-                        callbacks[id]();
+                this.timeoutId = window.setTimeout(() => {
+                    for (let id in this.callbacks) {
+                        this.callbacks[id]();
                     }
 
-                    callbacks = {};
+                    this.callbacks = {};
 
                     gmcp_save_system();
 
-                    client.systemService.lastSavedAt = Date.now();
+                    this.lastSavedAt = Date.now();
 
-                    client.systemService.echo('Settings saved.');
+                    this.echo('Settings saved.');
 
-                    timeoutId = undefined;
+                    this.timeoutId = undefined;
                 }, timeoutMilliseconds);
-            },
-            mergeDeep<T extends object>(target: T, ...sources: T[]): T {
+            }
+
+            public mergeDeep<T extends object>(target: T, ...sources: T[]): T {
                 if (!sources.length) {
                     return target
                 };
 
                 const source = sources.shift();
 
-                if (isObject(target) && isObject(source)) {
+                if (this.isObject(target) && this.isObject(source)) {
                     for (const key in source) {
-                        if (isObject(source[<keyof object>key])) {
+                        if (this.isObject(source[<keyof object>key])) {
                             if (!target[<keyof object>key]) {
                                 Object.assign(target, { [key]: {} });
                             }
 
-                            client.systemService.mergeDeep(target[<keyof object>key], source[<keyof object>key]);
+                            this.mergeDeep(target[<keyof object>key], source[<keyof object>key]);
                         } else {
                             Object.assign(target, { [key]: source[<keyof object>key] });
                         }
                     }
                 }
 
-                return client.systemService.mergeDeep(target, ...sources);
-            },
-            defaultsDeep<T extends object>(target: T | undefined, ...sources: T[]): T {
-                return client.systemService.mergeDeep<T>(<T>{}, ...[...sources, target || <T>{}]);
-            },
-            sendCommand(command, echo = false) {
+                return this.mergeDeep(target, ...sources);
+            }
+
+            public defaultsDeep<T extends object>(target: T | undefined, ...sources: T[]): T {
+                return this.mergeDeep<T>(<T>{}, ...[...sources, target || <T>{}]);
+            }
+
+            public sendCommand(command: string, echo?: boolean): void {
                 ws_send(command + '\r\n');
 
                 if (echo) {
                     display_notice(command);
                 }
-            },
-            sendCommands(commands, echo = false) {
+            }
+
+            public sendCommands(commands: string[], echo?: boolean): void {
                 commands.forEach(command => {
-                    client.systemService.sendCommand(command, echo);
+                    this.sendCommand(command, echo);
                 });
             }
-        };
 
-        function isObject(object: unknown): object is object {
-            return object !== undefined && typeof object === 'object' && !Array.isArray(object);
+            public isObject(object: unknown): object is object {
+                return object !== undefined && typeof object === 'object' && !Array.isArray(object);
+            }
         }
 
-        client.systemService.echo('Loaded.');
+        client.systemService = new _SystemService(
+            {},
+            client.displayService
+        );
     }
 );

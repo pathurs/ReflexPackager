@@ -1,9 +1,9 @@
-import { ExecuteScriptAction, MultiTriggerItem } from '../../../../source';
+import { ExecuteScriptAction, TriggerItem, TriggerType } from '../../../../source';
 import { SkillManagerClient } from 'skill-manager/skill-manager';
 
 declare const client: SkillManagerClient;
 
-export const cantHarvest = new MultiTriggerItem(
+export const cantHarvest = new TriggerItem(
     'Can\'t Harvest',
     [
         /^You carefully dig through the soft soil of the riverbed but are unable to find any suitable clay\.$/,
@@ -14,6 +14,7 @@ export const cantHarvest = new MultiTriggerItem(
         /^What would you like to gather\?/,
         /^This location will not yield \w+\.$/
     ],
+    TriggerType.MultiTrigger,
     [
         new ExecuteScriptAction(
             function () {

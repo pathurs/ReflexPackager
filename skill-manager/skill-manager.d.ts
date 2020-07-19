@@ -111,6 +111,18 @@ interface SkillManagerTarotSettings {
 
 //#endregion
 
+//#region Tekura
+
+interface SkillManagerTekura extends SkillManagerClassSkill {
+
+}
+
+interface SkillManagerTekuraSettings {
+    enabled: boolean;
+}
+
+//#endregion
+
 //#region Harvesting
 
 interface SkillManagerHarvesting extends SkillManagerTradeSkill {
@@ -251,6 +263,7 @@ interface SkillManagerClassSkillSettings {
     pranks: SkillManagerPranksSettings;
     puppetry: SkillManagerPuppetrySettings;
     tarot: SkillManagerTarotSettings;
+    tekura: SkillManagerTekuraSettings;
 }
 
 interface SkillManagerGeneralSkillSettings {
@@ -276,8 +289,9 @@ interface SkillManagerSettings {
 
 interface SkillManagerClassSkills {
     pranks: SkillManagerPranks;
-    tarot: SkillManagerTarot;
     puppetry: SkillManagerPuppetry;
+    tarot: SkillManagerTarot;
+    tekura: SkillManagerTekura;
 }
 
 interface SkillManagerGeneralSkills {
@@ -307,8 +321,8 @@ interface SkillManager {
     onAbility<Skill extends SkillManagerSkillName>(
         skill: Skill,
         ability: string,
-        command: string,
-        event: string,
+        command: string | undefined,
+        eventOrEvents: string | string[],
         args: TriggerFunctionArgs | MultiLineTriggerFunctionArgs
     ): void;
 }

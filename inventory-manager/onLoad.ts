@@ -135,24 +135,20 @@ export const onLoad = new FunctionItem(
                         case 'left':
                             client.inventoryManager.settings.wielding.expectedLeftId = undefined;
                             client.inventoryManager.expectdUnwield = 'left';
-
-                            client.systemService.sendCommand(`unwield left`);
                             break;
 
                         case 'right':
                             client.inventoryManager.settings.wielding.expectedRightId = undefined;
                             client.inventoryManager.expectdUnwield = 'right';
-
-                            client.systemService.sendCommand(`unwield right`);
                             break;
 
                         default:
                             client.inventoryManager.expectdUnwield = 'any';
-
-                            client.systemService.sendCommand(`unwield ${itemOrHand}`);
                             break;
                     }
                 }
+
+                client.systemService.sendCommand(`unwield ${itemOrHand}`);
 
                 client.inventoryManager.save();
             }
@@ -259,9 +255,9 @@ export const onLoad = new FunctionItem(
             }
         });
 
-        client.inventoryManager.settings.containers.tracked.forEach(container => {
-            send_GMCP('Char.Items.Contents', Number(container.id));
-        });
+        // client.inventoryManager.settings.containers.tracked.forEach(container => {
+        //     send_GMCP('Char.Items.Contents', Number(container.id));
+        // });
 
         client.inventoryManager.echo('Loaded.');
     }

@@ -138,6 +138,13 @@ type GMCPClientMethod =
     | GMCPClientMethodIRE
     ;
 
+// Char.Name
+
+interface GMCPCharName {
+    name: string;
+    fullname: string;
+}
+
 // Char.Vitals
 
 interface GMCPCharVitals {
@@ -154,6 +161,41 @@ interface GMCPCharVitals {
     nl: string;
     string: string;
     charstats: string[];
+}
+
+// Char.StatusVars
+
+interface GMCPCharStatusVars {
+
+}
+
+// Char.Status
+
+interface GMCPCharStatus {
+    age?: string;
+    bank?: string;
+    boundcredits?: string;
+    boundmayancrowns?: string;
+    city?: string;
+    class?: string;
+    explorerrank?: string;
+    fullname?: string;
+    gender?: string;
+    gold?: string;
+    house?: string;
+    lessons?: string;
+    level?: string;
+    mayancrowns?: string;
+    name?: string;
+    order?: string;
+    race?: string;
+    specialisation?: string;
+    target?: string;
+    unboundcredits?: string;
+    unread_msgs?: string;
+    unread_news?: string;
+    xp?: string;
+    xprank?: string;
 }
 
 // Char.Skills
@@ -364,10 +406,10 @@ interface GMCPServerMethodToArgsMap {
     'Core.Ping': unknown;
     'Core.Goodbye': unknown;
 
-    'Char.Name': unknown;
+    'Char.Name': GMCPCharName;
     'Char.Vitals': GMCPCharVitals;
-    'Char.StatusVars': unknown;
-    'Char.Status': unknown;
+    'Char.StatusVars': GMCPCharStatusVars;
+    'Char.Status': GMCPCharStatus;
     'Char.Afflictions.List': GMCPCharAfflictionsList;
     'Char.Afflictions.Add': GMCPCharAfflictionsAdd;
     'Char.Afflictions.Remove': GMCPCharAfflictionsRemove;
@@ -464,10 +506,22 @@ interface ScriptsArgs {
 
 // Variables
 
-interface NexusBlockParsedLine {
-    chunks: string[];
+interface NexusLineChunk {
+    _txt?: string | null;
+    _fg?: string | null;
+    _bg?: string | null;
     text(): string;
-    colorize(start: number, length: number, fgcolor: string, bgcolor?: string): void;
+    type(): 'text' | 'color' | 'link';
+}
+
+interface NexusBlockParsedLine {
+    chunks: NexusLineChunk[];
+    text(): string;
+    colorize(start: number, end: number, fgcolor: string, bgcolor?: string): void;
+}
+
+interface NexusEmptyLine {
+    line: string;
 }
 
 interface NexusBlockLine {
@@ -479,7 +533,7 @@ interface NexusBlockLine {
 interface NexusBlockParsedPrompt {
     chunks: string[];
     text(): string;
-    colorize(start: number, length: number, fgcolor: string, bgcolor?: string): void;
+    colorize(start: number, end: number, fgcolor: string, bgcolor?: string): void;
 }
 
 interface NexusBlockPrompt {
@@ -487,7 +541,7 @@ interface NexusBlockPrompt {
     parsed_prompt: NexusBlockParsedPrompt;
 }
 
-type NexusLine = NexusBlockLine | NexusBlockPrompt;
+type NexusLine = NexusEmptyLine | NexusBlockLine | NexusBlockPrompt;
 type NexusBlock = NexusLine[];
 
 declare const current_line: NexusLine;
@@ -672,6 +726,12 @@ declare function buttons_set_highlight(id: string, on_off: boolean): void;
 declare function buttons_set_default(id: string): void;
 
 // Misc.
+
+declare function linechunk_text(text: string): NexusLineChunk;
+
+declare function linechunk_color(fg: string | undefined | null, bg: string | undefined | null): NexusLineChunk;
+
+declare function linechunk_mxp_send(color: string, commands: string[], text: string, hint: string, isprompt: boolean): NexusLineChunk;
 
 /**
  * Convert a string number to a value.

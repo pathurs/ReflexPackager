@@ -1,36 +1,63 @@
 import { FunctionItem } from '../source';
 import { DisplayServiceClient } from 'display-service/display-service';
 import { SystemServiceClient } from 'system-service/system-service';
-import { GMCPServiceClient, GMCPSubscription, GMCPSubscriber, GMCPServiceRoom } from './gmcp-service';
+import { GMCPServiceClient, GMCPSubscription, GMCPSubscriber, GMCPServiceRoom, GMCPService, GMCPServiceRift, GMCPLatest, GMCPServiceItems } from './gmcp-service';
 
 declare const client: GMCPServiceClient & DisplayServiceClient & SystemServiceClient;
 
 export const onLoad = new FunctionItem(
     'onLoad',
     function () {
+        class _GMCPService extends client.systemService.BasePackage implements GMCPService {
+            public latest: GMCPLatest = {};
+            public subscriptions: GMCPSubscription<GMCPServerMethod>[] = [];
 
-        client.gmcpService = {
-            latest: {},
-            subscriptions: [],
-            vitals: <GMCPCharVitals>{},
-            previousVitals: <GMCPCharVitals>{},
-            room: <GMCPServiceRoom>{},
-            previousRoom: <GMCPServiceRoom>{},
-            items: {
+            public vitals: GMCPCharVitals = <GMCPCharVitals>{};
+            public previousVitals: GMCPCharVitals = <GMCPCharVitals>{};
+
+            public status: GMCPCharStatus = {};
+            public previousStatus: GMCPCharStatus = {};
+
+            public room: GMCPServiceRoom = <GMCPServiceRoom>{};
+            public previousRoom: GMCPServiceRoom = <GMCPServiceRoom>{};
+
+            public items: GMCPServiceItems = {
                 inv: [],
                 room: []
-            },
-            previousItems: {
+            };
+
+            public previousItems: GMCPServiceItems = {
                 inv: [],
                 room: []
-            },
-            defences: [],
-            previousDefences: [],
-            afflictions: [],
-            previousAfflictions: [],
-            rift: {},
-            previousRift: {},
-            subscribe<TMethod extends GMCPServerMethod>(methods: TMethod[], subscriber: GMCPSubscriber<TMethod>) {
+            };
+
+            public defences: GMCPCharDefencesDefence[] = [];
+            public previousDefences: GMCPCharDefencesDefence[] = [];
+
+            public afflictions: GMCPCharAfflictionsAffliction[] = [];
+            public previousAfflictions: GMCPCharAfflictionsAffliction[] = [];
+
+            public rift: GMCPServiceRift = {};
+            public previousRift: GMCPServiceRift = {};
+
+            public constructor () {
+                super(
+                    'GMCP Service',
+                    'gmcp-service:settings',
+                    {}
+                );
+
+                send_GMCP('Char.Items.Inv');
+                send_GMCP('Char.Items.Room');
+                send_GMCP('IRE.Rift.Request');
+
+                this.systemService.sendCommand('quicklook');
+                this.systemService.sendCommand('score');
+
+                this.echo('Loaded.');
+            }
+
+            public subscribe<TMethod extends GMCPServerMethod>(methods: TMethod[], subscriber: GMCPSubscriber<TMethod>) {
                 const subscription = {
                     methods,
                     subscriber
@@ -39,13 +66,15 @@ export const onLoad = new FunctionItem(
                 client.gmcpService.subscriptions.push(<GMCPSubscription<GMCPServerMethod>><unknown>subscription);
 
                 return subscription;
-            },
-            unsubscribe(subscription) {
+            }
+
+            public unsubscribe(subscription: GMCPSubscription<GMCPServerMethod>) {
                 const index = client.gmcpService.subscriptions.findIndex(value => value === subscription);
 
                 client.gmcpService.subscriptions.splice(index, 1);
-            },
-            once<TMethod extends GMCPServerMethod>(methods: TMethod[], subscriber: GMCPSubscriber<TMethod>) {
+            }
+
+            public once<TMethod extends GMCPServerMethod>(methods: TMethod[], subscriber: GMCPSubscriber<TMethod>) {
                 const subscription = client.gmcpService.subscribe(methods, function (args) {
                     subscriber(args);
 
@@ -53,21 +82,9 @@ export const onLoad = new FunctionItem(
                 });
 
                 return subscription;
-            },
-            echo(text) {
-                client.displayService.echo(`%lightgray%[%deepskyblue%GMCP Service%end%]:%end% ${text}`);
-            },
-            error(text) {
-                client.gmcpService.echo(`%red%${text}%end%`);
             }
         };
 
-        send_GMCP('Char.Items.Inv');
-        send_GMCP('Char.Items.Room');
-        send_GMCP('IRE.Rift.Request');
-
-        client.systemService.sendCommand('quicklook');
-
-        client.gmcpService.echo('Loaded.');
+        client.gmcpService = new _GMCPService();
     }
 );

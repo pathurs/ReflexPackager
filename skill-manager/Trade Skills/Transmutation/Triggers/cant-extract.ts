@@ -1,9 +1,9 @@
-import { ExecuteScriptAction, MultiTriggerItem } from '../../../../source';
+import { ExecuteScriptAction, TriggerItem, TriggerType } from '../../../../source';
 import { SkillManagerClient } from 'skill-manager/skill-manager';
 
 declare const client: SkillManagerClient;
 
-export const cantExtract = new MultiTriggerItem(
+export const cantExtract = new TriggerItem(
     'Can\'t Extract',
     [
         /^You carefully search the cracks and crevices of the surrounding rock, but find nothing\.$/,
@@ -13,6 +13,7 @@ export const cantExtract = new MultiTriggerItem(
         /^You have already extracted minerals from this location\.$/,
         /^The environment here will not yield any minerals\.$/
     ],
+    TriggerType.MultiTrigger,
     [
         new ExecuteScriptAction(
             function () {

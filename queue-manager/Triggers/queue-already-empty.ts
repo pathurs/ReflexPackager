@@ -1,17 +1,18 @@
 
 
-import { ExecuteScriptAction, MultiTriggerItem } from '../../source';
+import { ExecuteScriptAction, TriggerItem, TriggerType } from '../../source';
 import { QueueManagerClient } from 'queue-manager/queue-manager';
 
 declare const client: QueueManagerClient;
 
-export const queueAlreadyEmpty = new MultiTriggerItem(
+export const queueAlreadyEmpty = new TriggerItem(
     'queueAlreadyEmpty',
     [
         /^Your queues are already empty\.$/,
         /^You have no commands queued for equilibrium\.$/,
         /^Your (?:eqbal|class balance|ship) queue is already empty\.$/
     ],
+    TriggerType.MultiTrigger,
     [
         new ExecuteScriptAction(
             function () {

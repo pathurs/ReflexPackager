@@ -1,37 +1,28 @@
 import { FunctionItem } from '../source';
-import { DisplayServiceClient, DisplayService } from 'display-service/display-service';
-import { SystemServiceClient, SystemService } from 'system-service/system-service';
+import { DisplayServiceClient } from 'display-service/display-service';
+import { SystemServiceClient } from 'system-service/system-service';
 import { GMCPServiceClient } from 'gmcp-service/gmcp-service';
-import { CombatManagerClient, CombatManager } from './combat-manager';
+import { CombatManagerClient, CombatManager, CombatManagerSettings } from './combat-manager';
 
 declare const client: CombatManagerClient & DisplayServiceClient & SystemServiceClient & GMCPServiceClient;
 
 export const onLoad = new FunctionItem(
     'onLoad',
     function () {
-        class CombatManagerClass implements CombatManager {
-            public constructor (
-                private displayService: DisplayService,
-                private systemService: SystemService,
-            ) {
+        class _CombatManagerClass extends client.systemService.BasePackage<CombatManagerSettings> implements CombatManager {
+            public constructor () {
+                super(
+                    'Combat Manager',
+                    'combat-manager:settings',
+                    {
+                        enabled: true
+                    }
+                );
+
                 this.echo('Loaded.');
-            }
-
-            public echo(text: string) {
-                this.displayService.echo(`%lightgray%[%deepskyblue%Combat Manager%end%]:%end% ${text}`);
-            }
-
-            public error(text: string) {
-                this.echo(`%red%${text}%end%`);
-            }
-
-            public save() {
-                this.systemService.save('defence-manager', () => {
-                    this.echo('Settings saved.');
-                });
             }
         }
 
-        client.combatManager = new CombatManagerClass(client.displayService, client.systemService);
+        client.combatManager = new _CombatManagerClass();
     }
 );

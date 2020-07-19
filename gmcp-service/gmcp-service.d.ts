@@ -30,6 +30,8 @@ interface GMCPService {
     subscriptions: GMCPSubscription<GMCPServerMethod>[];
     vitals: GMCPCharVitals;
     previousVitals: GMCPCharVitals;
+    status: GMCPCharStatus;
+    previousStatus: GMCPCharStatus;
     room: GMCPServiceRoom;
     previousRoom: GMCPServiceRoom;
     // skills: GMCPServiceSkills;

@@ -12,7 +12,7 @@ export const inscribed = new TriggerItem(
         new ExecuteScriptAction(
             function (args: TriggerFunctionArgs & { 1: string }) {
                 if (client.skillManager.skills.class.tarot.active) {
-                    client.skillManager.onAbility('tarot', 'CHANGEME', 'CHANGEME', args);
+                    client.skillManager.onAbility('tarot', 'CHANGEME', 'CHANGEME', 'CHANGEME', args);
                 }
 
                 let card = <keyof SkillManagerTarotInscribingQueue>client.skillManager.skills.class.tarot.descriptionDictionary[args[1]];

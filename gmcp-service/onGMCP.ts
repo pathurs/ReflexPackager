@@ -15,6 +15,13 @@ export const onGMCP = new FunctionItem(
             client.gmcpService.vitals = args.gmcp_args;
         }
 
+        // Status
+
+        if (args.gmcp_method === 'Char.Status') {
+            client.gmcpService.previousStatus = deepCopy(client.gmcpService.status);
+            client.gmcpService.status = args.gmcp_args;
+        }
+
         // Room
 
         if (args.gmcp_method === 'Room.Info') {

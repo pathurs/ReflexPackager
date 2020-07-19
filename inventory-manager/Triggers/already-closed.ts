@@ -27,14 +27,20 @@ export const alreadyClosed = new TriggerItem(
                     return;
                 }
 
+                let initial = JSON.stringify(trackedContainers);
+
                 trackedContainers.forEach(trackedContainer => {
                     trackedContainer.closeable = true;
                     trackedContainer.possiblyOpen = false;
                 });
 
+                let changed = JSON.stringify(trackedContainers);
+
                 client.inventoryManager.expectedClose = undefined;
 
-                client.inventoryManager.save();
+                if (initial !== changed) {
+                    client.inventoryManager.save();
+                }
             }
         )
     ]

@@ -14,8 +14,8 @@ export abstract class Item<T extends ItemType> implements ItemDefinition<T> {
 
     public constructor (
         public readonly type: T,
-        public readonly items: Items | undefined = undefined,
-        public readonly actions: Actions | undefined = undefined,
+        public items: Items | undefined = undefined,
+        public actions: Actions | undefined = undefined,
         public name: string = '',
         public enabled: boolean = true
     ) {

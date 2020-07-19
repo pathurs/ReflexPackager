@@ -1,10 +1,10 @@
-import { ExecuteScriptAction, MultiTriggerItem } from '../../../../source';
+import { ExecuteScriptAction, TriggerItem, TriggerType } from '../../../../source';
 import { SystemServiceClient } from 'system-service/system-service';
 import { SkillManagerClient } from 'skill-manager/skill-manager';
 
 declare const client: SkillManagerClient & SystemServiceClient;
 
-export const gathered = new MultiTriggerItem(
+export const gathered = new TriggerItem(
     'Gathered',
     [
         /^You reach out and carefully harvest (a group of \d+ |an |a |some |\d+ )?([\w\W]+)\.$/,
@@ -13,6 +13,7 @@ export const gathered = new MultiTriggerItem(
         /^You scour the farmland and find a rudimentary nest, from which you gather (a group of \d+ |an |a |some |\d+ )?([\w\W]+)\.$/,
         /^Using your acute sight, you examine the surrounding sea\. You spot a sparkling patch of pure saltwater, free of impurities, and catch it in a tourmaline vial\.$/
     ],
+    TriggerType.MultiTrigger,
     [
         new ExecuteScriptAction(
             function (args: TriggerFunctionArgs & { 1?: string; 2: string }) {

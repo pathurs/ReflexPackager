@@ -30,6 +30,9 @@ export const onLoad = new FunctionItem(
                     },
                     tarot: {
                         enabled: true
+                    },
+                    tekura: {
+                        enabled: true
                     }
                 },
                 general: {
@@ -241,6 +244,12 @@ export const onLoad = new FunctionItem(
                                 client.queueManager.appendCommand(`inscribe blank with ${amount} ${card}`, 'equilibriumBalance');
                             }
                         }
+                    },
+                    tekura: {
+                        active: true,
+                        classes: [
+                            'Monk'
+                        ]
                     }
                 },
                 general: {
@@ -892,20 +901,23 @@ export const onLoad = new FunctionItem(
                     client.skillManager.echo('Settings saved.');
                 });
             },
-            onAbility(skill, ability, command, event, args) {
+            onAbility(skill, ability, command, eventOrEvents, args) {
                 if (Array.isArray(args)) {
                     colorize_current_line(0, args[0].length, 'lightsalmon');
                 }
                 else {
                     for (const line of args.lines) {
-                        if ('line' in line) {
+                        if ('parsed_line' in line) {
                             line.parsed_line.colorize(0, line.line.length, 'lightsalmon');
                         }
                     }
                 }
 
-                client.skillManager.echo(`${skill}:${ability}:${command}:${event}`);
-                // client.displayService.echo(`%lightsalmon%${args[0]}%end%`);
+                const events = Array.isArray(eventOrEvents) ? eventOrEvents : [eventOrEvents];
+
+                events.forEach(event => {
+                    client.skillManager.echo(`${skill}:${ability}:${command}:${event}`);
+                });
             }
         };
 

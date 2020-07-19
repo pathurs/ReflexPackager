@@ -5,10 +5,19 @@
             "type": "function",
             "items": [],
             "actions": [],
+            "name": "onBlock",
+            "enabled": true,
+            "id": 6,
+            "code": "current_block.forEach(line => {\r\n        if ('parsed_line' in line) {\r\n            for (let i = 0; i < line.parsed_line.chunks.length; i++) {\r\n                const currentChunk = line.parsed_line.chunks[i];\r\n                switch (currentChunk.type()) {\r\n                    case 'text':\r\n                        {\r\n                            const regExp = /([A-Z][a-z]+)/g;\r\n                            let text = currentChunk.text();\r\n                            let match = null;\r\n                            while (match = regExp.exec(text)) {\r\n                                const person = client.peopleManager.settings.people[match[1]];\r\n                                if (person && person.city) {\r\n                                    const chunks = [];\r\n                                    const start = regExp.lastIndex - person.name.length;\r\n                                    const end = regExp.lastIndex;\r\n                                    const colour = client.peopleManager.getColour(person.name);\r\n                                    chunks.push(linechunk_text(text.slice(0, start)));\r\n                                    chunks.push(linechunk_mxp_send(colour, [`HONOURS ${person.name}`], person.name, `${person.name} - ${person.city}`, false));\r\n                                    chunks.push(linechunk_text(text.slice(end)));\r\n                                    line.parsed_line.chunks.splice(i, 1, ...chunks);\r\n                                    i += chunks.length - 2; // Add length of chunks so we move to the new text chunk we made (the i++ in the for() is added too)\r\n                                    break;\r\n                                }\r\n                            }\r\n                        }\r\n                        break;\r\n                }\r\n            }\r\n        }\r\n    });\r\n"
+        },
+        {
+            "type": "function",
+            "items": [],
+            "actions": [],
             "name": "onLoad",
             "enabled": true,
             "id": 2,
-            "code": "client.peopleManager = {\r\n        settings: client.systemService.defaultsDeep(get_variable('people-manager:settings'), {\r\n            enabled: true\r\n        }),\r\n        echo(text) {\r\n            client.displayService.echo(`%lightgray%[%deepskyblue%People Manager%end%]:%end% ${text}`);\r\n        },\r\n        error(text) {\r\n            client.peopleManager.echo(`%red%${text}%end%`);\r\n        },\r\n        save() {\r\n            client.systemService.save('people-manager', () => {\r\n                set_variable('people-manager:settings', client.peopleManager.settings);\r\n                client.peopleManager.echo('Settings saved.');\r\n            });\r\n        }\r\n    };\r\n    client.peopleManager.echo('Loaded.');\r\n"
+            "code": "class _PeopleManager extends client.systemService.BasePackage {\r\n        constructor() {\r\n            super('People Manager', 'people-manager:settings', {\r\n                enabled: true,\r\n                people: {},\r\n                name: '',\r\n                colourDictionary: {\r\n                    'Ashtan': '#800080',\r\n                    'Cyrene': '#008080',\r\n                    'Eleusis': '#00ff00',\r\n                    'Hashan': '#808000',\r\n                    'Mhaldor': '#ff0000',\r\n                    'Targossas': '#ffffff',\r\n                    'Cityless': '#c0c0c0'\r\n                }\r\n            });\r\n            this.QWCColourToCityDictionary = {\r\n                '#800080': 'Ashtan',\r\n                '#008080': 'Cyrene',\r\n                '#00ff00': 'Eleusis',\r\n                '#808000': 'Hashan',\r\n                '#ff0000': 'Mhaldor',\r\n                '#ffffff': 'Targossas',\r\n                '#c0c0c0': 'Cityless'\r\n            };\r\n            this.echo('Loaded.');\r\n        }\r\n        get me() {\r\n            return this.settings.people[this.name];\r\n        }\r\n        updatePerson(name, updates) {\r\n            const person = this.getPerson(name) || { name };\r\n            this.systemService.mergeDeep(person, updates);\r\n            this.settings.people[name] = person;\r\n            this.save();\r\n            return person;\r\n        }\r\n        getPerson(name) {\r\n            return client.peopleManager.settings.people[name];\r\n        }\r\n        getColour(name) {\r\n            const person = this.getPerson(name);\r\n            if (person) {\r\n                if (person.city) {\r\n                    return this.settings.colourDictionary[person.city];\r\n                }\r\n            }\r\n            return '';\r\n        }\r\n    }\r\n    client.peopleManager = new _PeopleManager();\r\n"
         },
         {
             "type": "group",
@@ -19,22 +28,39 @@
                     "actions": [
                         {
                             "action": "script",
-                            "script": "\nvar regExpArray = [\n    /^Citizen                                                   Rank CT  Class$/,\n    /^-------                                                   ---- --  -----$/\n];\n\nvar firstIndex = current_block.indexOf(current_line);\nvar lastIndex = firstIndex + 2 - 1;\n\n// Override args\nvar args = {\n    matches: [],\n    block: current_block,\n    lines: []\n};\n\nvar prompt = current_block[current_block.length - 1];\n\nif (prompt.parsed_prompt) {\n    args.prompt = prompt;\n}\n\nfor (let i = firstIndex; i <= lastIndex; i++) {\n    if (!current_block[i] || !current_block[i].parsed_line) {\n        break;\n    }\n\n    var currentRegExp = regExpArray[i];\n    var currentText = current_block[i].parsed_line.text();\n\n    if (!currentRegExp.test(currentText)) {\n        break;\n    }\n\n    args.matches.push(currentText.match(currentRegExp));\n    args.lines.push(current_block[i]);\n\n    if (i === lastIndex) {\n        console.log('City Who');\r\n        console.log(args);\r\n        const nameRegExp = /\\u001b\\[38;5;006m([A-Z][a-z]+)\\u001b\\[38;5;007m/;\r\n        for (const line of args.lines) {\r\n            if ('line' in line) {\r\n                const match = line.line.match(nameRegExp) || [];\r\n                if (match[1]) {\r\n                    console.log(`Found: ${match[1]}`);\r\n                }\r\n            }\r\n        }\r\n    \n    }\n}\n"
+                            "script": "\n    var regExpArray = [\n        /^Citizen                                                   Rank CT  Class$/,\n    /^-------                                                   ---- --  -----$/\n    ];\n\n    var indexOffset = current_block.indexOf(current_line);\n    var lastIndex =  indexOffset + regExpArray.length - 1;\n\n    // Override args\n    var args = {\n        matches: [],\n        block: current_block,\n        lines: []\n    };\n\n    var prompt = current_block[current_block.length - 1];\n\n    if (prompt.parsed_prompt) {\n        args.prompt = prompt;\n    }\n\n    for (let i = 0; i < regExpArray.length; i++) {\n        const lineIndex = i + indexOffset;\n\n        if (!current_block[lineIndex] || !current_block[lineIndex].parsed_line) {\n            break;\n        }\n\n        var currentRegExp = regExpArray[i];\n        var currentText = current_block[lineIndex].parsed_line.text();\n\n        if (!currentRegExp.test(currentText)) {\n            break;\n        }\n\n        args.matches.push(currentText.match(currentRegExp));\n        args.lines.push(current_block[lineIndex]);\n\n        if (lineIndex === lastIndex) {\n            const changedPeople = [];\r\n        const nameRegExp = /\\u001b\\[38;5;006m([A-Z][a-z]+)\\u001b\\[38;5;007m/;\r\n        for (const line of args.block) {\r\n            if ('parsed_line' in line) {\r\n                const name = (line.line.match(nameRegExp) || [])[1];\r\n                const person = client.peopleManager.settings.people[name];\r\n                if (name) {\r\n                    if (!person) {\r\n                        changedPeople.push({ name });\r\n                    }\r\n                }\r\n            }\r\n        }\r\n        if (changedPeople.some(person => person.city !== undefined && person.city !== 'Cityless')) {\r\n            changedPeople.forEach(person => {\r\n                client.peopleManager.updatePerson(person.name, person);\r\n            });\r\n        }\r\n    \n        }\n    }\n    "
                         }
                     ],
                     "name": "City Who",
                     "enabled": true,
                     "id": 3,
+                    "matching": "regexp",
                     "whole_words": false,
                     "case_sensitive": false,
-                    "matching": "regexp",
                     "text": "^Citizen                                                   Rank CT  Class$"
+                },
+                {
+                    "type": "trigger",
+                    "items": [],
+                    "actions": [
+                        {
+                            "action": "script",
+                            "script": "\n    var regExpArray = [\n        /^([\\w\\W]+)$/,\n    /^(?:Plus another (\\d+) whose presence you cannot fully sense)? ?(?:\\(\\d+ total\\))?\\.$/\n    ];\n\n    var indexOffset = current_block.indexOf(current_line);\n    var lastIndex =  indexOffset + regExpArray.length - 1;\n\n    // Override args\n    var args = {\n        matches: [],\n        block: current_block,\n        lines: []\n    };\n\n    var prompt = current_block[current_block.length - 1];\n\n    if (prompt.parsed_prompt) {\n        args.prompt = prompt;\n    }\n\n    for (let i = 0; i < regExpArray.length; i++) {\n        const lineIndex = i + indexOffset;\n\n        if (!current_block[lineIndex] || !current_block[lineIndex].parsed_line) {\n            break;\n        }\n\n        var currentRegExp = regExpArray[i];\n        var currentText = current_block[lineIndex].parsed_line.text();\n\n        if (!currentRegExp.test(currentText)) {\n            break;\n        }\n\n        args.matches.push(currentText.match(currentRegExp));\n        args.lines.push(current_block[lineIndex]);\n\n        if (lineIndex === lastIndex) {\n            const peopleLine = args.lines[0];\r\n        const changedPeople = [];\r\n        if ('line' in peopleLine) {\r\n            if (peopleLine.line !== 'None') {\r\n                const regExp = /\\u001b\\[4z<COLOR (#[A-Za-z0-9]+)>\\u001b\\[4z(?:<SEND HREF=\"HONOURS [A-Z]+\">)?([A-Z][a-z]+)\\u001b\\[4z(?:<\\/SEND>)?\\u001b\\[4z<\\/COLOR>(?:, | and |\\.)?/g;\r\n                let match = null;\r\n                while (match = regExp.exec(peopleLine.line)) {\r\n                    const name = match[2];\r\n                    const city = match[1] in client.peopleManager.QWCColourToCityDictionary\r\n                        ? client.peopleManager.QWCColourToCityDictionary[match[1]]\r\n                        : undefined;\r\n                    const person = client.peopleManager.settings.people[name];\r\n                    if (!person || person.city !== city) {\r\n                        changedPeople.push({ name, city });\r\n                    }\r\n                }\r\n                if (changedPeople.some(person => person.city !== undefined && person.city !== 'Cityless')) {\r\n                    changedPeople.forEach(person => {\r\n                        client.peopleManager.updatePerson(person.name, person);\r\n                    });\r\n                }\r\n            }\r\n        }\r\n    \n        }\n    }\n    "
+                        }
+                    ],
+                    "name": "Quick Who",
+                    "enabled": true,
+                    "id": 4,
+                    "matching": "regexp",
+                    "whole_words": false,
+                    "case_sensitive": false,
+                    "text": "^([\\w\\W]+)$"
                 }
             ],
             "actions": [],
             "name": "Triggers",
             "enabled": true,
-            "id": 4
+            "id": 5
         }
     ],
     "actions": [],

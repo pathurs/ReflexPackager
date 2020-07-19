@@ -11,7 +11,7 @@ export const inscribeFailed = new TriggerItem(
         new ExecuteScriptAction(
             function (args: TriggerFunctionArgs) {
                 if (client.skillManager.skills.class.tarot.active) {
-                    client.skillManager.onAbility('tarot', 'CHANGEME', 'CHANGEME', args);
+                    client.skillManager.onAbility('tarot', 'CHANGEME', 'CHANGEME', 'CHANGEME', args);
                 }
 
                 if (client.skillManager.skills.class.tarot.inscribing.active) {
