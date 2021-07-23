@@ -33,7 +33,8 @@ interface SystemService {
     echo(text: string): void;
     error(text: string): void;
     save(id: string, callback: () => void): void;
-    mergeDeep<T extends object>(target: T, ...sources: T[]): T;
+    copyDeep<T extends object>(target: T): T;
+    mergeDeep<T extends object>(target: T, ...sources: Partial<T>[]): T;
     defaultsDeep<T extends object>(target: T | undefined, ...sources: T[]): T;
     sendCommand(command: string, echo?: boolean): void;
     sendCommands(commands: string[], echo?: boolean): void;

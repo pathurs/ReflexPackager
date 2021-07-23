@@ -8,7 +8,7 @@ export const usedHit = new TriggerItem(
     'Used Hit',
     [
         /^You launch a powerful uppercut at (\w+)\.$/,
-        /^You connect to the (.+)!$/
+        /^You connect to the ([\w\W]+)!$/
     ],
     TriggerType.MultiLineTrigger,
     [

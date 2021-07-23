@@ -33,7 +33,7 @@ export class AliasItem extends Item<ItemType.Alias> implements AliasDefinition {
         public matching: AliasType,
         actions: Actions,
         public whole_words: boolean = true,
-        public case_sensitive: boolean = true,
+        public case_sensitive: boolean = false,
         public prefix_suffix: boolean = true,
         enabled?: boolean
     ) {

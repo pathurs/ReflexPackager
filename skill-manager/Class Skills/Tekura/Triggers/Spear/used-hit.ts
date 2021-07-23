@@ -8,7 +8,7 @@ export const usedHit = new TriggerItem(
     'Used Hit',
     [
         /^You form a spear hand and stab out towards (\w+)\.$/,
-        /^You connect to the (.+)!$/
+        /^You connect to the ([\w\W]+)!$/
     ],
     TriggerType.MultiLineTrigger,
     [

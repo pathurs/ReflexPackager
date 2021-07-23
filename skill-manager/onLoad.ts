@@ -33,6 +33,9 @@ export const onLoad = new FunctionItem(
                     },
                     tekura: {
                         enabled: true
+                    },
+                    telepathy: {
+                        enabled: true
                     }
                 },
                 general: {
@@ -61,7 +64,7 @@ export const onLoad = new FunctionItem(
                     pranks: {
                         active: true,
                         classes: [
-                            'Jester'
+                            'jester'
                         ],
                         handspring(target) {
                             return `handspring ${target}`;
@@ -70,14 +73,14 @@ export const onLoad = new FunctionItem(
                     puppetry: {
                         active: true,
                         classes: [
-                            'Jester'
+                            'jester'
                         ]
                     },
                     tarot: {
                         active: true,
                         classes: [
-                            'Jester',
-                            'Occultist'
+                            'jester',
+                            'occultist'
                         ],
                         cards: [
                             'blank',
@@ -248,7 +251,13 @@ export const onLoad = new FunctionItem(
                     tekura: {
                         active: true,
                         classes: [
-                            'Monk'
+                            'monk'
+                        ]
+                    },
+                    telepathy: {
+                        active: true,
+                        classes: [
+                            'monk'
                         ]
                     }
                 },

@@ -1,13 +1,15 @@
 import { createFromFile } from '../source';
-import { onLoad } from './onLoad';
+import { Aliases } from './Aliases';
 import { Triggers } from './Triggers';
 import { onBlock } from './on-block';
+import { onLoad } from './on-load';
 
 createFromFile(
     [
+        Aliases,
+        Triggers,
         onBlock,
         onLoad,
-        Triggers
     ],
     'people-manager/rpconfig.json'
 );

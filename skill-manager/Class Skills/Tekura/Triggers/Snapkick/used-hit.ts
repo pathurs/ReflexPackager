@@ -8,7 +8,7 @@ export const usedHit = new TriggerItem(
     'Used Hit',
     [
         /^You let fly at (\w+) with a snap kick\.$/,
-        /^You connect to the (.+)!$/
+        /^You connect to the ([\w\W]+)!$/
     ],
     TriggerType.MultiLineTrigger,
     [

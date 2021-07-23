@@ -395,7 +395,7 @@ interface GMCPIRETimeUpdate {
 type GMCPIRETargetSet = string;
 
 interface GMCPIRETargetInfo {
-    short_desc: string;
+    short_desc?: string;
     hpperc: string;
     id: string;
 }
@@ -518,6 +518,7 @@ interface NexusBlockParsedLine {
     chunks: NexusLineChunk[];
     text(): string;
     colorize(start: number, end: number, fgcolor: string, bgcolor?: string): void;
+    remove(start: number, end: number): void;
 }
 
 interface NexusEmptyLine {
@@ -528,6 +529,7 @@ interface NexusBlockLine {
     line: string;
     monospace: boolean;
     parsed_line: NexusBlockParsedLine;
+    gag?: boolean;
 }
 
 interface NexusBlockParsedPrompt {

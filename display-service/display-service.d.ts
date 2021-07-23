@@ -16,6 +16,7 @@ interface DisplayService {
     table(title: string, groups: TableGroupDefinition[]): void;
     color(text: string, color: string): void;
     colorify(text: string): string;
+    rainbowify(text: string): string;
     commandify(text: string, commands: string, hint: string): string;
     clickify(text: string, code: string, hint: string): string;
 }

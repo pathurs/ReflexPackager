@@ -150,6 +150,30 @@ export const onLoad = new FunctionItem(
 
                 return result;
             },
+            rainbowify(text) {
+                const rainbow = [
+                    '#ff0000',
+                    '#ff8800',
+                    '#88ff00',
+                    '#00ff00',
+                    // '#00ff88',
+                    '#0088ff',
+                    // '#0000ff',
+                    '#8800ff',
+                    '#ff0088'
+                ];
+
+                let result = '';
+
+                for (let i = 0; i < text.length; i++) {
+                    const colour = rainbow[i % rainbow.length];
+                    const letter = text[i];
+
+                    result += `%${colour}%${letter}%end%`;
+                }
+
+                return result;
+            },
             commandify(text, command, hint) {
                 return client.displayService.clickify(
                     text,

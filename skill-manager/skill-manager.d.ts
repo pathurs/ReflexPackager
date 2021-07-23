@@ -123,6 +123,18 @@ interface SkillManagerTekuraSettings {
 
 //#endregion
 
+//#region Telepathy
+
+interface SkillManagerTelepathy extends SkillManagerClassSkill {
+
+}
+
+interface SkillManagerTelepathySettings {
+    enabled: boolean;
+}
+
+//#endregion
+
 //#region Harvesting
 
 interface SkillManagerHarvesting extends SkillManagerTradeSkill {
@@ -264,6 +276,7 @@ interface SkillManagerClassSkillSettings {
     puppetry: SkillManagerPuppetrySettings;
     tarot: SkillManagerTarotSettings;
     tekura: SkillManagerTekuraSettings;
+    telepathy: SkillManagerTelepathySettings;
 }
 
 interface SkillManagerGeneralSkillSettings {
@@ -292,6 +305,7 @@ interface SkillManagerClassSkills {
     puppetry: SkillManagerPuppetry;
     tarot: SkillManagerTarot;
     tekura: SkillManagerTekura;
+    telepathy: SkillManagerTelepathy;
 }
 
 interface SkillManagerGeneralSkills {

@@ -118,7 +118,11 @@ export const onLoad = new FunctionItem(
                 }, timeoutMilliseconds);
             }
 
-            public mergeDeep<T extends object>(target: T, ...sources: T[]): T {
+            public copyDeep<T extends object>(target: T): T {
+                return this.mergeDeep(<T>{}, target);
+            }
+
+            public mergeDeep<T extends object>(target: T, ...sources: Partial<T>[]): T {
                 if (!sources.length) {
                     return target
                 };
